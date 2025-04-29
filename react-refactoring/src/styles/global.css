@@ -10,6 +10,20 @@
     margin-top: 80px;
 }
 
+.navbar{
+    padding: .5rem 1rem;
+
+}
+.navbar-nav *, .navbar-nav{
+    -webkit-transition-property: none!important;
+    -moz-transition-property: none!important;
+    -o-transition-property: none!important;
+    transition-property: none!important;
+    -webkit-transition-duration: 0s;
+    -moz-transition-duration: 0s;
+    -o-transition-duration: 0s;
+    transition-duration: 0s;
+}
 /****FOCUSNOTE CREATOR****/
 #content{
     overflow: hidden !important;
@@ -332,7 +346,7 @@ input[type='radio'][value='orange']:checked + .checkmark, input[type='radio'][va
 
 /***TAG CARD COLOR***/
 .card-light .tags a{
-    color: var(--bs-light);
+    color: var(--bs-dark);
 }
 .card-blue .tags a{
     color: var(--bs-blue);
@@ -389,7 +403,7 @@ input[type='radio'][value='orange']:checked + .checkmark, input[type='radio'][va
     padding-top: 2px;
     font-family: bootstrap-icons;
     position: absolute;
-    content: '\e0c3';
+    content: '\F1D1';
     height: 26px;
     width: 26px;
     left: 4px;
@@ -409,9 +423,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    color: var(--dark);
+    color: var(--bs-dark);
     padding-top: 0;
-    content:'\e09f';
+    content:'\F494';
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
@@ -483,8 +497,8 @@ body.dark {
     background-color: var(--bs-black)!important;
 }
 
-body.dark .badge, body.dark .btn, body.dark .text-body, body.dark .card, body.dark .form-control, body.dark .modal-content,body.dark .optionMenu ul li{
-    color: #e4e6eb!important;
+body.dark .badge, body.dark .btn, body.dark .text-body, body.dark .card, body.dark .form-control, body.dark .modal-content,body.dark .optionMenu ul li, body.dark .card-light a{
+    color: var(--bs-light)!important;
 }
 
 body.dark .card, body.dark .modal-content,body.dark .optionMenu ul{
@@ -519,7 +533,7 @@ body.dark .navbar-light a,body.dark .navbar-light, body.dark .mobileButtonMenu s
     color: #a8abaf!important;
 }
 
-body.dark .bl-light, .card-light{
+body.dark .bl-light, body.dark .card-light{
     border-left-color: #393a3b!important;
 }
 

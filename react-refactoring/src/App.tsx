@@ -1,4 +1,5 @@
 import Note from './components/Note'
+import Menu from './components/Menu'
 
 function App() {
     const dt = new Date();
@@ -14,6 +15,7 @@ function App() {
         "orange"
     ];
     return <>
+        <Menu />
         <div className="row justify-content-center notes-container" >
             <div className="col-lg-8">
                 {colors.map((color, index) => (
