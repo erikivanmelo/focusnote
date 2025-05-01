@@ -1,5 +1,6 @@
 import Note from './components/Note'
 import Menu from './components/Menu'
+import NoteCreator from './components/NoteCreator';
 
 function App() {
     const dt = new Date();
@@ -18,6 +19,8 @@ function App() {
         <Menu />
         <div className="row justify-content-center notes-container" >
             <div className="col-lg-8">
+                <NoteCreator autocompleteTagList={["Ejemplo"]}/>
+                <hr />
                 {colors.map((color, index) => (
                     <Note id={index} datetime={dt} title={`${color} note`} tags={tags} color={color}> 
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. 

@@ -217,6 +217,7 @@ input[type='radio'][value='orange']:checked + .checkmark, input[type='radio'][va
     height: 100%;
     vertical-align: top;
     margin: 0;
+    margin-bottom: 8px;
     padding: 0;
 }
 
@@ -248,27 +249,24 @@ input[type='radio'][value='orange']:checked + .checkmark, input[type='radio'][va
     text-overflow: ellipsis!important;
     display: block!important;
     cursor: context-menu;
+    font-weight: bold;
 }
 
 #tag-pills li a{
 	border: 0;
     cursor: pointer;
     outline: none;
-}
-
-#tag-pills li a svg{
-	fill: #fff;
 	display: flex;
     background-size: 19px 19px;
     border: 0;
     cursor: pointer;
+    width: 19px;
     height: 19px;
     margin-left: -8px;
     margin-right: 4px;
+    margin-top: -6px;
     min-width: 19px;
-    /*padding: 3px;*/
-    width: 19px;
-    font-size: 13px;
+    font-size: 18px;
 }
 
 /****BORDER LEFT COLORS****/
