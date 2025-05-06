@@ -1,24 +1,82 @@
+# ================
+# === Django ===
+# ================
+# Virtual environment
+/backend/venv/
+/backend/.venv/
+/opt/venv/
+
+# Byte-compiled Python files
+*.py[cod]
+__pycache__/
+*.pyc
+
+# Django secret key
+*.env
+.env
+.env.local
+
+# Database
+*.sqlite3
+*.db
+*.dump
+
 # Logs
-logs
 *.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+
+# ================
+# === Node/React ===
+# ================
+# Dependencies
+/node_modules/
+/frontend/node_modules/
+*/node_modules/
+
+# Build directories
+/dist/
+/build/
+/.next/
+/out/
+
+# Cache
+.cache/
+.turbo/
+.yarn/
+
+# Environment variables
+.env.local
+.env.development
+.env.production
+
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+.pnpm-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Local development
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.swp
+*.swo
+
+# Vite specific
+/frontend/.vite/
+/frontend/*.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ================
+# === Docker ===
+# ================
+# Docker compose override files
+docker-compose.override.yml
+
+# Volumes (PG data)
+/postgres_data/
+/pgadmin_data/
