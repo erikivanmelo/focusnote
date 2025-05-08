@@ -6,8 +6,8 @@ services:
     container_name: django-backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./backend:/app:z
-      - /app/venv 
+      - ./backend:/app
+      - ./backend/venv:/app/venv
     environment:
       - PYTHONUNBUFFERED=1
       - PIP_CACHE_DIR=/tmp/.cache/pip  # Evita conflictos de permisos
