@@ -1,29 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
+import Note from "../models/Note";
+import Tag from "../models/Tag";
 
 interface Props {
-    id: number;
-    color  ?: string;
-    title  ?: string;
-    tags   ?: Array<string>;
-    datetime: Date;
-    children: React.ReactNode;
+    note: Note
 }
 
-function Card({ 
-        id, 
-        color = "light", 
-        title,
-        tags = [],
-        datetime, 
-        children
-}: Props) {
+function NoteCard({note}: Props) {
     return (
-        <div className={`card mb-3 shadow mt-4 bc-callout card-${color}`}>
+        <div className={`card mb-3 shadow mt-4 bc-callout card-${note.color.name}`}>
             <div className="card-body">
-                <Header id={id} datetime={datetime} />
-                <Title>{title}</Title>
-                <Content>{children}</Content>
-                <Tags tags={tags}/>
+                <Header id={note.id} created_at={note.createdAt} />
+                <Title>{note.title}</Title>
+                <Content>{note.content}</Content>
+                <TagPills tags={note.tags}/>
             </div>
         </div>
     );
@@ -31,10 +21,10 @@ function Card({
 
 interface HeaderProps {
     id: number;
-    datetime: Date;
+    created_at: Date;
 }
 
-function Header({ id, datetime }: HeaderProps) {
+function Header({ id, created_at }: HeaderProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -50,8 +40,8 @@ function Header({ id, datetime }: HeaderProps) {
         };
     }, []);
 
-    const date = datetime.toLocaleDateString();
-    const time = datetime.toLocaleTimeString();
+    const date = created_at.toLocaleDateString();
+    const time = created_at.toLocaleTimeString();
     return (
         <div className="text-body-secondary mb-2">
             <small>
@@ -100,18 +90,18 @@ function Content({ children }: ContentProps) {
     )
 }
 
-interface TagsProps {
-    tags: Array<string>;
+interface TagPillsProps {
+    tags: Array<Tag>;
 }
 
-function Tags({ tags }: TagsProps) {
+function TagPills({ tags }: TagPillsProps) {
     return (
         <div className="tags">
             {tags.map((tag) => (
-                <a href="#">#{tag}</a>
+                <a key = {tag.id} href="#">#{tag.name}</a>
             ))}
         </div>
     )
 }
 
-export default Card;
+export default NoteCard;

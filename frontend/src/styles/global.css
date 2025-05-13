@@ -567,3 +567,21 @@ body.dark .optionMenu ul::after{
     border-bottom-color: #242526 !important;
     filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(62, 64, 66, .3)) !important;
 }
+
+body.dark .alert-danger {
+    color: var(--darkreader-text-721c24, #e1868f);
+    background-color: var(--darkreader-background-f8d7da, #430c11);
+    border-top-color: var(--darkreader-border-f5c6cb, #68121b);
+    border-right-color: var(--darkreader-border-f5c6cb, #68121b);
+    border-bottom-color: var(--darkreader-border-f5c6cb, #68121b);
+    border-left-color: var(--darkreader-border-f5c6cb, #68121b);
+}
+
+body.dark .alert-info {
+  color: var(--darkreader-text-0c5460, #8ee3f1);
+  background-color: var(--darkreader-background-d1ecf1, #143b43);
+  border-top-color: var(--darkreader-border-bee5eb, #1e5961);
+  border-right-color: var(--darkreader-border-bee5eb, #1e5961);
+  border-bottom-color: var(--darkreader-border-bee5eb, #1e5961);
+  border-left-color: var(--darkreader-border-bee5eb, #1e5961);
+}
