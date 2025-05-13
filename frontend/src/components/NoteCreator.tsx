@@ -1,36 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 interface Props {
     autocompleteTagList?: Array<string>;
 }
 
-const NoteCreator: React.FC<Props> = ({ autocompleteTagList = [] }) => {
-    const [localAutocompleteTagList, setLocalAutocompleteTagList] = useState<Array<string>>(autocompleteTagList);
-    const [tags, setTags] = useState<Array<string>>([]);
-    const inputTagRef = useRef<HTMLInputElement>(null);
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!inputTagRef.current) return;
-        const value = inputTagRef.current.value.trim();
-        if (event.key === "Enter" && value) {
-            if (!tags.includes(value)) {
-                addTag(value);
-                inputTagRef.current.value = "";
-            }
-        }
-    };
-
-    const addTag = (newTag: string) => {
-        setLocalAutocompleteTagList(localAutocompleteTagList.filter((value) => newTag !== value));
-        setTags([...tags, newTag]);
-    };
-
-    const removeTag = (name: string) => {
-        if (autocompleteTagList.includes(name)) {
-            setLocalAutocompleteTagList([...localAutocompleteTagList, name]);
-        }
-        setTags(tags.filter((tag) => tag !== name));
-    };
+function NoteCreator({ autocompleteTagList = [] }: Props) {
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
     return (
         <div className="card mb-3 shadow">
@@ -44,12 +19,7 @@ const NoteCreator: React.FC<Props> = ({ autocompleteTagList = [] }) => {
                         className="form-control mb-2"
                         placeholder="What do you have to tell today?"
                     ></textarea>
-                    <TagList tags={tags} onRemove={removeTag} />
-                    <TagInput
-                        inputRef={inputTagRef}
-                        onKeyDown={handleKeyDown}
-                        autocompleteList={localAutocompleteTagList}
-                    />
+                    <TagInput autocompleteList={autocompleteTagList} onChange={setSelectedTags} />
                 </div>
             </div>
             <div className="card-footer">
@@ -61,6 +31,7 @@ const NoteCreator: React.FC<Props> = ({ autocompleteTagList = [] }) => {
 
 
 function ColorSelector() {
+
     const colors = ["light", "pink", "red", "orange", "yellow", "green", "blue", "purple"];
 
     return (
@@ -95,13 +66,45 @@ function TagList ({ tags, onRemove }: TagListProps) {
 };
 
 interface TagInputProps {
-    inputRef: React.RefObject<HTMLInputElement>;
-    onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     autocompleteList: Array<string>;
+    onChange: (tags: string[]) => void; 
 }
-function TagInput({ inputRef, onKeyDown, autocompleteList }: TagInputProps) {
+function TagInput({ autocompleteList, onChange }: TagInputProps) {
+    const [localAutocompleteTagList, setLocalAutocompleteTagList] = useState<Array<string>>(autocompleteList);
+    const [tags, setTags] = useState<Array<string>>([]);
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        onChange?.(tags);
+    }, [tags, onChange]);
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!inputRef.current) return;
+        const value = inputRef.current.value.trim();
+        if (event.key === "Enter" && value) {
+            if (!tags.includes(value)) {
+                addTag(value);
+                inputRef.current.value = "";
+            }
+        }
+    };
+
+    const addTag = (newTag: string) => {
+        setLocalAutocompleteTagList(localAutocompleteTagList.filter((value) => newTag !== value));
+        setTags([...tags, newTag]);
+    };
+
+    const removeTag = (name: string) => {
+        if (localAutocompleteTagList.includes(name)) {
+            setLocalAutocompleteTagList([...localAutocompleteTagList, name]);
+        }
+        setTags(tags.filter((tag) => tag !== name));
+    };
+
     return (
         <>
+            <TagList tags={tags} onRemove={removeTag} />
             <datalist id="tagList">
                 {autocompleteList.map((tag) => (
                     <option key={tag} value={tag}></option>
@@ -114,7 +117,7 @@ function TagInput({ inputRef, onKeyDown, autocompleteList }: TagInputProps) {
                 className="form-control"
                 list="tagList"
                 ref={inputRef}
-                onKeyDown={onKeyDown}
+                onKeyDown={handleKeyDown}
             />
         </>
     );
