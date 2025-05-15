@@ -2,9 +2,9 @@ import noteApi from "../api/noteApi";
 import Note from "../models/Note";
 
 const noteService = {
-    fetchAll: async (): Promise<Note[]> => {
-        const notes = await noteApi.getAll();
-        return Note.fromArray(notes);
+    getAll: async (): Promise<Note[]> => {
+        const rawNotes = await noteApi.getAll();
+        return rawNotes.map((rawNote) => new Note(rawNote));
     }
 };
 

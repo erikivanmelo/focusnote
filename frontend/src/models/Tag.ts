@@ -1,19 +1,23 @@
+export type RawTag = {
+   id  : number;
+   name: string;
+}
+
 class Tag {
-    id: number;
+    id  : number;
     name: string;
 
-    constructor(data: { id: number; name: string }) {
-        this.id = data.id;
+    constructor(data: RawTag) {
+        this.id   = data.id;
         this.name = data.name;
     }
 
-    static fromArray(dataArray: Array<{
-        id  : number;
-        name: string;
-    }>): Tag[] {
-        return dataArray.map((data) => new Tag(data));
+    toRaw(): RawTag {
+        return {
+            id  : this.id,
+            name: this.name
+        }
     }
-
 }
 
 export default Tag

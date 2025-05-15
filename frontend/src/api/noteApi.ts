@@ -1,9 +1,9 @@
 import { httpClient } from "./httpClient";
+import { RawNote } from "../models/Note"
 
 const noteApi = {
-
-    getAll: async (): Promise<any[]> => {
-        return await httpClient.get<any[]>("/notes/");
+    getAll: async (): Promise<RawNote[]> => {
+        return await httpClient.get<RawNote[]>("/notes/");
     },
 };
 

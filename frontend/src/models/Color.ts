@@ -1,10 +1,22 @@
+export type RawColor = {
+   id  : number;
+   name: string;
+}
+
 class Color {
-    id: number;
+    id  : number;
     name: string;
 
-    constructor(data: { id: number; name: string }) {
-        this.id = data.id;
+    constructor(data: RawColor) {
+        this.id   = data.id;
         this.name = data.name;
+    }
+
+    toRaw(): RawColor {
+        return {
+            id  : this.id,
+            name: this.name
+        }
     }
 }
 

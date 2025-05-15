@@ -3,7 +3,7 @@ import { useFetch } from '../hooks/useFetch';
 import noteService from '../services/noteService';
 
 function NoteCardList() {
-    const { data: notes, loading, error } = useFetch(noteService.fetchAll);
+    const { data: notes, loading, error } = useFetch(noteService.getAll);
 
     if (loading) {
         return (
