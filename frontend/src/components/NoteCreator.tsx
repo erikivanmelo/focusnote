@@ -1,4 +1,12 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect} from "react";
+//import useFetch from '../hooks/useFetch';
+import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
+import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
+import noteService from '../services/noteService';
+import colorService from "../services/colorService";
+import Note from "../models/Note";
+import Tag from "../models/Tag";
+import Color from "../models/Color";
 
 interface Props {
     autocompleteTagList?: Array<string>;
@@ -6,39 +14,68 @@ interface Props {
 
 function NoteCreator({ autocompleteTagList = [] }: Props) {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedColor, setSelectedColor] = useState<Color>(new Color(1, "light"));
+
+    const createNoteMutation = useInvalidateMutation(noteService.create, ["notes", "note"]);
+
+    const contentRef = useRef<HTMLTextAreaElement>(null);
+    const titleRef   = useRef<HTMLInputElement>(null);
+
+    const publish = () => {
+        const newNote = new Note(
+            -1,
+            titleRef.current?.value?? "",
+            contentRef.current?.value?? "",
+            selectedColor,
+            selectedTags.map((tagName) => new Tag(-1, tagName))
+        );
+        createNoteMutation.mutate(newNote)
+        //const { data: note, loading, error } = useFetch(noteService.create, newNote);
+    }
+
 
     return (
         <div className="card mb-3 shadow">
             <div className="card-body">
                 <div className="card-text">
-                    <ColorSelector />
+                    <ColorSelector onSelect={setSelectedColor} />
                     <hr />
-                    <input id="title" type="text" placeholder="Title" className="form-control mb-2" />
+                    <input ref={titleRef} id="title" type="text" placeholder="Title" className="form-control mb-2" />
                     <textarea
                         id="content"
                         className="form-control mb-2"
                         placeholder="What do you have to tell today?"
+                        ref={contentRef}
                     ></textarea>
                     <TagInput autocompleteList={autocompleteTagList} onChange={setSelectedTags} />
                 </div>
             </div>
             <div className="card-footer">
-                <button className="btn btn-primary rounded-pill float-end">Publish</button>
+                <button className="btn btn-primary rounded-pill float-end" onClick={publish}>Publish</button>
             </div>
         </div>
     );
 };
 
 
-function ColorSelector() {
+interface ColorSelectorProps {
+    onSelect: (color: Color) => void; // Asegúrate de que el tipo sea correcto
+}
 
-    const colors = ["light", "pink", "red", "orange", "yellow", "green", "blue", "purple"];
+function ColorSelector({ onSelect }: ColorSelectorProps) {
+    const { data: colors } = useGenericQueryNoParams(["colors"], colorService.getAll);
 
     return (
         <div className="d-flex flex-wrap mb-2 justify-content-center">
-            {colors.map((color) => (
-                <label key={color}>
-                    <input value={color} defaultChecked={color === "light"} type="radio" name="color" />
+            {colors?.map((color: Color) => (
+                <label key={color.id}>
+                    <input 
+                        type="radio" 
+                        name="color" 
+                        value={color.name} 
+                        defaultChecked={color.name === "light"} 
+                        onChange={() => onSelect?.(color)}
+                    />
                     <span className="checkmark"></span>
                 </label>
             ))}
@@ -53,8 +90,8 @@ interface TagListProps {
 function TagList ({ tags, onRemove }: TagListProps) {
     return (
         <ul id="tag-pills">
-            {tags.map((tag) => (
-                <li key={tag} value={tag}>
+            {tags.map((tag, index) => (
+                <li key={index} value={tag}>
                     <span>{tag}</span>
                     <a onClick={() => onRemove(tag)}>
                         <i className="bi bi-x-circle-fill"></i>
@@ -106,8 +143,8 @@ function TagInput({ autocompleteList, onChange }: TagInputProps) {
         <>
             <TagList tags={tags} onRemove={removeTag} />
             <datalist id="tagList">
-                {autocompleteList.map((tag) => (
-                    <option key={tag} value={tag}></option>
+                {autocompleteList.map((tag, index) => (
+                    <option key={index} value={tag}></option>
                 ))}
             </datalist>
             <input

@@ -1,11 +1,11 @@
 import NoteCard from './NoteCard';
-import { useFetch } from '../hooks/useFetch';
+import { useGenericQueryNoParams } from '../hooks/useGenericQuery';
 import noteService from '../services/noteService';
 
 function NoteCardList() {
-    const { data: notes, loading, error } = useFetch(noteService.getAll);
+    const { data: notes, isLoading, isFetching, isError, error } = useGenericQueryNoParams(["notes"], noteService.getAll);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="text-center my-5">
                 <div className="spinner-border text-primary" style={{width: '3rem', height: '3rem'}} role="status">
@@ -15,7 +15,7 @@ function NoteCardList() {
         );
     }
 
-    if (error) {
+    if (isError) {
         return (
             <div className="alert alert-danger">
                 <i className="bi bi-exclamation-triangle me-2"></i>

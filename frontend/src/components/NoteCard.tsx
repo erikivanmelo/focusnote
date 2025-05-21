@@ -1,19 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import Note from "../models/Note";
 import Tag from "../models/Tag";
+import noteService from "../services/noteService";
+import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 
 interface Props {
-    note: Note
+    note: Note;
 }
 
-function NoteCard({note}: Props) {
+function NoteCard({ note }: Props) {
+    const deleteNoteMutation = useInvalidateMutation(noteService.delete, "notes");
+
+    const handleDeleteNote = async (noteId: number) => {
+        deleteNoteMutation.mutate(noteId);
+    };
+
+
     return (
         <div className={`card mb-3 shadow mt-4 bc-callout card-${note.color.name}`}>
             <div className="card-body">
-                <Header id={note.id} created_at={note.createdAt} />
+                <Header id={note.id} created_at={note.createdAt} onDelete={handleDeleteNote} />
                 <Title>{note.title}</Title>
                 <Content>{note.content}</Content>
-                <TagPills tags={note.tags}/>
+                <TagPills tags={note.tags} />
             </div>
         </div>
     );
@@ -21,16 +30,24 @@ function NoteCard({note}: Props) {
 
 interface HeaderProps {
     id: number;
-    created_at: Date;
+    created_at: Date | null;
+    onDelete: (noteId: number) => void;
 }
 
-function Header({ id, created_at }: HeaderProps) {
+function Header({ id, created_at, onDelete }: HeaderProps) {
+
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const buttonRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLUListElement>(null);
+
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-            setIsOpen(false);        }
+        if (
+            buttonRef.current && !buttonRef.current.contains(event.target as Node) &&
+            menuRef.current && !menuRef.current.contains(event.target as Node)
+        ) {
+            setIsOpen(false);        
+        }
     };
 
     useEffect(() => {
@@ -40,24 +57,29 @@ function Header({ id, created_at }: HeaderProps) {
         };
     }, []);
 
-    const date = created_at.toLocaleDateString();
-    const time = created_at.toLocaleTimeString();
+    const date = created_at?.toLocaleDateString()?? "00/00/00";
+    const time = created_at?.toLocaleTimeString()?? "00:00:00";
+
     return (
         <div className="text-body-secondary mb-2">
             <small>
                 <b>#{id}</b> Published on {date} at {time}
             </small>
-            <div className="optionMenu float-end" >
-                <span  ref={buttonRef} className="button" onClick={() => setIsOpen(!isOpen)} ></span>
+            <div className="optionMenu float-end">
+                <span ref={buttonRef} className="button" onClick={() => setIsOpen(!isOpen)} ></span>
                 {isOpen && (
-                    <ul >
-                        <li><a>Delete</a></li>
-                        <li><a>Edit</a></li>
+                    <ul ref={menuRef}>
+                        <li>
+                            <a onClick={() => onDelete(id)}>Delete</a>
+                        </li>
+                        <li>
+                            <a>Edit</a>
+                        </li>
                     </ul>
                 )}
             </div>
         </div>
-    )
+    );
 }
 
 interface TitleProps {
@@ -65,15 +87,16 @@ interface TitleProps {
 }
 
 function Title({ children }: TitleProps) {
+    if (children?.toString() == "" )
+        return;
+
     return (
         <div className="card-title">
             <div className="row">
-                <span className="h4 col-11">
-                    {children}
-                </span>
+                <span className="h4 col-11">{children}</span>
             </div>
         </div>
-    )
+    );
 }
 
 interface ContentProps {
@@ -83,11 +106,9 @@ interface ContentProps {
 function Content({ children }: ContentProps) {
     return (
         <>
-            <p className="text-body">
-                {children}
-            </p>
+            <p className="text-body">{children}</p>
         </>
-    )
+    );
 }
 
 interface TagPillsProps {
@@ -98,10 +119,12 @@ function TagPills({ tags }: TagPillsProps) {
     return (
         <div className="tags">
             {tags.map((tag) => (
-                <a key = {tag.id} href="#">#{tag.name}</a>
+                <a key={tag.id} href="#">
+                    #{tag.name}
+                </a>
             ))}
         </div>
-    )
+    );
 }
 
 export default NoteCard;

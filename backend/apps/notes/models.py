@@ -7,8 +7,8 @@ class Tag(models.Model):
     name = models.CharField(max_length = 40, unique = True, null = False)
 
 class Note(models.Model):
-    title = models.CharField(max_length = 100, null = True)
-    content = models.TextField(null = False)
+    title = models.CharField(max_length = 100, blank = True, null = True)
+    content = models.TextField(null = False, blank = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 

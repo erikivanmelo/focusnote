@@ -5,11 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.min.css'
 import './styles/global.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+const queryClient = new QueryClient();
 
 //import './styles/open-iconic-bootstrap.min.css'
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+    <QueryClientProvider client={queryClient}>
+        <StrictMode>
+            <App />
+        </StrictMode>,
+    </QueryClientProvider>
 )
