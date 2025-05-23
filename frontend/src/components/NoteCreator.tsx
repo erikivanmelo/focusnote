@@ -1,25 +1,38 @@
 import React, { useRef, useState, useEffect} from "react";
-//import useFetch from '../hooks/useFetch';
 import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 import noteService from '../services/noteService';
 import colorService from "../services/colorService";
+import tagService from "../services/tagService";
 import Note from "../models/Note";
 import Tag from "../models/Tag";
 import Color from "../models/Color";
 
-interface Props {
-    autocompleteTagList?: Array<string>;
-}
+function NoteCreator() {
 
-function NoteCreator({ autocompleteTagList = [] }: Props) {
+    const {data: initialAutocompleteTagList} = useGenericQueryNoParams(["tags"], tagService.getAllNames)
+    const [autocompleteTagList , setAutocompleteTagList] = useState<string[]>(initialAutocompleteTagList??[])
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [selectedColor, setSelectedColor] = useState<Color>(new Color(1, "light"));
+
+    const { data: colors } = useGenericQueryNoParams(["colors"], colorService.getAll);
+    const [selectedColor, setSelectedColor] = useState<Color>(colors?.find((color) => color.isDefault)?? new Color(1, "light", true));
 
     const createNoteMutation = useInvalidateMutation(noteService.create, ["notes", "note"]);
 
     const contentRef = useRef<HTMLTextAreaElement>(null);
     const titleRef   = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (createNoteMutation.isSuccess) {
+            if (contentRef.current)
+                contentRef.current.value = "";
+            if (titleRef.current)
+                titleRef.current.value = ""
+            setSelectedTags([]);
+            setSelectedColor(new Color(1, "light", true))
+        }
+
+    }, [createNoteMutation.isSuccess])
 
     const publish = () => {
         const newNote = new Note(
@@ -30,15 +43,29 @@ function NoteCreator({ autocompleteTagList = [] }: Props) {
             selectedTags.map((tagName) => new Tag(-1, tagName))
         );
         createNoteMutation.mutate(newNote)
-        //const { data: note, loading, error } = useFetch(noteService.create, newNote);
     }
 
+    const removeTag = (name: string) => {
+        if (autocompleteTagList.includes(name)) {
+            setAutocompleteTagList([...autocompleteTagList, name]);
+        }
+        setSelectedTags(selectedTags.filter((tag) => tag !== name));
+    };
+
+    const addTag = (newTag: string) => {
+        if (selectedTags.includes(newTag))
+            return false;
+
+        setAutocompleteTagList(autocompleteTagList.filter((value) => newTag !== value));
+        setSelectedTags([...selectedTags, newTag]);
+        return true;
+    };
 
     return (
         <div className="card mb-3 shadow">
             <div className="card-body">
                 <div className="card-text">
-                    <ColorSelector onSelect={setSelectedColor} />
+                    <ColorSelector value={selectedColor} colors={colors} onSelect={setSelectedColor} />
                     <hr />
                     <input ref={titleRef} id="title" type="text" placeholder="Title" className="form-control mb-2" />
                     <textarea
@@ -47,7 +74,8 @@ function NoteCreator({ autocompleteTagList = [] }: Props) {
                         placeholder="What do you have to tell today?"
                         ref={contentRef}
                     ></textarea>
-                    <TagInput autocompleteList={autocompleteTagList} onChange={setSelectedTags} />
+                    <TagList tags={selectedTags} onRemove={removeTag} />
+                    <TagInput autocompleteList={autocompleteTagList} onSubmit={addTag} />
                 </div>
             </div>
             <div className="card-footer">
@@ -59,12 +87,12 @@ function NoteCreator({ autocompleteTagList = [] }: Props) {
 
 
 interface ColorSelectorProps {
-    onSelect: (color: Color) => void; // Asegúrate de que el tipo sea correcto
+    value: Color;
+    colors: Color[];
+    onSelect: (color: Color) => void;
 }
 
-function ColorSelector({ onSelect }: ColorSelectorProps) {
-    const { data: colors } = useGenericQueryNoParams(["colors"], colorService.getAll);
-
+function ColorSelector({ value, colors, onSelect }: ColorSelectorProps) {
     return (
         <div className="d-flex flex-wrap mb-2 justify-content-center">
             {colors?.map((color: Color) => (
@@ -73,7 +101,7 @@ function ColorSelector({ onSelect }: ColorSelectorProps) {
                         type="radio" 
                         name="color" 
                         value={color.name} 
-                        defaultChecked={color.name === "light"} 
+                        checked={color.id === value.id} 
                         onChange={() => onSelect?.(color)}
                     />
                     <span className="checkmark"></span>
@@ -104,44 +132,22 @@ function TagList ({ tags, onRemove }: TagListProps) {
 
 interface TagInputProps {
     autocompleteList: Array<string>;
-    onChange: (tags: string[]) => void; 
+    onSubmit: (tags: string) => boolean; 
 }
-function TagInput({ autocompleteList, onChange }: TagInputProps) {
-    const [localAutocompleteTagList, setLocalAutocompleteTagList] = useState<Array<string>>(autocompleteList);
-    const [tags, setTags] = useState<Array<string>>([]);
-
+function TagInput({ autocompleteList, onSubmit }: TagInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        onChange?.(tags);
-    }, [tags, onChange]);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (!inputRef.current) return;
         const value = inputRef.current.value.trim();
         if (event.key === "Enter" && value) {
-            if (!tags.includes(value)) {
-                addTag(value);
+            if (onSubmit(inputRef.current.value))
                 inputRef.current.value = "";
-            }
         }
-    };
-
-    const addTag = (newTag: string) => {
-        setLocalAutocompleteTagList(localAutocompleteTagList.filter((value) => newTag !== value));
-        setTags([...tags, newTag]);
-    };
-
-    const removeTag = (name: string) => {
-        if (localAutocompleteTagList.includes(name)) {
-            setLocalAutocompleteTagList([...localAutocompleteTagList, name]);
-        }
-        setTags(tags.filter((tag) => tag !== name));
     };
 
     return (
         <>
-            <TagList tags={tags} onRemove={removeTag} />
             <datalist id="tagList">
                 {autocompleteList.map((tag, index) => (
                     <option key={index} value={tag}></option>

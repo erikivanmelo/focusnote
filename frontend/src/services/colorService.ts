@@ -4,7 +4,8 @@ import Color from "../models/Color";
 export function fromRawToColor(data: RawColor) {
     return new Color(
         data.id,
-        data.name
+        data.name,
+        data.is_default
     )
 }
 

@@ -22,7 +22,7 @@ function NoteCard({ note }: Props) {
                 <Header id={note.id} created_at={note.createdAt} onDelete={handleDeleteNote} />
                 <Title>{note.title}</Title>
                 <Content>{note.content}</Content>
-                <TagPills tags={note.tags} />
+                <Tags tags={note.tags} />
             </div>
         </div>
     );
@@ -91,10 +91,8 @@ function Title({ children }: TitleProps) {
         return;
 
     return (
-        <div className="card-title">
-            <div className="row">
-                <span className="h4 col-11">{children}</span>
-            </div>
+        <div className="card-title row">
+            <span className="h4 col-11">{children}</span>
         </div>
     );
 }
@@ -104,18 +102,14 @@ interface ContentProps {
 }
 
 function Content({ children }: ContentProps) {
-    return (
-        <>
-            <p className="text-body">{children}</p>
-        </>
-    );
+    return <p className="text-body">{children}</p>;
 }
 
-interface TagPillsProps {
+interface TagsProps {
     tags: Array<Tag>;
 }
 
-function TagPills({ tags }: TagPillsProps) {
+function Tags({ tags }: TagsProps) {
     return (
         <div className="tags">
             {tags.map((tag) => (

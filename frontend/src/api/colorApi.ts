@@ -3,6 +3,7 @@ import { httpClient } from "./httpClient";
 export interface RawColor {
    id  : number;
    name: string;
+   is_default: boolean;
 }
 
 const colorApi = {

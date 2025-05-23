@@ -2,6 +2,7 @@ from django.db import models
 
 class Color(models.Model):
     name = models.CharField(max_length = 8, null = False)
+    is_default = models.BooleanField(default=False)
 
 class Tag(models.Model):
     name = models.CharField(max_length = 40, unique = True, null = False)
