@@ -2,8 +2,8 @@ import { useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react
 
 // T = tipo de argumento, R = tipo de retorno
 export function useInvalidateMutation<T = unknown, R = unknown>(
-  mutationFn: (variables: T) => Promise<R>,
   invalidateKeys: string | string[],
+  mutationFn: (variables: T) => Promise<R>,
   options?: UseMutationOptions<R, unknown, T>
 ) {
   const queryClient = useQueryClient();

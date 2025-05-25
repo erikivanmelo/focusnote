@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect} from "react";
+import React, { useCallback, useState, useEffect, useMemo} from "react";
 import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 import noteService from '../services/noteService';
@@ -7,92 +7,126 @@ import tagService from "../services/tagService";
 import Note from "../models/Note";
 import Tag from "../models/Tag";
 import Color from "../models/Color";
+import DisableLayer from "./DisableLayer";
 
 function NoteCreator() {
+    const defaultColor = useMemo(() => new Color(1, "light", true), []);
 
-    const {data: initialAutocompleteTagList} = useGenericQueryNoParams(["tags"], tagService.getAllNames)
-    const [autocompleteTagList , setAutocompleteTagList] = useState<string[]>(initialAutocompleteTagList??[])
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const createNoteMutation = useInvalidateMutation(["notes", "note"], noteService.create);
 
-    const { data: colors } = useGenericQueryNoParams(["colors"], colorService.getAll);
-    const [selectedColor, setSelectedColor] = useState<Color>(colors?.find((color) => color.isDefault)?? new Color(1, "light", true));
-
-    const createNoteMutation = useInvalidateMutation(noteService.create, ["notes", "note"]);
-
-    const contentRef = useRef<HTMLTextAreaElement>(null);
-    const titleRef   = useRef<HTMLInputElement>(null);
+    //Inputs
+    const [selectedColor, setSelectedColor] = useState<Color   >(defaultColor);
+    const [title        , setTitle        ] = useState<string  >("");
+    const [content      , setContent      ] = useState<string  >("");
+    const [selectedTags , setSelectedTags ] = useState<string[]>([]);
 
     useEffect(() => {
-        if (createNoteMutation.isSuccess) {
-            if (contentRef.current)
-                contentRef.current.value = "";
-            if (titleRef.current)
-                titleRef.current.value = ""
-            setSelectedTags([]);
-            setSelectedColor(new Color(1, "light", true))
+        if (createNoteMutation.isSuccess){
+            setContent      ("");
+            setTitle        ("");
+            setSelectedTags ([]);
+            setSelectedColor(defaultColor)
         }
-
-    }, [createNoteMutation.isSuccess])
+    }, [
+        createNoteMutation.isSuccess,
+        defaultColor
+    ]);
 
     const publish = () => {
         const newNote = new Note(
             -1,
-            titleRef.current?.value?? "",
-            contentRef.current?.value?? "",
+            title,
+            content,
             selectedColor,
             selectedTags.map((tagName) => new Tag(-1, tagName))
         );
         createNoteMutation.mutate(newNote)
     }
 
-    const removeTag = (name: string) => {
-        if (autocompleteTagList.includes(name)) {
-            setAutocompleteTagList([...autocompleteTagList, name]);
-        }
+    const handleRemoveTag = (name: string) => {
         setSelectedTags(selectedTags.filter((tag) => tag !== name));
     };
 
-    const addTag = (newTag: string) => {
+    const handleAddTag = (newTag: string) => {
         if (selectedTags.includes(newTag))
             return false;
 
-        setAutocompleteTagList(autocompleteTagList.filter((value) => newTag !== value));
         setSelectedTags([...selectedTags, newTag]);
         return true;
     };
 
     return (
-        <div className="card mb-3 shadow">
+        <div className="card mb-3 shadow form-wrapper disabled">
             <div className="card-body">
-                <div className="card-text">
-                    <ColorSelector value={selectedColor} colors={colors} onSelect={setSelectedColor} />
+                <div className="card-text" style={createNoteMutation.isPending? {  "filter": "blur(4px)" } : {}}>
+                    <ColorSelector 
+                        value={selectedColor} 
+                        onChange={setSelectedColor}
+                    />
                     <hr />
-                    <input ref={titleRef} id="title" type="text" placeholder="Title" className="form-control mb-2" />
+
+                    {/* Title Input */}
+                    <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        id="title" 
+                        type="text" 
+                        placeholder="Title" 
+                        className="form-control mb-2" 
+                    />
+
+                    {/* Content Input */}
                     <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                         id="content"
                         className="form-control mb-2"
                         placeholder="What do you have to tell today?"
-                        ref={contentRef}
                     ></textarea>
-                    <TagList tags={selectedTags} onRemove={removeTag} />
-                    <TagInput autocompleteList={autocompleteTagList} onSubmit={addTag} />
+
+                    <TagInput 
+                        tags={selectedTags}
+                        onSubmit={handleAddTag}
+                        onRemove={handleRemoveTag}
+                    />
                 </div>
             </div>
             <div className="card-footer">
+                { createNoteMutation.isPending &&
+                    <div className="float-start mt-2">
+                        <div 
+                            className="spinner-border" 
+                            style={{
+                                "width": '25px', 
+                                "height": '25px', 
+                                "borderWidth": "5px", 
+                                "paddingTop": '5px', 
+                                "position": "absolute"
+                            }}>
+                            <span className="visually-hidden"></span>
+                        </div>
+                        <div className="ps-5">
+                            Sending...
+                        </div>
+                    </div>
+                }
+
                 <button className="btn btn-primary rounded-pill float-end" onClick={publish}>Publish</button>
             </div>
+            <DisableLayer disabled={createNoteMutation.isPending} />
         </div>
     );
 };
 
 
 interface ColorSelectorProps {
-    value: Color;
-    colors: Color[];
-    onSelect: (color: Color) => void;
+    value   : Color;
+    onChange: (color: Color) => void;
 }
 
-function ColorSelector({ value, colors, onSelect }: ColorSelectorProps) {
+function ColorSelector({ value, onChange }: ColorSelectorProps) {
+    const {data: colors} = useGenericQueryNoParams<Array<Color >>(["colors"], colorService.getAll   );
+
     return (
         <div className="d-flex flex-wrap mb-2 justify-content-center">
             {colors?.map((color: Color) => (
@@ -102,7 +136,7 @@ function ColorSelector({ value, colors, onSelect }: ColorSelectorProps) {
                         name="color" 
                         value={color.name} 
                         checked={color.id === value.id} 
-                        onChange={() => onSelect?.(color)}
+                        onChange={() => onChange?.(color)}
                     />
                     <span className="checkmark"></span>
                 </label>
@@ -111,59 +145,68 @@ function ColorSelector({ value, colors, onSelect }: ColorSelectorProps) {
     );
 }
 
-interface TagListProps {
-    tags: string[];
-    onRemove: (tag: string) => void;
-}
-function TagList ({ tags, onRemove }: TagListProps) {
-    return (
-        <ul id="tag-pills">
-            {tags.map((tag, index) => (
-                <li key={index} value={tag}>
-                    <span>{tag}</span>
-                    <a onClick={() => onRemove(tag)}>
-                        <i className="bi bi-x-circle-fill"></i>
-                    </a>
-                </li>
-            ))}
-        </ul>
-    );
-};
 
 interface TagInputProps {
-    autocompleteList: Array<string>;
-    onSubmit: (tags: string) => boolean; 
+	tags: string[];
+	onSubmit: (tag: string) => boolean;
+	onRemove: (tag: string) => void;
 }
-function TagInput({ autocompleteList, onSubmit }: TagInputProps) {
-    const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!inputRef.current) return;
-        const value = inputRef.current.value.trim();
-        if (event.key === "Enter" && value) {
-            if (onSubmit(inputRef.current.value))
-                inputRef.current.value = "";
-        }
-    };
+function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
+	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNames);
+	const [inputValue , setInputValue ] = useState("");
 
-    return (
-        <>
-            <datalist id="tagList">
-                {autocompleteList.map((tag, index) => (
-                    <option key={index} value={tag}></option>
-                ))}
-            </datalist>
-            <input
-                id="tags"
-                type="text"
-                placeholder="Tags"
-                className="form-control"
-                list="tagList"
-                ref={inputRef}
-                onKeyDown={handleKeyDown}
-            />
-        </>
-    );
+    const suggestions = useMemo(() => {
+        if (!initialSuggestions.isSuccess || !initialSuggestions.data) return [];
+        return initialSuggestions.data.filter(tag => !tags.includes(tag));
+    }, [
+        initialSuggestions.isSuccess, 
+        initialSuggestions.data, 
+        tags
+    ]);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.key !== "Enter")
+                return;
+
+            if (onSubmit(inputValue.trim()))
+                setInputValue("");
+		},
+		[inputValue, onSubmit]
+	);
+
+	return (
+		<>
+			<ul id="tag-pills">
+				{tags.map(tag => (
+					<li key={tag} value={tag}>
+						<span>{tag}</span>
+						<a onClick={() => onRemove(tag)}>
+							<i className="bi bi-x-circle-fill"></i>
+						</a>
+					</li>
+				))}
+			</ul>
+
+			<datalist id="tagList">
+				{[...suggestions].map(tag => (
+					<option key={tag} value={tag} />
+				))}
+			</datalist>
+
+			<input
+				id="tags"
+				type="text"
+				placeholder="Tags"
+				className="form-control"
+				list="tagList"
+				value={inputValue}
+				onChange={e => setInputValue(e.target.value)}
+				onKeyDown={handleKeyDown}
+			/>
+		</>
+	);
 }
 
 export default NoteCreator;

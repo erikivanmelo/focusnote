@@ -3,13 +3,13 @@ import { useGenericQueryNoParams } from '../hooks/useGenericQuery';
 import noteService from '../services/noteService';
 
 function NoteCardList() {
-    const { data: notes, isLoading, isFetching, isError, error } = useGenericQueryNoParams(["notes"], noteService.getAll);
+    const { data: notes, isLoading, isError } = useGenericQueryNoParams(["notes"], noteService.getAll);
 
     if (isLoading) {
         return (
             <div className="text-center my-5">
                 <div className="spinner-border text-primary" style={{width: '3rem', height: '3rem'}} role="status">
-                    <span className="visually-hidden">Cargando...</span>
+                    <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
         );

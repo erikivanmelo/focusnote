@@ -9,7 +9,7 @@ interface Props {
 }
 
 function NoteCard({ note }: Props) {
-    const deleteNoteMutation = useInvalidateMutation(noteService.delete, "notes");
+    const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
 
     const handleDeleteNote = async (noteId: number) => {
         deleteNoteMutation.mutate(noteId);
