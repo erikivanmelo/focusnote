@@ -166,7 +166,7 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
     ]);
 
 	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
+         (e: React.KeyboardEvent<HTMLInputElement>) => {
 			if (e.key !== "Enter")
                 return;
 
@@ -175,6 +175,14 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
 		},
 		[inputValue, onSubmit]
 	);
+
+    const handleAddTag = useCallback(() => {
+            if (onSubmit(inputValue.trim()))
+                setInputValue("");
+		},
+		[inputValue, onSubmit]
+	);
+
 
 	return (
 		<>
@@ -195,16 +203,24 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
 				))}
 			</datalist>
 
-			<input
-				id="tags"
-				type="text"
-				placeholder="Tags"
-				className="form-control"
-				list="tagList"
-				value={inputValue}
-				onChange={e => setInputValue(e.target.value)}
-				onKeyDown={handleKeyDown}
-			/>
+            <div className="input-group">
+                <input
+                    id="tags"
+                    type="text"
+                    placeholder="Tags"
+                    className="form-control"
+                    list="tagList"
+                    value={inputValue}
+                    onChange={e => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+                <button 
+                    className="btn"  
+                    onClick={handleAddTag}
+                >
+                    <i className="bi bi-plus-lg" ></i>
+                </button>
+            </div>
 		</>
 	);
 }
