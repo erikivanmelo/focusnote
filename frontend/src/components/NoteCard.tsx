@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import Note from "../models/Note";
 import Tag from "../models/Tag";
 import noteService from "../services/noteService";
@@ -37,25 +37,6 @@ interface HeaderProps {
 function Header({ id, created_at, onDelete }: HeaderProps) {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const buttonRef = useRef<HTMLDivElement>(null);
-    const menuRef = useRef<HTMLUListElement>(null);
-
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (
-            buttonRef.current && !buttonRef.current.contains(event.target as Node) &&
-            menuRef.current && !menuRef.current.contains(event.target as Node)
-        ) {
-            setIsOpen(false);        
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
 
     const date = created_at?.toLocaleDateString()?? "00/00/00";
     const time = created_at?.toLocaleTimeString()?? "00:00:00";
@@ -66,9 +47,19 @@ function Header({ id, created_at, onDelete }: HeaderProps) {
                 <b>#{id}</b> Published on {date} at {time}
             </small>
             <div className="optionMenu float-end">
-                <span ref={buttonRef} className="button" onClick={() => setIsOpen(!isOpen)} ></span>
+                <span 
+                    className="button" 
+                    aria-haspopup="true"
+                    aria-expanded={isOpen}
+                    tabIndex={0}
+                    onClick={() => setIsOpen(open => !open)} 
+                    onBlur={() => setIsOpen(false)}
+                ></span>
                 {isOpen && (
-                    <ul ref={menuRef}>
+                    <ul 
+                        tabIndex={-1} 
+                        onMouseDown={e => e.preventDefault()}
+                    >
                         <li>
                             <a onClick={() => onDelete(id)}>Delete</a>
                         </li>
