@@ -1,7 +1,6 @@
-import React, { useImperativeHandle, forwardRef } from "react";
+import { useImperativeHandle, forwardRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Strike from "@tiptap/extension-strike";
 import Placeholder from "@tiptap/extension-placeholder";
 
 export interface TiptapEditorRef {
@@ -20,7 +19,6 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
         const editor = useEditor({
             extensions: [
                 StarterKit,
-                Strike,
                 Placeholder.configure({ placeholder: placeholder}),
             ],
             content: "",
