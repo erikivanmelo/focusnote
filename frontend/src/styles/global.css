@@ -6,14 +6,22 @@
     margin-right: 0.4rem;
 }
 
+.card .text-body{
+    white-space: pre-line;
+} 
+
 .notes-container{
     margin-top: 80px;
 }
 
 .navbar{
     padding: .5rem 1rem;
-
 }
+
+p {
+    margin-bottom: 8px;
+}
+
 .navbar-nav *, .navbar-nav{
     -webkit-transition-property: none!important;
     -moz-transition-property: none!important;
@@ -25,18 +33,42 @@
     transition-duration: 0s;
 }
 /****FOCUSNOTE CREATOR****/
-#content{
-    overflow: hidden !important;
+.tiptap.ProseMirror{
+    overflow: auto !important;
     height: auto;
-    min-height: 110px !important;
     display: block !important;
+    width: 100%;
+    padding: .375rem .75rem!important;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    appearance: none;
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    --bs-focus-ring-width: 0.25rem;
+    --bs-focus-ring-opacity: 0.25;
+    --bs-focus-ring-color: rgba(13, 110, 253, 0.25)!important;
+    resize: vertical;
+    min-height: 110px !important;
 }
 
-#content[contentEditable=true]:empty:not(:focus):before{
-    content:attr(placeholder);
-    color: #6c757d;
+.tiptap.ProseMirror:focus{
+    color:var(--bs-body-color);
+    background-color:var(--bs-body-bg);
+    border-color:#86b7fe;
+    outline:0;
+    box-shadow:0 0 0 .25rem rgba(13,110,253,.25)
 }
 
+.tiptap.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #595c60;
+  pointer-events: none;
+  height: 0;
+}
 
 /****SUB MENU****/
 .optionMenu ul{
@@ -48,7 +80,7 @@
     border: 1px solid rgba(0, 0, 0, .15);
     border-radius: 3px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
-    z-index: 100;
+    z-index: 10;
     margin-top: 3px;
     margin-left: -20px;
 }
@@ -495,7 +527,7 @@ body.dark {
     background-color: var(--bs-black)!important;
 }
 
-body.dark .badge, body.dark .btn, body.dark .text-body, body.dark .card, body.dark .form-control, body.dark .modal-content,body.dark .optionMenu ul li, body.dark .card-light a{
+body.dark .badge, body.dark .btn, body.dark .text-body, body.dark .card, body.dark .form-control, body.dark .tiptap.ProseMirror, body.dark .modal-content,body.dark .optionMenu ul li, body.dark .card-light a{
     color: var(--bs-light)!important;
 }
 
@@ -503,7 +535,7 @@ body.dark .card, body.dark .modal-content,body.dark .optionMenu ul{
     background-color: #242526!important;
 }
 
-body.dark .badge, body.dark .btn,body.dark .form-control{
+body.dark .badge, body.dark .btn,body.dark .form-control, body.dark .tiptap.ProseMirror{
     border-color: #393a3b;
 }
 
@@ -511,7 +543,7 @@ body.dark .badge, body.dark .btn,body.dark .form-control{
     background-color: #3a3b3c;
 }*/
 
-body.dark hr,body.dark .card, body.dark .card .card-footer, body.dark .modal-content,body.dark .body.dark .modal-header, body.dark .modal-header, body.dark .optionMenu ul{
+body.dark .card, body.dark .card .card-footer, body.dark .modal-content,body.dark .body.dark .modal-header, body.dark .modal-header, body.dark .optionMenu ul{
     border-color: #3e4042;
 }
 
@@ -544,11 +576,11 @@ body.dark input[type='radio'][value='light']:checked + .checkmark, input[type='r
     border-color: white;
 }
 
-body.dark .form-control,body.dark .optionMenu ul li:hover{
+body.dark .form-control,body.dark .optionMenu ul li:hover, body.dark .tiptap.ProseMirror{
     background-color: #3a3b3c;
 }
 
-body.dark .form-control::placeholder, body.dark #content[contentEditable=true]:empty:not(:focus):before{
+body.dark .form-control::placeholder, body.dark .tiptap.ProseMirror::placeholder, body.dark .tiptap.ProseMirror p.is-editor-empty:first-child::before{
     color: #b0b3b8;
 }
 

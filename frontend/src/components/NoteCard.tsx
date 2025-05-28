@@ -23,7 +23,7 @@ function NoteCard({ note }: Props) {
                 {/* Header */}
                 <div className="text-body-secondary mb-2">
                     <small>
-                        <b>#{note.id}</b> Published on {date} at {time}
+                        <strong>#{note.id}</strong> Published on {date} at {time}
                     </small>
 
                     <OptionMenu className="float-end">
@@ -39,11 +39,18 @@ function NoteCard({ note }: Props) {
 
                 {/* Title */}
                 <div className="card-title row">
-                    <span className="h4 col-11">{note.title}</span>
+                    {note.title && 
+                    <>
+                        <span className="h2 col-11">{note.title}</span>
+                        <hr/>
+                    </>
+                    }
                 </div>
 
                 {/* Content */}
-                <p className="text-body">{note.content}</p>
+                <p className="text-body">
+                    <div dangerouslySetInnerHTML={{ __html: note.content }} />
+                </p>
 
                 {/* Tags */}
                 <div className="tags">

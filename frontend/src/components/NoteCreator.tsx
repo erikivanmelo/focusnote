@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo} from "react";
+import React, {useRef,  useCallback, useState, useEffect, useMemo} from "react";
 import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 import noteService from '../services/noteService';
@@ -8,6 +8,7 @@ import Note from "../models/Note";
 import Tag from "../models/Tag";
 import Color from "../models/Color";
 import DisableLayer from "./DisableLayer";
+import TiptapEditor, { TiptapEditorRef } from "./TiptapEditor";
 
 function NoteCreator() {
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
@@ -17,14 +18,15 @@ function NoteCreator() {
     //Inputs
     const [selectedColor, setSelectedColor] = useState<Color   >(defaultColor);
     const [title        , setTitle        ] = useState<string  >("");
-    const [content      , setContent      ] = useState<string  >("");
     const [selectedTags , setSelectedTags ] = useState<string[]>([]);
+
+    const contentRef = useRef<TiptapEditorRef>(null);
 
     useEffect(() => {
         if (createNoteMutation.isSuccess){
-            setContent      ("");
-            setTitle        ("");
-            setSelectedTags ([]);
+            setTitle("");
+            contentRef.current?.setContent("")
+            setSelectedTags([]);
             setSelectedColor(defaultColor)
         }
     }, [
@@ -36,7 +38,7 @@ function NoteCreator() {
         const newNote = new Note(
             -1,
             title,
-            content,
+            contentRef.current?.getContent()?? "",
             selectedColor,
             selectedTags.map((tagName) => new Tag(-1, tagName))
         );
@@ -55,6 +57,11 @@ function NoteCreator() {
         return true;
     };
 
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter")
+            contentRef.current?.focus();
+    };
+
     return (
         <div className="card mb-3 shadow form-wrapper disabled">
             <div className="card-body">
@@ -63,7 +70,6 @@ function NoteCreator() {
                         value={selectedColor} 
                         onChange={setSelectedColor}
                     />
-                    <hr />
 
                     {/* Title Input */}
                     <input
@@ -72,17 +78,15 @@ function NoteCreator() {
                         id="title" 
                         type="text" 
                         placeholder="Title" 
-                        className="form-control mb-2" 
+                        className="form-control mb-2 mt-4"
+                        onKeyDown={handleTitleKeyDown}
                     />
 
                     {/* Content Input */}
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        id="content"
-                        className="form-control mb-2"
+                    <TiptapEditor
+                        ref={contentRef}
                         placeholder="What do you have to tell today?"
-                    ></textarea>
+                    />
 
                     <TagInput 
                         tags={selectedTags}
@@ -167,7 +171,7 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
 
 	const handleKeyDown = useCallback(
          (e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (e.key !== "Enter")
+            if (e.key !== "Enter")
                 return;
 
             if (onSubmit(inputValue.trim()))
