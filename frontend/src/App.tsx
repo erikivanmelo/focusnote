@@ -1,9 +1,6 @@
 import NoteCardList from './components/NoteCardList'
 import Menu from './components/Menu'
 import NoteCreator from './components/NoteCreator';
-import {useGenericQueryNoParams} from './hooks/useGenericQuery';
-import tagService from './services/tagService';
-
 
 function App() {
 
