@@ -364,12 +364,12 @@ body.dark {
     .form-control, 
     .tiptap.ProseMirror, 
     .modal-content, 
-    .optionMenu ul li, 
     .card-light a{
         color: var(--bs-light)!important;
     }
 
-    .card, .modal-content, .optionMenu ul{
+    .card, 
+    .modal-content {
         background-color: #242526!important;
     }
 
@@ -382,8 +382,7 @@ body.dark {
     .card .card-footer,
     .modal-content,
     .modal-header,
-    .modal-header,
-    .optionMenu ul {
+    .modal-header {
         --bs-card-border-color: #393a3b!important;
         border-color: var(--bs-card-border-color);
     }
@@ -392,12 +391,7 @@ body.dark {
         border-color: var(--bs-card-border-color)!important;
     }
 
-    .optionMenu ul li{
-        border-color: #242526;
-    }
-    
-    small, 
-    .optionMenu .button{
+    small {
         color: #b0b3b8!important;
     }
 
@@ -431,7 +425,6 @@ body.dark {
     }
 
     .form-control,
-    .optionMenu ul li:hover, 
     .tiptap.ProseMirror{
         background-color: #3a3b3c;
     }
@@ -447,15 +440,6 @@ body.dark {
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-bottom-color: #393a3b;
-    }
-
-    .optionMenu .button:hover{
-        color: white!important;
-    }
-
-    .optionMenu ul::after{
-        border-bottom-color: #242526 !important;
-        filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(62, 64, 66, .3)) !important;
     }
 
     .alert-danger {

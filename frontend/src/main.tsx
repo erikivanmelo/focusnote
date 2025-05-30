@@ -4,12 +4,12 @@ import App from './App.tsx'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.min.css'
-import './styles/global.css'
+import './styles/global.scss'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
-//import './styles/open-iconic-bootstrap.min.css'
 createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
         <StrictMode>

@@ -32,18 +32,18 @@ function NoteCard({ note }: Props) {
                             <strong>#{note.id}</strong> Published on {date} at {time}
                         </small>
 
-                        <OptionMenu className="float-end">
-                            <OptionMenuItem onClick={() => setShowModal(true)}>
-                                <i className="bi bi-trash" /> Delete
-                            </OptionMenuItem>
-                            <OptionMenuItem>
-                                <i className="bi bi-pencil" /> Edit
-                            </OptionMenuItem>
-                        </OptionMenu>
+                        <div className="float-end">
+                            <button className="btn rounded-circle border" onClick={() => setShowModal(true)}>
+                                <i className="bi bi-trash" />
+                            </button>
+                            <button className="btn rounded-circle ms-2 border">
+                                <i className="bi bi-pencil" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Title */}
-                    <div className="card-title row">
+                    <div className="card-title">
                         {note.title && (
                             <>
                                 <span className="h2 col-11">{note.title}</span>
