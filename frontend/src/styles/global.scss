@@ -358,6 +358,10 @@ body.dark {
     background-color: var(--bs-black)!important;
     --bs-card-border-color: #393a3b!important;
 
+    .btn-close {
+        filter: invert(1);
+    }
+
     .btn, 
     .text-body, 
     .card, 

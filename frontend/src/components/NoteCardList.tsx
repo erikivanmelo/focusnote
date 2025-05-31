@@ -1,9 +1,17 @@
 import NoteCard from './NoteCard';
 import { useGenericQueryNoParams } from '../hooks/useGenericQuery';
 import noteService from '../services/noteService';
+import { Modal, Button } from 'react-bootstrap';
+import {useState} from 'react';
+import NoteForm from './NoteForm';
+import Note from '../models/Note';
 
 function NoteCardList() {
     const { data: notes, isLoading, isError } = useGenericQueryNoParams(["notes"], noteService.getAll);
+
+
+    const [isModalEditorShowed, setIsModalEditorShowed] = useState<boolean>(false);
+    const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
 
     if (isLoading) {
         return (
@@ -33,11 +41,43 @@ function NoteCardList() {
         );
     }
 
+
+    const handleToEdit = (note: Note) => {
+        setNoteToEdit(note);
+        setIsModalEditorShowed(true);
+    }
+
     return (
         <>
             {notes.map(note => (
-                <NoteCard key={note.id} note={note} />
+                <NoteCard 
+                    key={note.id} 
+                    note={note}
+                    onEdit={handleToEdit}
+                />
             ))}
+
+            
+            <Modal
+                show={isModalEditorShowed} 
+                onHide={() => setIsModalEditorShowed(false)} 
+                backdrop="static"
+                keyboard={false}
+                centered
+                dialogClassName='modal-xl'
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Note Editor</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='p-0 m-0'>
+                    <NoteForm 
+                        note={noteToEdit}
+                        action="Update"
+                        resetAfterSend={false}
+                    />
+                </Modal.Body>
+            </Modal>
+
         </>
     );
 }

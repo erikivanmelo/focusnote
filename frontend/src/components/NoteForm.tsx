@@ -10,10 +10,23 @@ import Color from "../models/Color";
 import DisableLayer from "./DisableLayer";
 import TiptapEditor, { TiptapEditorRef } from "./TiptapEditor";
 
-function NoteCreator() {
+interface NoteFormProp{
+    note?: Note | null;
+    action: "Update" | "Publish";
+    resetAfterSend?: boolean;
+}
+
+function NoteForm({
+        note = null,
+        action,
+        resetAfterSend = true,
+}: NoteFormProp) {
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
 
-    const createNoteMutation = useInvalidateMutation(["notes", "note"], noteService.create);
+    const mutator = useInvalidateMutation(
+        ["notes", "note"], 
+        action === 'Publish' ? noteService.create : noteService.update,
+    );
 
     //Inputs
     const [selectedColor, setSelectedColor] = useState<Color   >(defaultColor);
@@ -23,26 +36,36 @@ function NoteCreator() {
     const contentRef = useRef<TiptapEditorRef>(null);
 
     useEffect(() => {
-        if (createNoteMutation.isSuccess){
+        if (!note)
+            return;
+        setSelectedColor(note?.color);
+        setTitle(note?.title);
+        setSelectedTags(note?.tags.map((tag) => tag.name));
+        contentRef.current?.setContent(note.content);
+    }, [note]);
+
+    useEffect(() => {
+        if (mutator.isSuccess && resetAfterSend){
             setTitle("");
             contentRef.current?.setContent("")
             setSelectedTags([]);
             setSelectedColor(defaultColor)
         }
     }, [
-        createNoteMutation.isSuccess,
-        defaultColor
+        mutator.isSuccess,
+        resetAfterSend,
+        defaultColor,
     ]);
 
     const publish = () => {
         const newNote = new Note(
-            -1,
+            note? note.id : -1,
             title,
             contentRef.current?.getContent()?? "",
             selectedColor,
             selectedTags.map((tagName) => new Tag(-1, tagName))
         );
-        createNoteMutation.mutate(newNote)
+        mutator.mutate(newNote)
     }
 
     const handleRemoveTag = (name: string) => {
@@ -63,9 +86,9 @@ function NoteCreator() {
     };
 
     return (
-        <div className="card mb-3 shadow form-wrapper disabled">
+        <div className="card shadow form-wrapper">
             <div className="card-body">
-                <div className="card-text" style={createNoteMutation.isPending? {  "filter": "blur(4px)" } : {}}>
+                <div className="card-text" style={mutator.isPending? {  "filter": "blur(4px)" } : {}}>
                     <ColorSelector 
                         value={selectedColor} 
                         onChange={setSelectedColor}
@@ -78,7 +101,7 @@ function NoteCreator() {
                         id="title" 
                         type="text" 
                         placeholder="Title" 
-                        className="form-control mb-2 mt-4"
+                        className="form-control mb-2 mt-4 fs-2"
                         onKeyDown={handleTitleKeyDown}
                     />
 
@@ -96,7 +119,7 @@ function NoteCreator() {
                 </div>
             </div>
             <div className="card-footer">
-                { createNoteMutation.isPending &&
+                { mutator.isPending &&
                     <div className="float-start mt-2">
                         <div 
                             className="spinner-border" 
@@ -115,9 +138,9 @@ function NoteCreator() {
                     </div>
                 }
 
-                <button className="btn btn-primary rounded-pill float-end" onClick={publish}>Publish</button>
+                <button className="btn btn-primary rounded-pill float-end" onClick={publish}>{action}</button>
             </div>
-            <DisableLayer disabled={createNoteMutation.isPending} />
+            <DisableLayer disabled={mutator.isPending} />
         </div>
     );
 };
@@ -132,7 +155,7 @@ function ColorSelector({ value, onChange }: ColorSelectorProps) {
     const {data: colors} = useGenericQueryNoParams<Array<Color >>(["colors"], colorService.getAll   );
 
     return (
-        <div className="d-flex flex-wrap mb-2 justify-content-center">
+        <div className="d-flex flex-wrap mb-2 justify-content-center input-colors ">
             {colors?.map((color: Color) => (
                 <label key={color.id}>
                     <input 
@@ -229,4 +252,4 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
 	);
 }
 
-export default NoteCreator;
+export default NoteForm;

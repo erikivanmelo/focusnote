@@ -36,7 +36,7 @@ const noteApi = {
         color  ?: number;
         tags   ?: Array<string>; 
     }): Promise<RawNote> => {
-        const response = await httpClient.put<RawNote>("/notes/", note);
+        const response = await httpClient.put<RawNote>("/notes/"+note.id+"/", note);
         return response;
     },
 

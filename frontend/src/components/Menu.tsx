@@ -89,11 +89,6 @@ function Menu() {
                         notes.
                     </p>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
             </Modal>
         </>
     );

@@ -3,13 +3,13 @@ import { Modal, Button } from "react-bootstrap";
 import Note from "../models/Note";
 import noteService from "../services/noteService";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
-import OptionMenu, { OptionMenuItem } from "./OptionMenu";
 
 interface Props {
     note: Note;
+    onEdit: (note: Note) => void
 }
 
-function NoteCard({ note }: Props) {
+function NoteCard({ note, onEdit }: Props) {
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
 
     const [showModal, setShowModal] = useState(false);
@@ -36,7 +36,7 @@ function NoteCard({ note }: Props) {
                             <button className="btn rounded-circle border" onClick={() => setShowModal(true)}>
                                 <i className="bi bi-trash" />
                             </button>
-                            <button className="btn rounded-circle ms-2 border">
+                            <button className="btn rounded-circle ms-2 border" onClick={() => onEdit(note)}>
                                 <i className="bi bi-pencil" />
                             </button>
                         </div>
@@ -68,7 +68,7 @@ function NoteCard({ note }: Props) {
                 </div>
             </div>
 
-            {/* Confirmation Modal */}
+            {/* Delete Note Modal */}
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Note</Modal.Title>

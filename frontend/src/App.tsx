@@ -1,6 +1,6 @@
 import NoteCardList from './components/NoteCardList'
 import Menu from './components/Menu'
-import NoteCreator from './components/NoteCreator';
+import NoteForm from './components/NoteForm';
 
 function App() {
 
@@ -8,7 +8,7 @@ function App() {
         <Menu />
         <div className="row justify-content-center notes-container" >
             <div className="col-lg-8">
-                <NoteCreator />
+                <NoteForm action="Publish" />
                 <hr />
                 <NoteCardList />
             </div>
