@@ -3,14 +3,16 @@ import { Modal, Button } from "react-bootstrap";
 import Note from "../models/Note";
 import noteService from "../services/noteService";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
+import {useNavigate} from "react-router-dom";
+import {ROUTES} from "../routes/routesConfig";
 
 interface Props {
     note: Note;
-    onEdit: (note: Note) => void
 }
 
-function NoteCard({ note, onEdit }: Props) {
+function NoteCard({ note }: Props) {
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
+    const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
 
@@ -36,7 +38,7 @@ function NoteCard({ note, onEdit }: Props) {
                             <button className="btn rounded-circle border" onClick={() => setShowModal(true)}>
                                 <i className="bi bi-trash" />
                             </button>
-                            <button className="btn rounded-circle ms-2 border" onClick={() => onEdit(note)}>
+                            <button className="btn rounded-circle ms-2 border" onClick={() => navigate(ROUTES.NOTE_EDIT(note.id))}>
                                 <i className="bi bi-pencil" />
                             </button>
                         </div>
@@ -53,9 +55,7 @@ function NoteCard({ note, onEdit }: Props) {
                     </div>
 
                     {/* Content */}
-                    <p className="text-body">
-                        <div dangerouslySetInnerHTML={{ __html: note.content }} />
-                    </p>
+                    <div className="text-body" dangerouslySetInnerHTML={{ __html: note.content }} />
 
                     {/* Tags */}
                     <div className="tags">

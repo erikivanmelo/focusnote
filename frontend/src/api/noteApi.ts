@@ -19,6 +19,10 @@ const noteApi = {
         return await httpClient.get<RawNote[]>("/notes/");
     },
 
+    get: async (id: number): Promise<RawNote> => {
+        return await httpClient.get<RawNote>("/notes/"+id);
+    },
+
     create: async (note: {
         title   : string | null;
         content : string;

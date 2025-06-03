@@ -13,13 +13,13 @@ import TiptapEditor, { TiptapEditorRef } from "./TiptapEditor";
 interface NoteFormProp{
     note?: Note | null;
     action: "Update" | "Publish";
-    resetAfterSend?: boolean;
+    onSuccess?: () => void
 }
 
 function NoteForm({
         note = null,
         action,
-        resetAfterSend = true,
+        onSuccess
 }: NoteFormProp) {
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
 
@@ -45,16 +45,18 @@ function NoteForm({
     }, [note]);
 
     useEffect(() => {
-        if (mutator.isSuccess && resetAfterSend){
-            setTitle("");
-            contentRef.current?.setContent("")
-            setSelectedTags([]);
+        if (mutator.isSuccess){
             setSelectedColor(defaultColor)
+            setTitle("");
+            setSelectedTags([]);
+            contentRef.current?.setContent("")
+            if (onSuccess)
+                onSuccess();
         }
     }, [
         mutator.isSuccess,
-        resetAfterSend,
         defaultColor,
+        onSuccess
     ]);
 
     const publish = () => {
@@ -160,11 +162,10 @@ function ColorSelector({ value, onChange }: ColorSelectorProps) {
                 <label key={color.id}>
                     <input 
                         type="radio" 
-                        name="color" 
                         value={color.name} 
                         checked={color.id === value.id} 
-                        onChange={() => onChange?.(color)}
-                    />
+                        onChange={() => onChange(color)}
+                    /> 
                     <span className="checkmark"></span>
                 </label>
             ))}

@@ -14,11 +14,6 @@ export function fromRawsToTags(data: Array<RawTag>) {
 }
 
 const tagService = {
-    getAll: async (): Promise<Tag[]> => {
-        const rawTags = await tagApi.getAll();
-        return fromRawsToTags(rawTags)
-    },
-
     getAllNames: async (): Promise<string[]> => {
         const tags = await tagApi.getAllNames();
         return tags;

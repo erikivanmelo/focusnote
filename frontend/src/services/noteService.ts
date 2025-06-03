@@ -22,6 +22,11 @@ const noteService = {
         return rawNotes.map((rawNote) => fromRawToNote(rawNote));
     },
 
+    get: async (id: number): Promise<Note> => {
+        const rawNote = await noteApi.get(id);
+        return fromRawToNote(rawNote);
+    },
+
     create: async (note: Note): Promise<Note> => {
         const data = {
             title  : note.title,
