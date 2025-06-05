@@ -1,0 +1,33 @@
+# Dependencias
+node_modules
+npm-debug.log
+
+# Tests
+coverage
+*.test.js
+*.spec.js
+
+# Debug
+*.log
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Otros
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build
+build/
+dist/
+*.gz
+*.map

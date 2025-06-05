@@ -2,13 +2,14 @@ import { httpClient } from "./httpClient";
 import {RawColor} from "./colorApi";
 import {RawTag} from "./tagApi";
 
+
+
 export interface RawNote {
 	id           : number;
 	title        : string;
 	content      : string;
 	created_at   : string;
 	updated_at   : string;
-	color        : number;
 	color_details: RawColor;
 	tags_details : Array<RawTag>;
 };
@@ -19,29 +20,27 @@ const noteApi = {
         return await httpClient.get<RawNote[]>("/notes/");
     },
 
-    get: async (id: number): Promise<RawNote> => {
+    getOne: async (id: number): Promise<RawNote> => {
         return await httpClient.get<RawNote>("/notes/"+id);
     },
 
     create: async (note: {
-        title   : string | null;
+        title   : string;
         content : string;
-        color   : number;
-        tags    : Array<string>; 
+        color_id: number;
+        tags    : string[]; 
     }): Promise<RawNote> => {
-        const response = await httpClient.post<RawNote>("/notes/", note);
-        return response;
+        return await httpClient.post<RawNote>("/notes/", note);
     },
 
     update: async (note: {
-        id      : number;
-        title  ?: string;
-        content?: string;
-        color  ?: number;
-        tags   ?: Array<string>; 
+        id       : number;
+        title   ?: string;
+        content ?: string;
+        color_id?: number;
+        tags    ?: Array<string>; 
     }): Promise<RawNote> => {
-        const response = await httpClient.put<RawNote>("/notes/"+note.id+"/", note);
-        return response;
+        return await httpClient.put<RawNote>("/notes/"+note.id+"/", note);
     },
 
 

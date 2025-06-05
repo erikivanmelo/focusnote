@@ -15,13 +15,16 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 	const { id } = useParams();
 	const { data: note } = useGenericQuery(
 		["note"], 
-		noteService.get, 
+		noteService.getOne, 
 		Number(id)
 	);
 
 	useEffect(() => {
-		if (window.history.state?.idx === 0) {
-			window.history.replaceState({ ...window.history.state, hasInitialModal: true }, '');
+		// Ensure modal shows when component mounts
+		const modal = document.querySelector('.modal');
+		if (modal) {
+			modal.classList.add('show');
+			modal.style.display = 'block';
 		}
 	}, []);
 

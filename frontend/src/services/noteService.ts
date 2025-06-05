@@ -22,34 +22,32 @@ const noteService = {
         return rawNotes.map((rawNote) => fromRawToNote(rawNote));
     },
 
-    get: async (id: number): Promise<Note> => {
-        const rawNote = await noteApi.get(id);
+    getOne: async (id: number): Promise<Note> => {
+        const rawNote = await noteApi.getOne(id);
         return fromRawToNote(rawNote);
     },
 
-    create: async (note: Note): Promise<Note> => {
+    create: async (note: Note): Promise<void> => {
         const data = {
-            title  : note.title,
-            content: note.content,
-            color  : note.color.id,
-            tags   : note.tags?.map(tag => tag.name) ?? []
+            title   : note.title,
+            content : note.content,
+            color_id: note.color.id,
+            tags    : note.tags?.map(tag => tag.name) ?? []
         };
 
-        const createdRaw = await noteApi.create(data);
-        return fromRawToNote(createdRaw);
+        await noteApi.create(data);
     },
 
-    update: async (note: Note): Promise<Note> => {
+    update: async (note: Note): Promise<void> => {
         const data = {
-            id     : note.id,
-            title  : note.title,
-            content: note.content,
-            color  : note.color.id,
-            tags   : note.tags?.map(tag => tag.name) ?? []
+            id      : note.id,
+            title   : note.title,
+            content : note.content,
+            color_id: note.color.id,
+            tags    : note.tags?.map(tag => tag.name) ?? []
         };
 
-        const updatedRaw = await noteApi.update(data);
-        return fromRawToNote(updatedRaw);
+        await noteApi.update(data);
     },
 
     delete: async (id: number): Promise<void> => {
