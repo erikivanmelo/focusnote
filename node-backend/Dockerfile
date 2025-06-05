@@ -19,13 +19,13 @@ COPY . .
 # Compilar TypeScript
 RUN tsc
 
-# Run migrations during build
-RUN node dist/scripts/run-migrations.js
-
 # Etapa de producción
 FROM node:18-alpine
 
 WORKDIR /app
+
+# Crear directorio de datos
+RUN mkdir -p /app/data
 
 # Copiar dependencias y código compilado
 COPY --from=builder /app/node_modules ./node_modules
@@ -40,4 +40,4 @@ ENV PORT=3001
 EXPOSE 3001
 
 # Comando para iniciar el servidor
-CMD ["node", "dist/index.js"]
+CMD ["/bin/sh", "-c", "node dist/scripts/run-migrations.js && node dist/index.js"]

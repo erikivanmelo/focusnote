@@ -16,13 +16,13 @@ async function runMigrations() {
 	// Insert default colors if they don't exist
 	const defaultColors = [
 		{ name: 'light', is_default: true },
-		{ name: 'pink', is_default: true },
-		{ name: 'red', is_default: true },
-		{ name: 'orange', is_default: true },
-		{ name: 'yellow', is_default: true },
-		{ name: 'green', is_default: true },
-		{ name: 'blue', is_default: true },
-		{ name: 'purple', is_default: true }
+		{ name: 'pink', is_default: false },
+		{ name: 'red', is_default: false },
+		{ name: 'orange', is_default: false },
+		{ name: 'yellow', is_default: false },
+		{ name: 'green', is_default: false },
+		{ name: 'blue', is_default: false },
+		{ name: 'purple', is_default: false }
 	];
 
 	const insertColor = db.prepare(`
@@ -31,7 +31,7 @@ async function runMigrations() {
 	`);
 
 	for (const color of defaultColors) {
-		insertColor.run(color.name, color.is_default);
+		insertColor.run(color.name, color.is_default? 1 : 0);
 	}
 
 	// Create tags table
