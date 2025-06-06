@@ -6,43 +6,47 @@ import {Outlet} from 'react-router-dom';
 function NoteCardList() {
     const { data: notes, isLoading, isError } = useGenericQueryNoParams(["notes"], noteService.getAll);
 
+
+    let content;
     if (isLoading) {
-        return (
+        content = (
             <div className="text-center my-5">
                 <div className="spinner-border text-primary" style={{width: '3rem', height: '3rem'}} role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
         );
-    }
 
-    if (isError) {
-        return (
+    } else if (isError) {
+        content = (
             <div className="alert alert-danger">
                 <i className="bi bi-exclamation-triangle me-2"></i>
                 <span>Failed to load notes. Please try again.</span>
             </div>
         );
-    }
 
-    if (!notes || notes.length === 0) {
-        return (
+    } else if (!notes || notes.length === 0) {
+        content = (
             <div className="alert alert-info">
                 <i className="bi bi-journal me-2"></i>
                 <span>No notes yet. Create your first one!</span>
             </div>
         );
-    }
 
-    return (
-        <>
-            {notes.map(note => (
+    } else {
+        content = (
+            notes.map(note => (
                 <NoteCard 
                     key={note.id} 
                     note={note}
                 />
-            ))}
+            ))
+        )
+    }
 
+    return (
+        <>
+            {content}
             <Outlet />
         </>
     );
