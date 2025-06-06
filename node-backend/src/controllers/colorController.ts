@@ -11,7 +11,7 @@ const colorController = {
     getAll: (): RawColor[] => {
         const query = db.prepare(`
             SELECT * FROM colors
-            ORDER BY name ASC
+            ORDER BY id ASC
         `);
         return query.all() as RawColor[];
     },

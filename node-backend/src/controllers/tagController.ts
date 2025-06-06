@@ -31,7 +31,7 @@ const tagController = {
             SELECT name FROM tags
             ORDER BY name ASC
         `);
-        return query.all() as string[];
+        return query.pluck().all() as string[];
     },
 
     createOrIgnore: (tags: string[]): void => {
