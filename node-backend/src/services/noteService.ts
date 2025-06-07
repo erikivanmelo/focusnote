@@ -12,6 +12,29 @@ export interface Note {
 	tags_details : Array<Tag>;
 }
 
+export interface CreateNoteParams {
+	title: string | null;
+	content: string;
+	color_id: number;
+	tags: string[];
+}
+
+export interface UpdateNoteParams {
+	id: number;
+	title: string;
+	content: string;
+	color_id: number;
+	tags: string[];
+}
+
+export interface DeleteNoteParams {
+	id: number;
+}
+
+export interface GetOneNoteParams {
+	id: number;
+}
+
 function fromRawToNote(note: RawNote): Note {
     return {
         id: note.id,
@@ -19,8 +42,8 @@ function fromRawToNote(note: RawNote): Note {
         content: note.content,
         created_at: note.created_at,
         updated_at: note.updated_at,
-        color_details: colorService.getOne(note.color_id),
-        tags_details : tagService.getAllByNote(note.id)
+        color_details: colorService.getOne({ id: note.color_id }),
+        tags_details : tagService.getAllByNote({ noteId: note.id })
     };
 }
 
@@ -32,43 +55,35 @@ const noteService = {
         ) as Note[];
 	},
 
-	getOne: (id: number): Note => {
-		const rawNote = noteController.getOne(id);
+	getOne: (params: GetOneNoteParams): Note => {
+		const rawNote = noteController.getOne(params.id);
 		return fromRawToNote(rawNote);
 	},
 
-	create: (
-        title    : string | null, 
-        content  : string, 
-        color_id : number, 
-        tags     : string[]
-    ): void => {
-		const noteId = noteController.create(title, content, color_id);
-        tagService.createOrIgnore(tags);
-		noteController.addTags(tags, noteId);
+	create: (params: CreateNoteParams): void => {
+		const noteId = noteController.create(params.title, params.content, params.color_id);
+        tagService.createOrIgnore({ names: params.tags });
+		noteController.addTags(params.tags, noteId);
 	},
 
-	update: (
-        id: number, 
-        title: string, 
-        content: string, 
-        color_id: number, 
-        tags: string[]
-    ): void => {
+	update: (params: UpdateNoteParams): void => {
         noteController.update(
-            id,
-            title,
-            content,
-            color_id
+            params.id,
+            params.title,
+            params.content,
+            params.color_id
         );
 
-        noteController.removeAllTags(id)
-        noteController.addTags(tags, id);
+        noteController.removeAllTags(params.id);
+        if (params.tags && Array.isArray(params.tags)) {
+            tagService.createOrIgnore({ names: params.tags });
+            noteController.addTags(params.tags, params.id);
+        }
 	},
 
-	delete: (id: number): void => {
-        noteController.removeAllTags(id);
-		noteController.delete(id);
+	delete: (params: DeleteNoteParams): void => {
+        noteController.removeAllTags(params.id);
+		noteController.delete(params.id);
 	},
 
 };

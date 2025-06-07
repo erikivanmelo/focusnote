@@ -6,13 +6,17 @@ export interface Color {
    is_default: boolean;
 }
 
+export interface GetOneColorParams {
+   id: number;
+}
+
 const colorService = {
     getAll: (): Color[] => {
         return colorController.getAll() as Color[];
     },
 
-    getOne: (id: number): Color => {
-        return colorController.getOne(id) as Color;
+    getOne: (params: GetOneColorParams): Color => {
+        return colorController.getOne(params.id) as Color;
     },
 }
 

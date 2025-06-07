@@ -5,6 +5,18 @@ export interface Tag {
    name: string;
 }
 
+export interface GetAllByNoteParams {
+   noteId: number;
+}
+
+export interface CreateOrIgnoreParams {
+   names: string[];
+}
+
+export interface DeleteTagParams {
+   id: number;
+}
+
 const tagService = {
     getAll: (): Tag[]  => {
         return tagController.getAll() as Tag[];
@@ -14,13 +26,13 @@ const tagService = {
         return tagController.getAllNames() as string[];
     },
 
-    getAllByNote: (noteId: number): Tag[] => {
-        return tagController.getAllByNote(noteId) as Tag[];
+    getAllByNote: (params: GetAllByNoteParams): Tag[] => {
+        return tagController.getAllByNote(params.noteId) as Tag[];
     },
 
-    createOrIgnore: (names: string[]): void => {
-        tagController.createOrIgnore(names);
+    createOrIgnore: (params: CreateOrIgnoreParams): void => {
+        tagController.createOrIgnore(params.names);
     }
-};
+}
 
 export default tagService;
