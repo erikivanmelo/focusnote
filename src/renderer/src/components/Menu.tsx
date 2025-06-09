@@ -1,71 +1,65 @@
-import { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { ROUTES } from "@renderer/routes/routesConfig";
+import { useState, useEffect } from "react";
+import { Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function Menu() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+    const navigate = useNavigate();
 
+    // Toggle dark/light theme
+    const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+        if (newDarkMode) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    };
+
+    // Set initial theme on component mount
     useEffect(() => {
         if (isDarkMode) {
-            document.body.classList.add("dark");
+            document.body.classList.add('dark');
         } else {
-            document.body.classList.remove("dark");
+            document.body.classList.remove('dark');
         }
     }, [isDarkMode]);
 
+
     return (
-        <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm w-100 fixed-top pt-1 pb-1">
-                <span id="page-title" className="order-1 order-lg-0 ms-lg-0 ms-auto me-auto">
-                    <a className="navbar-brand" href="#">
-                        FocusNote
-                    </a>
-                </span>
-
-                <button
-                    className="navbar-toggler bg-light mobileButtonMenu align-self-start btn fs-1"
-                    type="button"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    <span className="bi bi-list"></span>
-                </button>
-
-                <div
-                    className={`collapse navbar-collapse d-flex bg-light flex-column flex-lg-row flex-xl-row justify-content-lg-end p-3 p-lg-0 mt-5 mt-lg-1 mobileMenu  ${
-                        isOpen && "open"
-                    }`}
-                    id="navbarSupportedContent"
-                >
-                    <ul className="navbar-nav align-self-stretch">
-                        <li className="nav-item active">
-                            <a className="nav-link" href="#">
-                                Home <span className="visually-hidden">(current)</span>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={() => setIsModalOpen(true)}>
-                                About
-                            </a>
-                        </li>
-                    </ul>
-                    <label className="switch ms-lg-auto">
-                        <input
-                            type="checkbox"
-                            checked={isDarkMode}
-                            onChange={() => setIsDarkMode(!isDarkMode)}
-                        />
-                        <span className="slider round"></span>
-                    </label>
+        <div>
+            {/* Top Navigation */}
+            <nav className="top-navbar">
+                <div className="app-title">FocusNote</div>
+                <div className="nav-actions">
+                    <button
+                        className="nav-action"
+                        onClick={() => setIsModalOpen(true)}
+                        title="About"
+                    >
+                        <i className="bi bi-info-circle"></i>
+                    </button>
+                    <button
+                        className="nav-action"
+                        onClick={toggleTheme}
+                        title={isDarkMode ? 'Switch to light theme' : 'Switch to dark theme'}
+                    >
+                        <i className={`bi ${isDarkMode ? 'bi-sun' : 'bi-moon'}`}></i>
+                    </button>
+                    <button
+                        className="nav-action"
+                        onClick={() => navigate(ROUTES.NOTE_CREATE)}
+                        title="New Note"
+                    >
+                        <i className="bi bi-plus-lg"></i>
+                    </button>
                 </div>
             </nav>
 
-            <span
-                className={`overlay  ${isOpen && "open"}`}
-                onClick={() => setIsOpen(!isOpen)}
-            ></span>
-
-            {/* Modal inline */}
+            {/* About Modal */}
             <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>About</Modal.Title>
@@ -90,7 +84,7 @@ function Menu() {
                     </p>
                 </Modal.Body>
             </Modal>
-        </>
+        </div>
     );
 }
 

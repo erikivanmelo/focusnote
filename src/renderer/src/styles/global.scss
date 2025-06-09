@@ -1,5 +1,9 @@
-:root{
+:root {
     --bs-black: #18191a;
+    --topbar-bg: #252526;
+    --topbar-height: 48px;
+    --topbar-text: #cccccc;
+    --border-color: #1e1e1e;
 }
 
 .card .tags a{
@@ -356,6 +360,66 @@ input:checked + .slider:before {
 }
 
 /****DARK MODE****/
+/* Top Navigation Bar */
+.top-navbar {
+    height: var(--topbar-height);
+    background-color: var(--topbar-bg);
+    color: var(--topbar-text);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.app-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--topbar-text);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 4px;
+}
+
+.nav-action {
+    background: none;
+    border: none;
+    color: var(--topbar-text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:active {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Main content adjustment for fixed navbar */
+.app-container {
+    padding-top: var(--topbar-height);
+    min-height: 100vh;
+    background-color: #1e1e1e;
+}
+
+/* Dark theme variables */
 body.dark {
     background-color: var(--bs-black)!important;
     --bs-card-border-color: #393a3b!important;
