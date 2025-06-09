@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions, QueryKey } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions, QueryKey, UseQueryResult } from '@tanstack/react-query';
 
 // T = tipo de datos devueltos, P = tipo de parámetros
 export function useGenericQuery<T, P = void>(
@@ -6,7 +6,7 @@ export function useGenericQuery<T, P = void>(
   queryFn: (params: P) => Promise<T>,
   params: P,
   options?: UseQueryOptions<T>
-) {
+): UseQueryResult<T> {
   return useQuery<T>({
     queryKey: [...(Array.isArray(queryKey) ? queryKey : [queryKey]), params],
     queryFn: () => queryFn(params),
@@ -19,7 +19,7 @@ export function useGenericQueryNoParams<T>(
   queryKey: QueryKey,
   queryFn: () => Promise<T>,
   options?: UseQueryOptions<T>
-) {
+): UseQueryResult<T> {
   return useQuery<T>({
     queryKey: Array.isArray(queryKey) ? queryKey : [queryKey],
     queryFn,

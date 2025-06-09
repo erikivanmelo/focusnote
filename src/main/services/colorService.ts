@@ -20,6 +20,9 @@ const colorService = {
             (note) => fromRawToColor(note)
         ) as Color[];
     },
+    getOne: (id: number) => {
+        return fromRawToColor(colorController.getOne(id));
+    }
 };
 
 export default colorService;

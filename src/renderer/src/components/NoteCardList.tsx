@@ -4,8 +4,10 @@ import noteService from '../services/noteService';
 import {Outlet} from 'react-router-dom';
 
 function NoteCardList() {
-    const { data: notes, isLoading, isError } = useGenericQueryNoParams(["notes"], noteService.getAll);
+    const { data: notes, isLoading, isError, error } = useGenericQueryNoParams(["notes"], noteService.getAll);
 
+    // Log para depuración
+    console.log('[NoteCardList] notes:', notes, 'isLoading:', isLoading, 'isError:', isError, 'error:', error);
 
     let content;
     if (isLoading) {
@@ -22,6 +24,7 @@ function NoteCardList() {
             <div className="alert alert-danger">
                 <i className="bi bi-exclamation-triangle me-2"></i>
                 <span>Failed to load notes. Please try again.</span>
+                {error && <div className="mt-2 small text-muted">{error instanceof Error ? error.message : String(error)}</div>}
             </div>
         );
 
@@ -36,8 +39,8 @@ function NoteCardList() {
     } else {
         content = (
             notes.map(note => (
-                <NoteCard 
-                    key={note.id} 
+                <NoteCard
+                    key={note.id}
                     note={note}
                 />
             ))

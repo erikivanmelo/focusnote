@@ -8,10 +8,12 @@
 
 .card .text-body{
     white-space: pre-line;
-} 
+}
 
 .notes-container{
     margin-top: 80px;
+		margin-left: 0;
+		margin-right: 0;
 }
 
 .navbar{
@@ -79,7 +81,7 @@ p {
 		position: absolute;
 		opacity: 0;
 		cursor: pointer;
-		
+
 		& + .checkmark {
 			display: block;
 			position: relative;
@@ -91,7 +93,7 @@ p {
 			-moz-user-select: none;
 			-ms-user-select: none;
 			margin-right: 10px;
-			
+
 			&::after {
 				content: "";
 				position: absolute;
@@ -104,7 +106,7 @@ p {
 				background: white;
 			}
 		}
-		
+
 		&:checked + .checkmark::after {
 			display: block;
 		}
@@ -126,7 +128,7 @@ p {
 		& + .checkmark::after {
 			background: black;
 		}
-		
+
 		& + .checkmark,
 		&:checked + .checkmark {
 			background-color: var(--bs-light);
@@ -313,7 +315,7 @@ input:checked + .slider:before {
     }
 
     .mobileMenu{
-        position: fixed; 
+        position: fixed;
         top: 0;
         bottom: 0;
         right: 0;
@@ -362,17 +364,17 @@ body.dark {
         filter: invert(1);
     }
 
-    .btn, 
-    .text-body, 
-    .card, 
-    .form-control, 
-    .tiptap.ProseMirror, 
-    .modal-content, 
+    .btn,
+    .text-body,
+    .card,
+    .form-control,
+    .tiptap.ProseMirror,
+    .modal-content,
     .card-light a{
         color: var(--bs-light)!important;
     }
 
-    .card, 
+    .card,
     .modal-content {
         background-color: #242526!important;
     }
@@ -404,25 +406,25 @@ body.dark {
     .bg-light{
         background-color: #242526!important;
     }
-    
+
     .navbar-light a,
-    .navbar-light, 
+    .navbar-light,
     .mobileButtonMenu span{
         color: #a8abaf!important;
     }
 
-    .bl-light, 
+    .bl-light,
     .card-light{
         border-left-color: #393a3b!important;
     }
 
-    
+
     input[type='radio'][value='light'] + .checkmark:after{
         background:white;
     }
 
-    
-    input[type='radio'][value='light']:checked + .checkmark, 
+
+    input[type='radio'][value='light']:checked + .checkmark,
     input[type='radio'][value='light'] + .checkmark{
         background-color: #393a3b;
         border-color: white;
@@ -433,8 +435,8 @@ body.dark {
         background-color: #3a3b3c;
     }
 
-    .form-control::placeholder, 
-    .tiptap.ProseMirror::placeholder, 
+    .form-control::placeholder,
+    .tiptap.ProseMirror::placeholder,
     .tiptap.ProseMirror p.is-editor-empty:first-child::before{
         color: #b0b3b8;
     }

@@ -1,28 +1,9 @@
-// Types for colors
-export interface Color {
-  id: number;
-  name: string;
-  is_default: boolean;
-}
+import { apiArrayCall, apiObjectCall } from './apiUtils';
+import { RawColor } from './types';
 
 const colorApi = {
-  getAll: async (): Promise<Color[]> => {
-    return window.ipcCall("color.getAll")
-      .then(colors => colors)
-      .catch(error => {
-        console.error('Error in getAllColors:', error);
-        throw error;
-      });
-  },
-
-  getOne: async (id: number): Promise<Color | null> => {
-    return window.ipcCall("color.getOne", {id: id})
-      .then(color => color)
-      .catch(error => {
-        console.error(`Error in getColorById(${id}):`, error);
-        throw error;
-      });
-  }
-}
+  getAll: () => apiArrayCall<RawColor>('color', 'getAll'),
+  getOne: (id: number) => apiObjectCall<RawColor>('color', 'getOne', id),
+};
 
 export default colorApi;

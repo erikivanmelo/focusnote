@@ -1,13 +1,14 @@
-export interface RawTag {
-  id: number;
-  name: string;
-  color_id: number;
-}
+import { apiArrayCall, apiObjectCall } from './apiUtils';
+import { RawTag } from './types';
 
 const tagApi = {
-  getAll     : ():           Promise<RawTag[]     > => window.api.tag.getAll(),
-  getOne     : (id: number): Promise<RawTag | null> => window.api.tag.getOne(id),
-  getAllNames: ():           Promise<string[]     > => window.api.tag.getAllNames()
+  getAll: () => apiArrayCall<RawTag>('tag', 'getAll'),
+  getOne: (id: number) => apiObjectCall<RawTag>('tag', 'getOne', id),
+  create: (data: any) => apiObjectCall<RawTag>('tag', 'create', data),
+  update: (data: any) => apiObjectCall<RawTag>('tag', 'update', data),
+  remove: (id: number) => apiObjectCall<boolean>('tag', 'delete', id),
 };
+
+export type TagApi = typeof tagApi;
 
 export default tagApi;
