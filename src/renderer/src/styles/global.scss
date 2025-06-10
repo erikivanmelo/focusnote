@@ -1,9 +1,5 @@
-:root {
+:root{
     --bs-black: #18191a;
-    --topbar-bg: #252526;
-    --topbar-height: 48px;
-    --topbar-text: #cccccc;
-    --border-color: #1e1e1e;
 }
 
 .card .tags a{
@@ -38,6 +34,7 @@ p {
     -o-transition-duration: 0s;
     transition-duration: 0s;
 }
+
 
 /****FOCUSNOTE CREATOR****/
 .tiptap.ProseMirror{
@@ -78,76 +75,79 @@ p {
 }
 
 
-/****INPUT COLOR****/
+/**** COLOR SELECTOR ****/
 .input-colors {
-	/* Common styles for all color inputs */
-	input[type="radio"] {
-		position: absolute;
-		opacity: 0;
-		cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 1rem;
+    justify-content: center;
+    align-items: center;
 
-		& + .checkmark {
-			display: block;
-			position: relative;
-			padding: 17px;
-			cursor: pointer;
-			font-size: 22px;
-			user-select: none;
-			-webkit-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			margin-right: 10px;
+    label {
+        position: relative;
+        width: 38px;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-			&::after {
-				content: "";
-				position: absolute;
-				display: none;
-				top: 14px;
-				left: 13px;
-				width: 8px;
-				height: 8px;
-				border-radius: 50%;
-				background: white;
-			}
-		}
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            z-index: 1;
 
-		&:checked + .checkmark::after {
-			display: block;
-		}
-	}
+            &:checked + .checkmark::after {
+                content: "✓";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                font-weight: bold;
+                font-size: 30px;
+                text-shadow: 0 0 2px rgba(0,0,0,0.8);
+            }
+        }
 
-	/* Checkmark base style */
-	.checkmark {
-		position: absolute;
-		top: 0;
-		left: 0;
-		height: 25px;
-		width: 25px;
-		background-color: #eee;
-		border-radius: 50%;
-	}
+        .checkmark {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--color);
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
 
-	/* Special case for light theme */
-	[value="light"] {
-		& + .checkmark::after {
-			background: black;
-		}
+            &:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            }
+        }
 
-		& + .checkmark,
-		&:checked + .checkmark {
-			background-color: var(--bs-light);
-			border: 1px solid black;
-		}
-	}
 
-	/* Color variants - using attribute selector wildcard */
-	[value="blue"  ] + .checkmark, [value="blue"  ]:checked	+ .checkmark { background-color: var(--bs-blue  ); }
-	[value="green" ] + .checkmark, [value="green" ]:checked	+ .checkmark { background-color: var(--bs-green ); }
-	[value="yellow"] + .checkmark, [value="yellow"]:checked + .checkmark { background-color: var(--bs-yellow); }
-	[value="red"   ] + .checkmark, [value="red"   ]:checked	+ .checkmark { background-color: var(--bs-red   ); }
-	[value="purple"] + .checkmark, [value="purple"]:checked + .checkmark { background-color: var(--bs-purple); }
-	[value="pink"  ] + .checkmark, [value="pink"  ]:checked	+ .checkmark { background-color: var(--bs-pink  ); }
-	[value="orange"] + .checkmark, [value="orange"]:checked + .checkmark { background-color: var(--bs-orange); }
+        /* Special case for light theme */
+        &[data-value="light"] {
+            .checkmark {
+                background-color: var(--bs-light);
+                border: 1px solid #dee2e6;
+
+                &::after {
+                    color: #333 !important;
+                    text-shadow: 0 0 2px rgba(255,255,255,0.8) !important;
+                }
+            }
+        }
+    }
 }
 
 
@@ -362,9 +362,9 @@ input:checked + .slider:before {
 /****DARK MODE****/
 /* Top Navigation Bar */
 .top-navbar {
-    height: var(--topbar-height);
-    background-color: var(--topbar-bg);
-    color: var(--topbar-text);
+    height: 48px;
+    background-color: #252526;
+    color: #cccccc;
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -380,20 +380,20 @@ input:checked + .slider:before {
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
-    color: var(--topbar-text);
+    color: #cccccc;
 }
 
 .nav-actions {
     display: flex;
     align-items: center;
     margin-left: auto;
-    gap: 4px;
+    gap: 8px;
 }
 
 .nav-action {
     background: none;
     border: none;
-    color: var(--topbar-text);
+    color: #cccccc;
     font-size: 1.1rem;
     cursor: pointer;
     padding: 8px;
@@ -401,12 +401,12 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
-    
+    transition: all 0.2s ease;
+
     &:hover {
         background-color: rgba(255, 255, 255, 0.1);
     }
-    
+
     &:active {
         background-color: rgba(255, 255, 255, 0.2);
     }
@@ -414,16 +414,35 @@ input:checked + .slider:before {
 
 /* Main content adjustment for fixed navbar */
 .app-container {
-    padding-top: var(--topbar-height);
+    padding-top: 48px;
     min-height: 100vh;
-    background-color: #1e1e1e;
 }
 
-/* Dark theme variables */
+/* Dark mode */
 body.dark {
     background-color: var(--bs-black)!important;
     --bs-card-border-color: #393a3b!important;
 
+    .top-navbar {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+
+    .app-title {
+        color: #e0e0e0;
+    }
+
+    .nav-action {
+        color: #e0e0e0;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        &:active {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+    }
     .btn-close {
         filter: invert(1);
     }
@@ -483,15 +502,32 @@ body.dark {
     }
 
 
-    input[type='radio'][value='light'] + .checkmark:after{
-        background:white;
-    }
-
-
-    input[type='radio'][value='light']:checked + .checkmark,
-    input[type='radio'][value='light'] + .checkmark{
-        background-color: #393a3b;
-        border-color: white;
+    /* Estilos para el tema claro en modo oscuro */
+    .input-colors [data-value="light"] {
+        .checkmark {
+            background-color: #393a3b !important; /* Fondo oscuro */
+            border: 2px solid #555 !important; /* Borde más oscuro */
+            
+            &::after {
+                color: #fff !important; /* Check en blanco */
+                text-shadow: 0 0 2px rgba(0,0,0,0.8) !important;
+            }
+            
+            &:hover {
+                border-color: #777 !important;
+                transform: scale(1.1);
+                box-shadow: 0 0 5px rgba(255,255,255,0.1);
+            }
+        }
+        
+        input[type="radio"]:checked + .checkmark {
+            border-color: #555 !important; /* Mantener el mismo color de borde que en estado normal */
+            box-shadow: 0 0 5px rgba(255,255,255,0.1) !important; /* Eliminar la sombra del borde */
+            
+            &::after {
+                color: #fff !important; /* Mantener el check en blanco */
+            }
+        }
     }
 
     .form-control,

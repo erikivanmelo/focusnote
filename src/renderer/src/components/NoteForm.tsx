@@ -154,19 +154,25 @@ interface ColorSelectorProps {
 }
 
 function ColorSelector({ value, onChange }: ColorSelectorProps) {
-    const {data: colors} = useGenericQueryNoParams<Array<Color >>(["colors"], colorService.getAll   );
+    const {data: colors} = useGenericQueryNoParams<Array<Color>>(["colors"], colorService.getAll);
 
     return (
-        <div className="d-flex flex-wrap mb-2 justify-content-center input-colors ">
+        <div className="input-colors">
             {colors?.map((color: Color) => (
-                <label key={color.id}>
+                <label 
+                    key={color.id}
+                    data-value={color.name.toLowerCase()}
+                >
                     <input 
                         type="radio" 
                         value={color.name} 
                         checked={color.id === value.id} 
                         onChange={() => onChange(color)}
                     /> 
-                    <span className="checkmark"></span>
+                    <span 
+                        className="checkmark" 
+                        style={{ '--color': `var(--bs-${color.name.toLowerCase()})` } as React.CSSProperties}
+                    ></span>
                 </label>
             ))}
         </div>
