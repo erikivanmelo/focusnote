@@ -3,10 +3,10 @@ import { RawNote } from './types';
 
 const noteApi = {
   getAll: () => apiArrayCall<RawNote>('note', 'getAll'),
-  getOne: (id: number) => apiObjectCall<RawNote>('note', 'getOne', id),
+  getOne: (id: number) => apiObjectCall<RawNote>('note', 'getOne', {id: id}),
   create: (data: any) => apiObjectCall<RawNote>('note', 'create', data),
   update: (data: any) => apiObjectCall<RawNote>('note', 'update', data),
-  remove: (id: number) => apiObjectCall<boolean>('note', 'delete', id),
+  remove: (id: number) => apiObjectCall<boolean>('note', 'delete', {id: id}),
 };
 
 export default noteApi;

@@ -6,6 +6,9 @@ export interface Color {
     is_default: boolean;
 }
 
+export interface GetOneNoteParams {
+   id:number;
+}
 function fromRawToColor(note: RawColor): Color {
     return {
         id: note.id,
@@ -20,8 +23,8 @@ const colorService = {
             (note) => fromRawToColor(note)
         ) as Color[];
     },
-    getOne: (id: number) => {
-        return fromRawToColor(colorController.getOne(id));
+    getOne: (params: GetOneNoteParams) => {
+        return fromRawToColor(colorController.getOne(params.id));
     }
 };
 
