@@ -150,6 +150,11 @@
 .note-card.purple::before { background-color: #6f42c1; }
 .note-card.default::before { background-color: #6c757d; }
 
+/* Dark mode color adjustments */
+body.dark .note-card.light::before {
+    background-color: #4a4a4a !important; 
+}
+
 /* Dark mode adjustments */
 body.dark .note-card {
     background: #242526;
