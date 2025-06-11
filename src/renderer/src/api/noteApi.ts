@@ -1,5 +1,16 @@
 import { apiArrayCall, apiObjectCall } from './apiUtils';
-import { RawNote } from './types';
+import {RawColor} from './colorApi';
+import {RawTag} from './tagApi';
+
+export interface RawNote {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  color_details: RawColor;
+  tags_details: RawTag[];
+}
 
 const noteApi = {
   getAll: () => apiArrayCall<RawNote>('note', 'getAll'),

@@ -1,5 +1,10 @@
 import { apiArrayCall, apiObjectCall } from './apiUtils';
-import { RawColor } from './types';
+
+export interface RawColor {
+  id: number;
+  name: string;
+  is_default: boolean;
+}
 
 const colorApi = {
   getAll: () => apiArrayCall<RawColor>('color', 'getAll'),

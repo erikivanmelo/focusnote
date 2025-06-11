@@ -22,9 +22,9 @@ const noteService = {
         return rawNotes.map((rawNote) => fromRawToNote(rawNote));
     },
 
-    getOne: async (id: number): Promise<Note> => {
+    getOne: async (id: number): Promise<Note | null> => {
         const rawNote = await noteApi.getOne(id);
-        return fromRawToNote(rawNote);
+        return rawNote? fromRawToNote(rawNote) : null;
     },
 
     create: async (note: Note): Promise<void> => {

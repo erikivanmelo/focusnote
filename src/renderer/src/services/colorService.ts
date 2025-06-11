@@ -1,5 +1,4 @@
-import { RawColor } from '../api/types';
-import colorApi from '../api/colorApi';
+import colorApi, { RawColor } from '../api/colorApi';
 import Color from '../models/Color';
 
 export function fromRawToColor(data: RawColor): Color {

@@ -1,15 +1,22 @@
 import { ApiResponse } from './types';
 
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  status?: number;
+}
+
 export async function callApi<T = any>(serviceName: string, methodName: string, params?: any): Promise<ApiResponse<T>> {
   console.log('[API CALL]', `${serviceName}.${methodName}`, 'params:', params);
   try {
     const response = await window.ipcCall(`${serviceName}.${methodName}`, params);
     console.log('[API RESPONSE]', `${serviceName}.${methodName}`, 'response:', response);
-    
+
     if (!response.success) {
       throw new Error(response.error || 'Unknown error');
     }
-    
+
     return {
       success: true,
       data: response.data,
@@ -52,11 +59,11 @@ export function createApiHandlers<T extends Record<string, (...args: any[]) => P
   methodNames: string[]
 ): T {
   const handlers: Record<string, (...args: any[]) => Promise<ApiResponse<any>>> = {};
-  
+
   // Crear un handler para cada método
   methodNames.forEach(methodName => {
     handlers[methodName] = createApiHandler(serviceName, methodName);
   });
-  
+
   return handlers as T;
 }

@@ -1,7 +1,6 @@
 import tagApi, {RawTag} from "../api/tagApi";
 import Tag from "../models/Tag";
 
-
 export function fromRawToTag(data: RawTag){
     return new Tag(
         data.id,
