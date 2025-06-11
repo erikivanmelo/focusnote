@@ -13,11 +13,11 @@ interface ModalNoteFormProps {
 export function ModalNoteForm({ action }: ModalNoteFormProps) {
     const navigate = useNavigate();
 	const { id } = useParams();
-	const { data: note } = useGenericQuery(
-		["note"], 
-		noteService.getOne, 
+	const { data: note } = id? useGenericQuery(
+		["note"],
+		noteService.getOne,
 		Number(id)
-	);
+	) : {data: null};
 
 	useEffect(() => {
 		// Ensure modal shows when component mounts
@@ -49,7 +49,7 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 				<Modal.Title>Note Editor</Modal.Title>
 			</Modal.Header>
 			<Modal.Body className='p-0 m-0'>
-				<NoteForm 
+				<NoteForm
 					note={note}
 					action={action}
 					onSuccess={handleClose}
