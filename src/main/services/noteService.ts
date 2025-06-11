@@ -62,8 +62,10 @@ const noteService = {
 
 	create: (params: CreateNoteParams): void => {
 		const noteId = noteController.create(params.title, params.content, params.color_id);
-        tagService.createOrIgnore({ names: params.tags });
-		noteController.addTags(params.tags, noteId);
+		if (params.tags.length > 0) {
+			tagService.createOrIgnore({ names: params.tags });
+			noteController.addTags(params.tags, noteId);
+		}
 	},
 
 	update: (params: UpdateNoteParams): void => {
