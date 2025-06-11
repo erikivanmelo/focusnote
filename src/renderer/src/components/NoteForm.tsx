@@ -1,4 +1,5 @@
-import React, {useRef,  useCallback, useState, useEffect, useMemo} from "react";
+import React, {useRef, useCallback, useEffect, useMemo, useState } from 'react';
+import './NoteForm.css';
 import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 import noteService from '../services/noteService';
@@ -24,14 +25,16 @@ function NoteForm({
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
 
     const mutator = useInvalidateMutation(
-        ["notes", "note"], 
+        ["notes", "note"],
         action === 'Publish' ? noteService.create : noteService.update,
     );
 
     //Inputs
-    const [selectedColor, setSelectedColor] = useState<Color   >(defaultColor);
+    const [selectedColor, setSelectedColor] = useState<Color>(defaultColor);
     const [title        , setTitle        ] = useState<string  >("");
     const [selectedTags , setSelectedTags ] = useState<string[]>([]);
+
+    const [shakeContent, setShakeContent] = useState<boolean>(false);
 
     const contentRef = useRef<TiptapEditorRef>(null);
 
@@ -59,16 +62,28 @@ function NoteForm({
         onSuccess
     ]);
 
-    const publish = () => {
+    const publish = useCallback(async () => {
+        const currentContent = contentRef.current?.getContent().trim() || '';
+        const isContentEmpty = currentContent === '' || currentContent === "<p></p>";
+
+        if (isContentEmpty) {
+            setShakeContent(isContentEmpty);
+
+            setTimeout(() => {
+                setShakeContent(false);
+            }, 1000);
+            return;
+        }
+
         const newNote = new Note(
             note? note.id : -1,
-            title,
-            contentRef.current?.getContent()?? "",
+            title.trim(),
+            currentContent,
             selectedColor,
             selectedTags.map((tagName) => new Tag(-1, tagName))
         );
         mutator.mutate(newNote)
-    }
+    }, [title, selectedColor, selectedTags, note, mutator]);
 
     const handleRemoveTag = (name: string) => {
         setSelectedTags(selectedTags.filter((tag) => tag !== name));
@@ -91,8 +106,8 @@ function NoteForm({
         <div className="card shadow form-wrapper">
             <div className="card-body">
                 <div className="card-text" style={mutator.isPending? {  "filter": "blur(4px)" } : {}}>
-                    <ColorSelector 
-                        value={selectedColor} 
+                    <ColorSelector
+                        value={selectedColor}
                         onChange={setSelectedColor}
                     />
 
@@ -100,10 +115,10 @@ function NoteForm({
                     <input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        id="title" 
-                        type="text" 
-                        placeholder="Title" 
-                        className="form-control mb-2 mt-4 fs-2"
+                        id="title"
+                        type="text"
+                        placeholder="Title"
+                        className="form-control mb-2 mt-4 fs-2 "
                         onKeyDown={handleTitleKeyDown}
                     />
 
@@ -111,9 +126,10 @@ function NoteForm({
                     <TiptapEditor
                         ref={contentRef}
                         placeholder="What do you have to tell today?"
+                        className={(shakeContent ? 'shake-animation' : '')}
                     />
 
-                    <TagInput 
+                    <TagInput
                         tags={selectedTags}
                         onSubmit={handleAddTag}
                         onRemove={handleRemoveTag}
@@ -123,13 +139,13 @@ function NoteForm({
             <div className="card-footer">
                 { mutator.isPending &&
                     <div className="float-start mt-2">
-                        <div 
-                            className="spinner-border" 
+                        <div
+                            className="spinner-border"
                             style={{
-                                "width": '25px', 
-                                "height": '25px', 
-                                "borderWidth": "5px", 
-                                "paddingTop": '5px', 
+                                "width": '25px',
+                                "height": '25px',
+                                "borderWidth": "5px",
+                                "paddingTop": '5px',
                                 "position": "absolute"
                             }}>
                             <span className="visually-hidden"></span>
@@ -159,18 +175,18 @@ function ColorSelector({ value, onChange }: ColorSelectorProps) {
     return (
         <div className="input-colors">
             {colors?.map((color: Color) => (
-                <label 
+                <label
                     key={color.id}
                     data-value={color.name.toLowerCase()}
                 >
-                    <input 
-                        type="radio" 
-                        value={color.name} 
-                        checked={color.id === value.id} 
+                    <input
+                        type="radio"
+                        value={color.name}
+                        checked={color.id === value.id}
                         onChange={() => onChange(color)}
-                    /> 
-                    <span 
-                        className="checkmark" 
+                    />
+                    <span
+                        className="checkmark"
                         style={{ '--color': `var(--bs-${color.name.toLowerCase()})` } as React.CSSProperties}
                     ></span>
                 </label>
@@ -194,8 +210,8 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
         if (!initialSuggestions.isSuccess || !initialSuggestions.data) return [];
         return initialSuggestions.data.filter(tag => !tags.includes(tag));
     }, [
-        initialSuggestions.isSuccess, 
-        initialSuggestions.data, 
+        initialSuggestions.isSuccess,
+        initialSuggestions.data,
         tags
     ]);
 
@@ -248,8 +264,8 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
                     onChange={e => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
-                <button 
-                    className="btn"  
+                <button
+                    className="btn"
                     onClick={handleAddTag}
                 >
                     <i className="bi bi-plus-lg" ></i>

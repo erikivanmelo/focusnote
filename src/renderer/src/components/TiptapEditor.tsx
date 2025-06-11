@@ -10,12 +10,13 @@ export interface TiptapEditorRef {
 }
 
 export interface TiptapEditorProps {
+    className?: string;
     placeholder?: string;
     id?:string;
 }
 
 const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
-    ({ placeholder = "", id = ""}, ref) => {
+    ({ placeholder = "", id = "", className=""}, ref) => {
         const editor = useEditor({
             extensions: [
                 StarterKit,
@@ -31,7 +32,7 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
         }));
 
 
-        return <EditorContent editor={editor} id={id} placeholder={placeholder} className="mb-2"/>;
+        return <EditorContent editor={editor} id={id} placeholder={placeholder} className={"mb-2 " + className}/>;
     }
 );
 
