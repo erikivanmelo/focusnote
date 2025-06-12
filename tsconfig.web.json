@@ -1,8 +1,7 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.ts",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts"
   ],
@@ -10,10 +9,13 @@
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "outDir": "./dist/renderer",
     "paths": {
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ]
+      "@renderer/*": ["src/renderer/src/*"]
     }
   }
 }

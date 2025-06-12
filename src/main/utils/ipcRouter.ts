@@ -1,9 +1,9 @@
-import { IpcMain, IpcMainInvokeEvent } from 'electron';
+import { IpcMain} from 'electron';
 import colorService from '../services/colorService';
 import noteService from '../services/noteService';
 import tagService from '../services/tagService';
 
-type IpcResponse<T = any> = 
+type IpcResponse<T = any> =
   | { success: true; data: T }
   | { success: false; error: string; status?: number };
 
@@ -33,7 +33,7 @@ function handleServiceCall(serviceName: keyof ServiceMap, methodName: string, pa
 
   // Get the method using bracket notation
   const method = service[methodName];
-  
+
   if (!method) {
     return Promise.resolve({
       success: false,
@@ -44,10 +44,10 @@ function handleServiceCall(serviceName: keyof ServiceMap, methodName: string, pa
 
   try {
     // Execute the method with the service as context
-    const result = params !== undefined && params !== null ? 
-      method.call(service, params) : 
+    const result = params !== undefined && params !== null ?
+      method.call(service, params) :
       method.call(service);
-    
+
     return Promise.resolve({
       success: true,
       data: result
@@ -69,7 +69,7 @@ export function registerServiceRoutes(ipcMain: IpcMain) {
   ipcMain.handle('ipcCall', async (_event: Electron.IpcMainInvokeEvent, name: string, params: any) => {
     // Parsear el nombre del método (ej: 'note.getAll' -> ['note', 'getAll'])
     const [serviceName, methodName] = name.split('.');
-    
+
     if (!serviceName || !methodName) {
       return {
         success: false,

@@ -1,43 +1,40 @@
-appId: com.electron.app
-productName: focusnote-app
+appId: com.focusnote.app
+productName: FocusNote
 directories:
   buildResources: build
+  output: dist
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
-asarUnpack:
-  - resources/**
-win:
-  executableName: focusnote-app
-nsis:
-  artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
-  createDesktopShortcut: always
-mac:
-  entitlementsInherit: build/entitlements.mac.plist
-  extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  notarize: false
-dmg:
-  artifactName: ${name}-${version}.${ext}
+  - "out/**/*"
+  - "package.json"
+  - "!**/.git/**"
+  - "!**/src/**"
+  - "!**/.vscode/**"
+  - "!**/dist/**"
+  - "!**/*.{iml,o,hprof,orig,pyc,pyo,swp,md,log,lock}"
+  - "!**/._*"
+  - "!**/node_modules/.cache/**"
+  - "!**/node_modules/*/{test,__tests__,tests,example,examples,doc,docs,*.md}"
+  - "node_modules/**/*"
+  - "!node_modules/**/{.bin,*.md,*.d.ts,*.tsbuildinfo}"
+
 linux:
-  target:
-    - AppImage
-    - snap
-    - deb
-  maintainer: electronjs.org
-  category: Utility
-appImage:
-  artifactName: ${name}-${version}.${ext}
-npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  target: ["AppImage"]
+  category: "Utility"
+  icon: "build/icon.png"
+  maintainer: "FocusNote Team"
+  desktop:
+    Name: "FocusNote"
+    Comment: "A minimalistic note-taking app"
+    Categories: "Utility;TextEditor;"
+    Terminal: false
+
+extraResources:
+  - "resources/**"
+  - "!resources/**/*.{map,ts,tsx,js,jsx}"
+
+deb:
+  maintainer: "FocusNote Team"
+  depends: ["libcrypt1", "libgtk-3-0", "libnotify4", "libnss3", "libxss1", "libxtst6", "xdg-utils", "libat-spi2-core", "libuuid1", "libsecret-1-0", "libappindicator3-1"]
+  packageCategory: "Utility"
+  description: "FocusNote is a simple and clean note-taking application."
+  icon: "build/icon.png"

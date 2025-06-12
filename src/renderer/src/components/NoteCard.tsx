@@ -5,7 +5,7 @@ import noteService from "../services/noteService";
 import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes/routesConfig";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { enUS } from "date-fns/locale";
 import "./NoteCard.css";
 
@@ -18,18 +18,18 @@ function NoteCard({ note }: Props) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
-    
+
     // Watch for theme changes
     useEffect(() => {
         const observer = new MutationObserver(() => {
             setIsDarkMode(document.body.classList.contains('dark'));
         });
-        
+
         observer.observe(document.body, {
             attributes: true,
             attributeFilter: ['class']
         });
-        
+
         return () => observer.disconnect();
     }, []);
 
@@ -47,7 +47,7 @@ function NoteCard({ note }: Props) {
 
     return (
         <>
-            <div 
+            <div
                 className={`note-card ${note.color?.name || 'default'}`}
                 data-bs-theme={isDarkMode ? 'dark' : 'light'}
             >

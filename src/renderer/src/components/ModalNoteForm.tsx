@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import noteService from "../services/noteService";
 import { useGenericQuery } from "../hooks/useGenericQuery";
 import {ROUTES} from "../routes/routesConfig";
-import {useEffect} from "react";
 
 interface ModalNoteFormProps {
 	action: "Update" | "Publish";
@@ -18,15 +17,6 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 		noteService.getOne,
 		Number(id)
 	) : {data: null};
-
-	useEffect(() => {
-		// Ensure modal shows when component mounts
-		const modal = document.querySelector('.modal');
-		if (modal) {
-			modal.classList.add('show');
-			modal.style.display = 'block';
-		}
-	}, []);
 
 	const handleClose = () => {
 		if (window.history.state?.hasInitialModal) {
