@@ -11,9 +11,12 @@
 }
 
 .notes-container{
-    margin-top: 80px;
+    padding-top: 1.5rem;
+    margin-top: 48px;
 		margin-left: 0;
 		margin-right: 0;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .navbar{
@@ -118,7 +121,6 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 0 1rem;
-    margin-top: 56px; // Altura del navbar
     height: calc(100vh - 56px);
 }
 
