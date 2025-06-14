@@ -77,7 +77,7 @@ const noteService = {
         );
 
         noteController.removeAllTags(params.id);
-        if (params.tags && Array.isArray(params.tags)) {
+        if (params.tags.length > 0) {
             tagService.createOrIgnore({ names: params.tags });
             noteController.addTags(params.tags, params.id);
         }
