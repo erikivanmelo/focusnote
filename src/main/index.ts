@@ -3,6 +3,7 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { setupIpcRoutes } from './utils/ipcRoutes';
 import { initDatabase } from './database/init';
+import { Menu, MenuItem } from 'electron';
 
 // Inicializar la base de datos y configurar manejadores IPC
 app.whenReady().then(() => {
@@ -24,9 +25,34 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      spellcheck: true
     }
   });
+
+  mainWindow.webContents.on('context-menu', (event, params) => {
+  const menu = new Menu()
+
+  // Add each spelling suggestion
+  for (const suggestion of params.dictionarySuggestions) {
+    menu.append(new MenuItem({
+      label: suggestion,
+      click: () => mainWindow.webContents.replaceMisspelling(suggestion)
+    }))
+  }
+
+  // Allow users to add the misspelled word to the dictionary
+  if (params.misspelledWord) {
+    menu.append(
+      new MenuItem({
+        label: 'Add to dictionary',
+        click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+      })
+    )
+  }
+
+  menu.popup()
+})
 
   // Manejo de eventos de la ventana
   ipcMain.on('window:minimize', () => {
