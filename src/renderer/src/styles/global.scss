@@ -1,5 +1,5 @@
 :root{
-    --bs-black: #18191a;
+    --bs-black: #18191a!important;
 }
 
 .card .tags a{
@@ -12,9 +12,7 @@
 
 .notes-container{
     padding-top: 1.5rem;
-    margin-top: 48px;
-		margin-left: 0;
-		margin-right: 0;
+    margin: 0!important;
     flex: 1;
     overflow-y: auto;
 }
@@ -49,7 +47,7 @@ $scrollbar-track-color: rgba(0, 0, 0, 0.05);
     background: $scrollbar-thumb-color;
     border-radius: 12px;
     transition: all 0.2s ease;
-    border: 1px solid var(--bs-border-color);
+    border: hidden !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -101,7 +99,60 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    min-height: 100vh;
+}
+
+.custom-title-bar {
+  height: 38px;
+  background: #23272b;
+  color: #f1f1f1;
+  border-bottom: 1px solid #393a3b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  -webkit-app-region: drag;
+  font-family: inherit;
+  font-size: 1rem;
+  z-index: 2000;
+  .title-bar-title {
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin-right: 1rem;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+  .title-bar-buttons {
+    display: flex;
+    gap: 0.3rem;
+    -webkit-app-region: no-drag;
+  }
+  .title-bar-btn {
+    background: transparent;
+    color: #f1f1f1;
+    width: 32px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    &:hover {
+      background: #393a3b;
+    }
+    &.btn-danger {
+      background: #d9363e;
+      color: #fff;
+      &:hover {
+        background: #a61d24;
+      }
+    }
+  }
 }
 
 // Navbar fijo
@@ -482,12 +533,13 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     padding: 0 16px;
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    margin-top: 38px; // altura de la custom-title-bar
 }
 
 .app-title {
@@ -507,7 +559,7 @@ input:checked + .slider:before {
 .nav-action {
     background: none;
     border: none;
-    color: #cccccc;
+    color: var(--bs-light)!important;
     font-size: 1.1rem;
     cursor: pointer;
     padding: 8px;
