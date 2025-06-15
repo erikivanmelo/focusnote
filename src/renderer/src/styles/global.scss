@@ -2,27 +2,11 @@
     --bs-black: #18191a!important;
 }
 
-.card .tags a{
-    margin-right: 0.4rem;
-}
-
-.card .text-body{
-    white-space: pre-line;
-}
-
 .notes-container{
     padding-top: 1.5rem;
     margin: 0!important;
     flex: 1;
     overflow-y: auto;
-}
-
-.navbar{
-    padding: .5rem 1rem;
-}
-
-p {
-    margin-bottom: 8px;
 }
 
 // Scrollbar personalizada
@@ -155,32 +139,6 @@ body {
   }
 }
 
-// Navbar fijo
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    z-index: 1000;
-    background: var(--bs-bg);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-// Contenido principal
-.content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 1rem;
-    height: calc(100vh - 56px);
-}
-
-// Contenido del Router
-.content-wrapper {
-    padding: 1rem;
-    min-height: 100%;
-}
-
 // Estilos para el modo oscuro
 body.dark {
     $scrollbar-track-color: rgba(255, 255, 255, 0.1);
@@ -188,18 +146,6 @@ body.dark {
     $scrollbar-thumb-hover-color: #718096; // Gris medio
     $scrollbar-thumb-active-color: #4a5568; // Gris oscuro
 }
-
-.navbar-nav *, .navbar-nav{
-    -webkit-transition-property: none!important;
-    -moz-transition-property: none!important;
-    -o-transition-property: none!important;
-    transition-property: none!important;
-    -webkit-transition-duration: 0s;
-    -moz-transition-duration: 0s;
-    -o-transition-duration: 0s;
-    transition-duration: 0s;
-}
-
 
 /****FOCUSNOTE CREATOR****/
 .tiptap.ProseMirror{
@@ -299,18 +245,23 @@ body.dark {
             }
         }
 
+        @each $color in blue, green, yellow, red, purple, pink, orange {
+          input[type='radio'][value='#{$color}']:checked + .checkmark,
+          input[type='radio'][value='#{$color}'] + .checkmark {
+            background-color: var(--bs-#{$color});
+          }
+        }
 
         /* Special case for light theme */
-        &[data-value="light"] {
-            .checkmark {
-                background-color: var(--bs-light);
-                border: 1px solid #dee2e6;
+          input[type='radio'][value='light']:checked + .checkmark,
+          input[type='radio'][value='light'] + .checkmark {
+          background-color: var(--bs-light);
+          border: 1px solid #dee2e6;
 
-                &::after {
-                    color: #333 !important;
-                    text-shadow: 0 0 2px rgba(255,255,255,0.8) !important;
-                }
-            }
+          &::after {
+              color: #333 !important;
+              text-shadow: 0 0 2px rgba(255,255,255,0.8) !important;
+          }
         }
     }
 }
@@ -403,159 +354,8 @@ body.dark {
 .card-pink   .tags a { color: var(--bs-pink  ); }
 .card-orange .tags a { color: var(--bs-orange); }
 
-/****SWITCH****/
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    margin-top: 4px;
-    margin-bottom: 0!important;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #17a2b8;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-    padding-left: 5px;
-    padding-top: 2px;
-    font-family: bootstrap-icons;
-    position: absolute;
-    content: '\F1D1';
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-    color:var(--bs-yellow);
-}
-
-input:checked + .slider {
-  background-color: #092858;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-    color: var(--bs-dark);
-    padding-top: 0;
-    content:'\F494';
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-@media(max-width: 992px){
-    .mobileButtonMenu{
-        position: fixed;
-        bottom: 4rem;
-        right: 1.5rem;
-        z-index: 100;
-        padding-top:12px!important;
-        padding-bottom: 12px!important;
-        border-radius: 100%!important;
-        box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.5);
-    }
-
-    .mobileMenu{
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        margin:auto;
-        transform: translate(100%);
-        transition: all ease 0.25s;
-    }
-    .mobileMenu.open{
-        transform: translate(0);
-    }
-
-    .overlay{
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: auto;
-        background-color: rgba(0,0,0,0.5);
-        display: none;
-        z-index: 100;
-    }
-    .overlay.open{
-        display: block;
-    }
-
-    .navbar-nav{
-        overflow-y: auto;
-    }
-
-    .btn-search{
-        padding-left: 0px;
-    }
-
-    .navbar-brand{
-        text-rendering: unset;
-    }
-}
-
-/****DARK MODE****/
 /* Top Navigation Bar */
-.top-navbar {
-    height: 48px;
-    background-color: #252526;
-    color: #cccccc;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    margin-top: 38px; // altura de la custom-title-bar
-}
-
-.app-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    color: #cccccc;
-}
-
-.nav-actions {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    gap: 8px;
-}
-
 .nav-action {
     background: none;
     border: none;
@@ -570,48 +370,18 @@ input:checked + .slider:before {
     transition: all 0.2s ease;
 
     &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.15)!important;
     }
 
     &:active {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.25)!important;
     }
 }
 
-/* Main content adjustment for fixed navbar */
-.app-container {
-    padding-top: 48px;
-    min-height: 100vh;
-}
-
-/* Dark mode */
+/****DARK MODE****/
 body.dark {
     background-color: var(--bs-black)!important;
     --bs-card-border-color: #393a3b!important;
-
-    .top-navbar {
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-    }
-
-    .app-title {
-        color: #e0e0e0;
-    }
-
-    .nav-action {
-        color: #e0e0e0;
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        &:active {
-            background-color: rgba(255, 255, 255, 0.25);
-        }
-    }
-    .btn-close {
-        filter: invert(1);
-    }
 
     .btn,
     .text-body,
@@ -669,31 +439,16 @@ body.dark {
 
 
     /* Estilos para el tema claro en modo oscuro */
-    .input-colors [data-value="light"] {
-        .checkmark {
-            background-color: #393a3b !important; /* Fondo oscuro */
-            border: 2px solid #555 !important; /* Borde más oscuro */
-
-            &::after {
-                color: #fff !important; /* Check en blanco */
-                text-shadow: 0 0 2px rgba(0,0,0,0.8) !important;
-            }
-
-            &:hover {
-                border-color: #777 !important;
-                transform: scale(1.1);
-                box-shadow: 0 0 5px rgba(255,255,255,0.1);
-            }
-        }
-
-        input[type="radio"]:checked + .checkmark {
-            border-color: #555 !important; /* Mantener el mismo color de borde que en estado normal */
-            box-shadow: 0 0 5px rgba(255,255,255,0.1) !important; /* Eliminar la sombra del borde */
-
-            &::after {
-                color: #fff !important; /* Mantener el check en blanco */
-            }
-        }
+    input[type='radio'][value='light'] + .checkmark,
+    input[type='radio'][value='light']:checked + .checkmark {
+      background-color: #393a3b !important; /* Fondo oscuro */
+      border: 2px solid #555 !important; /* Borde más oscuro */
+      border-color: #555 !important;
+      box-shadow: 0 0 5px rgba(255,255,255,0.1) !important;
+      &::after {
+        color: #fff !important; /* Check en blanco */
+        text-shadow: 0 0 2px rgba(0,0,0,0.8) !important;
+      }
     }
 
     .form-control,

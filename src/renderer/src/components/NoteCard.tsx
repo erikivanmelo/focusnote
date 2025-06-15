@@ -17,21 +17,6 @@ function NoteCard({ note }: Props) {
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
-
-    // Watch for theme changes
-    useEffect(() => {
-        const observer = new MutationObserver(() => {
-            setIsDarkMode(document.body.classList.contains('dark'));
-        });
-
-        observer.observe(document.body, {
-            attributes: true,
-            attributeFilter: ['class']
-        });
-
-        return () => observer.disconnect();
-    }, []);
 
     const formattedDate = note.createdAt
         ? formatDistanceToNow(new Date(note.createdAt), {
@@ -48,8 +33,7 @@ function NoteCard({ note }: Props) {
     return (
         <>
             <div
-                className={`note-card ${note.color?.name || 'default'}`}
-                data-bs-theme={isDarkMode ? 'dark' : 'light'}
+                className={`note-card ${note.color?.name || 'light'}`}
             >
                 <div className="note-card__header">
                     <div className="note-card__meta">

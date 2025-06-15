@@ -175,20 +175,14 @@ function ColorSelector({ value, onChange }: ColorSelectorProps) {
     return (
         <div className="input-colors">
             {colors?.map((color: Color) => (
-                <label
-                    key={color.id}
-                    data-value={color.name.toLowerCase()}
-                >
+                <label key={color.id}>
                     <input
                         type="radio"
                         value={color.name}
                         checked={color.id === value.id}
                         onChange={() => onChange(color)}
                     />
-                    <span
-                        className="checkmark"
-                        style={{ '--color': `var(--bs-${color.name.toLowerCase()})` } as React.CSSProperties}
-                    ></span>
+                    <span className="checkmark"></span>
                 </label>
             ))}
         </div>
