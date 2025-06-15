@@ -40,6 +40,7 @@
     "quill-markdown-shortcuts": "^0.0.10",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.10",
+    "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.3",

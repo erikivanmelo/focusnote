@@ -4,12 +4,9 @@ import Menu from './components/Menu';
 function App() {
   return (
     <>
-      <Menu />
-      <div className="row justify-content-center notes-container">
-        <main className="col-lg-8">
+      <Menu>
           <Outlet />
-        </main>
-      </div>
+      </Menu>
     </>
   );
 }
