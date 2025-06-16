@@ -6,9 +6,6 @@ import {Outlet} from 'react-router-dom';
 function NoteCardList() {
     const { data: notes, isLoading, isError, error } = useGenericQueryNoParams(["notes"], noteService.getAll);
 
-    // Log para depuración
-    console.log('[NoteCardList] notes:', notes, 'isLoading:', isLoading, 'isError:', isError, 'error:', error);
-
     let content;
     if (isLoading) {
         content = (
