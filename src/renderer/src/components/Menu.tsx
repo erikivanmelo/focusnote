@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@renderer/routes/routesConfig";
 import Note from "../models/Note";
 import noteService from "@renderer/services/noteService";
+import ColorSelector from "./ColorSelector";
+import TagInput from "./TagInput";
+import Color from "@renderer/models/Color";
+import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
 
 // Extender la interfaz CSSProperties para incluir propiedades de WebKit
 declare module 'react' {
@@ -41,14 +45,6 @@ function Menu({ children }: Props) {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [isMaximized, setIsMaximized] = useState<boolean>(false);
     const [showSearch, setShowSearch] = useState<boolean>(false);
-    const [searchResults, setSearchResults] = useState<Note[]>([]);
-    const [isSearching, setIsSearching] = useState<boolean>(false);
-    const [filters, setFilters] = useState<SearchFilters>({
-        title: '',
-        content: ''
-    });
-
-    const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
     const navigate = useNavigate();
 
     // Handle window controls
@@ -81,48 +77,6 @@ function Menu({ children }: Props) {
     useEffect(() => {
         document.body.classList.toggle('dark', isDarkMode);
     }, [isDarkMode]);
-
-    // Handle search input changes
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    // Handle search submission
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!filters.title && !filters.content) {
-            setSearchResults([]);
-            return;
-        }
-
-        setIsSearching(true);
-        try {
-            const allNotes = await noteService.getAll();
-            const filteredNotes = allNotes.filter(note => {
-                const titleMatch = !filters.title ||
-                    (note.title && note.title.toLowerCase().includes(filters.title.toLowerCase()));
-                const contentMatch = !filters.content ||
-                    (note.content && note.content.toLowerCase().includes(filters.content.toLowerCase()));
-                return titleMatch && contentMatch;
-            });
-            setSearchResults(filteredNotes);
-        } catch (error) {
-            console.error('Error searching notes:', error);
-            setSearchResults([]);
-        } finally {
-            setIsSearching(false);
-        }
-    };
-
-    // Navigate to note
-    const navigateToNote = (noteId: number) => {
-        navigate(`/notes/edit/${noteId}`);
-        setShowSearch(false);
-    };
 
     const sidebarButtons = [
         {
@@ -210,141 +164,9 @@ function Menu({ children }: Props) {
                 </div>
 
                 {/* Search Sidebar */}
-                {showSearch && (
-                    <div className="search-sidebar">
-                        <Form onSubmit={handleSearch}>
-                            <div className="d-flex gap-2">
-                                <Form.Control
-                                    type="search"
-                                    name="title"
-                                    value={filters.title}
-                                    //onChange={handleFilterChange}
-                                    placeholder="Search notes..."
-                                    autoFocus
-                                    className="flex-grow-1"
-                                />
-                                <Button
-                                    variant="outline-secondary"
-                                    type="button"
-                                    onClick={() => setShowAdvanced(!showAdvanced)}
-                                    size="sm"
-                                    title="Advanced search"
-                                >
-                                    <i className={`bi bi-${showAdvanced ? 'chevron-up' : 'chevron-down'}`} />
-                                </Button>
-                            </div>
-
-                            {showAdvanced && (
-                                <div className="mt-3">
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={2}
-                                        name="content"
-                                        value={filters.content}
-                                        //onChange={handleFilterChange}
-                                        placeholder="Search in content..."
-                                        className="mb-2"
-                                    />
-
-                                    <div className="d-flex gap-2 mb-2">
-                                        <div className="color-slider-container">
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                //max={colorOptions.length - 1}
-                                                //value={colorValues.indexOf(filters.color) >= 0 ? colorValues.indexOf(filters.color) : 0}
-                                                //onChange={handleSliderChange}
-                                                className="color-slider"
-                                                list="color-markers"
-                                            />
-                                            <div className="color-legend">
-                                                {/*colorOptions.map((color, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className={`color-marker ${filters.color === color.value ? 'active' : ''}`}
-                                                        style={{ '--color': color.color } as React.CSSProperties}
-                                                        onClick={() => {
-                                                            //setSliderValue(index);
-                                                            setFilters(prev => ({ ...prev, color: color.value }));
-                                                        }}
-                                                        title={color.label}
-                                                    >
-                                                        {!color.value && (
-                                                            <i className="bi bi-x"></i>
-                                                        )}
-                                                    </div>
-                                                    ))*/}
-                                            </div>
-                                        </div>
-
-                                        <Button
-                                            variant="outline-secondary"
-                                            //onClick={clearFilters}
-                                            size="sm"
-                                            title="Clear filters"
-                                        >
-                                            <i className="bi bi-x-lg" />
-                                        </Button>
-                                    </div>
-
-                                    <div className="d-flex gap-2">
-                                        <Form.Control
-                                            type="text"
-                                            //value={tagInput}
-                                            //onChange={(e) => setTagInput(e.target.value)}
-                                            //onKeyDown={handleAddTag}
-                                            placeholder="Add tags (Enter to add)"
-                                            size="sm"
-                                            className="flex-grow-1"
-                                        />
-                                    </div>
-
-                                    {/*filters.tags && (
-                                        <div className="tags-container mt-2">
-                                            {filters.tags.map(tag => (
-                                                <span key={tag} className="tag">
-                                                    {tag}
-                                                    <button
-                                                        type="button"
-                                                        className="tag-remove"
-                                                        //onClick={() => removeTag(tag)}
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </span>
-                                            ))}
-                                        </div>
-                                        )*/}
-                                </div>
-                            )}
-                        </Form>
-
-                        <div className="search-results mt-3">
-                            {searchResults.length > 0 ? (
-                                <ListGroup>
-                                    {searchResults.map(note => (
-                                        <ListGroup.Item
-                                            key={note.id}
-                                            action
-                                            onClick={() => navigateToNote(note.id)}
-                                            className="search-result-item"
-                                        >
-                                            <div className="fw-bold">{note.title || 'Untitled Note'}</div>
-                                            <div className="text-muted small">
-                                                {note.content && note.content.substring(0, 100)}{note.content && note.content.length > 100 ? '...' : ''}
-                                            </div>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            ) : (
-                                <div className="text-center text-muted py-3">
-                                <hr/>
-                                    {isSearching ? 'Searching...' : 'No results found'}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
+                <div className="search-sidebar" style={{display: (showSearch? "block" : "none")}}>
+                    <NoteFilter/>
+                </div>
 
                 {/* Main Content */}
                 <div className={`main-content ${showSearch ? 'with-search' : ''}`}>
@@ -368,6 +190,126 @@ function Menu({ children }: Props) {
             </Modal>
         </div>
     );
+}
+
+//interface NoteFilterProps
+
+function NoteFilter() {
+
+    const [title, setTitle] = useState<string>("");
+    const [content, setContent] = useState<string>("");
+    const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+    const [selectedTags , setSelectedTags ] = useState<string[]>([]);
+
+    const { data: searchResults, isLoading} = useGenericQueryNoParams(["notes"], noteService.getAll);
+
+    const handleRemoveTag = (name: string) => {
+        setSelectedTags(selectedTags.filter((tag) => tag !== name));
+    };
+
+    const handleAddTag = (newTag: string) => {
+        if (selectedTags.includes(newTag))
+            return false;
+
+        setSelectedTags([...selectedTags, newTag]);
+        return true;
+    };
+
+    const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+    return(
+        <>
+        <Form className="search-form">
+            <div className="d-flex gap-2">
+                <Button
+                    variant="outline-secondary"
+                    type="button"
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    size="sm"
+                >
+                    <i className={`bi bi-${showAdvanced ? 'chevron-up' : 'chevron-down'}`} />
+                </Button>
+                <Form.Control
+                    type="search"
+                    name="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Search by title..."
+                    autoFocus
+                    className="flex-grow-1"
+                />
+                <Button
+                    variant="outline-secondary"
+                    type="button"
+                    size="sm"
+                >
+                    <i className={`bi bi-arrow-return-left`} />
+                </Button>
+            </div>
+
+            {showAdvanced && (
+                <div className="mt-1">
+                    <Form.Control
+                        as="textarea"
+                        rows={2}
+                        name="content"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Search by content..."
+                        className="mb-2"
+                    />
+                    <TagInput
+                        tags={selectedTags}
+                        onSubmit={handleAddTag}
+                        onRemove={handleRemoveTag}
+                    />
+
+                    <div className="d-flex gap-2 mb-2 mt-3">
+                        <div className="color-slider-container">
+                            <ColorSelector
+                                value={selectedColor}
+                                onChange={setSelectedColor}
+                            />
+                        </div>
+
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => setSelectedColor(null)}
+                            size="sm"
+                            title="Clear filters"
+                        >
+                            <i className="bi bi-x-lg" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </Form>
+
+        <div className="search-results">
+            {searchResults && searchResults.length > 0 ? (
+                <ListGroup className="">
+                    {searchResults.map((note: Note) => (
+                        <ListGroup.Item
+                            key={note.id}
+                            action
+                            //onClick={() => navigateToNote(note.id)}
+                            className={"search-result-item " + note.color.name}
+                        >
+                            <div className="fw-bold">{note.title || 'Untitled Note'}</div>
+                            <div className="text-muted small">
+                                {note.content && note.content.substring(0, 100)}{note.content && note.content.length > 100 ? '...' : ''}
+                            </div>
+                        </ListGroup.Item>
+                    ))}
+                </ListGroup>
+            ) : (
+                <div className="text-center text-muted">
+                <hr/>
+                    {isLoading ? 'Searching...' : 'No results found'}
+                </div>
+            )}
+        </div>
+        </>
+    )
 }
 
 export default Menu;
