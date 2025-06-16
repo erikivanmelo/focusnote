@@ -33,6 +33,7 @@ function NoteCard({ note }: Props) {
     return (
         <>
             <div
+                id={`note-${note.id}`}
                 className={`note-card ${note.color?.name || 'light'}`}
             >
                 <div className="note-card__header">

@@ -115,9 +115,13 @@ body.dark {
         overflow-y:auto;
 
         overflow: hidden;
+        .list-group {
+            margin-right: 5px;
+        }
+
         .list-group-item {
             margin-bottom: 0.5rem;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid var(--bs-border-color);
             background-color: var(--bs-body-bg);
             transition: all 0.2s ease;
@@ -125,7 +129,7 @@ body.dark {
             &:hover {
                 background-color: var(--bs-tertiary-bg);
                 border-color: var(--bs-primary);
-                transform: translateX(2px);
+                transform: translateX(4px);
             }
 
             .fw-bold {

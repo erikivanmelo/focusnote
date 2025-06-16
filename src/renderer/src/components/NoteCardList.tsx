@@ -1,10 +1,49 @@
+import { useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import NoteCard from './NoteCard';
-import { useGenericQueryNoParams } from '../hooks/useGenericQuery';
-import noteService from '../services/noteService';
 import {Outlet} from 'react-router-dom';
+import Note from '@renderer/models/Note';
+import {useGenericQueryNoParams} from '@renderer/hooks/useGenericQuery';
+import noteService from '@renderer/services/noteService';
 
 function NoteCardList() {
-    const { data: notes, isLoading, isError, error } = useGenericQueryNoParams(["notes"], noteService.getAll);
+    const { data: notes, isLoading, isError, error} = useGenericQueryNoParams<Note[]>(
+        ["notes"],
+        noteService.getAll
+    );
+
+    const [searchParams] = useSearchParams();
+    const noteRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+    // Handle smooth scrolling when noteId is in URL
+    useEffect(() => {
+        const noteId = searchParams.get('noteId');
+        if (noteId && noteRefs.current[noteId]) {
+            // Small timeout to ensure the DOM is ready
+            const timer = setTimeout(() => {
+                const element = noteRefs.current[noteId];
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+
+                    // Add highlight class and remove it after animation
+                    element.classList.add('note-highlight');
+
+                    const highlightTimer = setTimeout(() => {
+                        element.classList.remove('note-highlight');
+                    }, 2000);
+
+                    return () => clearTimeout(highlightTimer);
+                }
+                return undefined;
+            }, 100);
+
+            return () => clearTimeout(timer);
+        }
+        return undefined; // Explicitly return undefined for TypeScript
+    }, [searchParams, notes]);
 
     let content;
     if (isLoading) {
@@ -34,14 +73,20 @@ function NoteCardList() {
         );
 
     } else {
-        content = (
-            notes.map(note => (
-                <NoteCard
-                    key={note.id}
-                    note={note}
-                />
-            ))
-        )
+        content = notes.map(note => (
+            <div
+                key={note.id}
+                ref={(el: HTMLDivElement | null) => {
+                    if (el) {
+                        noteRefs.current[note.id] = el;
+                    } else {
+                        delete noteRefs.current[note.id];
+                    }
+                }}
+            >
+                <NoteCard note={note} />
+            </div>
+        ));
     }
 
     return (

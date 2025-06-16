@@ -9,6 +9,7 @@ import ColorSelector from "./ColorSelector";
 import TagInput from "./TagInput";
 import Color from "@renderer/models/Color";
 import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
+import {useCachedQueryData} from "@renderer/hooks/useCachedQueryData";
 
 // Extender la interfaz CSSProperties para incluir propiedades de WebKit
 declare module 'react' {
@@ -33,11 +34,6 @@ const electronWindow = window as unknown as {
 
 interface Props {
     children: ReactNode;
-}
-
-interface SearchFilters {
-    title: string;
-    content: string;
 }
 
 function Menu({ children }: Props) {
@@ -192,16 +188,18 @@ function Menu({ children }: Props) {
     );
 }
 
-//interface NoteFilterProps
-
 function NoteFilter() {
 
+    const navigate = useNavigate();
     const [title, setTitle] = useState<string>("");
     const [content, setContent] = useState<string>("");
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
     const [selectedTags , setSelectedTags ] = useState<string[]>([]);
 
-    const { data: searchResults, isLoading} = useGenericQueryNoParams(["notes"], noteService.getAll);
+    const { data: searchResults, isLoading} = useGenericQueryNoParams<Note[]>(
+        ["notes"],
+        noteService.getAll
+    );
 
     const handleRemoveTag = (name: string) => {
         setSelectedTags(selectedTags.filter((tag) => tag !== name));
@@ -213,6 +211,14 @@ function NoteFilter() {
 
         setSelectedTags([...selectedTags, newTag]);
         return true;
+    };
+
+    const handleNoteClick = (noteId: number) => {
+        // Update URL with noteId to trigger scroll in NoteCardList
+        navigate({
+            pathname: ROUTES.NOTES,
+            search: `?noteId=${noteId}`
+        });
     };
 
     const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
@@ -291,7 +297,7 @@ function NoteFilter() {
                         <ListGroup.Item
                             key={note.id}
                             action
-                            //onClick={() => navigateToNote(note.id)}
+                            onClick={() => handleNoteClick(note.id)}
                             className={"search-result-item " + note.color.name}
                         >
                             <div className="fw-bold">{note.title || 'Untitled Note'}</div>
