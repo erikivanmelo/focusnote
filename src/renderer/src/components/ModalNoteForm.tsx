@@ -19,11 +19,7 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 	) : {data: null};
 
 	const handleClose = () => {
-		if (window.history.state?.hasInitialModal) {
-			navigate(ROUTES.HOME, { replace: true });
-		} else {
-			navigate(-1);
-		}
+		navigate(ROUTES.HOME, { replace: true });
 	};
 
 	return (
