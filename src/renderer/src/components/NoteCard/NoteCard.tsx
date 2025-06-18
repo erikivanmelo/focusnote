@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import Note from "../models/Note";
-import noteService from "../services/noteService";
-import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
+import Note from "@renderer/models/Note";
+import noteService from "@renderer/services/noteService";
+import { useInvalidateMutation } from "@renderer/hooks/useInvalidateMutation";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../routes/routesConfig";
+import { ROUTES } from "@renderer/routes/routesConfig";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { enUS } from "date-fns/locale";
 import "./NoteCard.css";

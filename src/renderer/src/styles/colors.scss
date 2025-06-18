@@ -1,0 +1,13 @@
+body {
+    --text-color: #212529;
+    --border-color:#dee2e6;
+    --background-form-color:#fff;
+    --placeholder-color: #3a3b3b;
+}
+body.dark {
+    --text-color: #e0e0e0;
+    --border-color:#393a3b;
+    --background-form-color:#3a3b3b;
+    --placeholder-color: #b0b3b8;
+}
+

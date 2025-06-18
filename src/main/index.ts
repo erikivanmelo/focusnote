@@ -30,7 +30,7 @@ function createWindow(): void {
     }
   });
 
-  mainWindow.webContents.on('context-menu', (event, params) => {
+  mainWindow.webContents.on('context-menu', (_, params) => {
   const menu = new Menu()
 
   // Add each spelling suggestion

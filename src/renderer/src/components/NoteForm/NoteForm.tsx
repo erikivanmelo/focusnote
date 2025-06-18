@@ -1,15 +1,16 @@
 import React, {useRef, useCallback, useEffect, useMemo, useState } from 'react';
-import './NoteForm.css';
-import { useGenericQueryNoParams } from "../hooks/useGenericQuery";
-import { useInvalidateMutation } from "../hooks/useInvalidateMutation";
-import noteService from '../services/noteService';
-import colorService from "../services/colorService";
-import tagService from "../services/tagService";
-import Note from "../models/Note";
-import Tag from "../models/Tag";
-import Color from "../models/Color";
-import DisableLayer from "./DisableLayer";
-import TiptapEditor, { TiptapEditorRef } from "./TiptapEditor";
+import { useGenericQueryNoParams } from "@renderer/hooks/useGenericQuery";
+import { useInvalidateMutation } from "@renderer/hooks/useInvalidateMutation";
+//import noteService from '../services/noteService';
+import colorService from "@renderer/services/colorService";
+import tagService from "@renderer/services/tagService";
+import Note from "@renderer/models/Note";
+import Tag from "@renderer/models/Tag";
+import Color from "@renderer/models/Color";
+import DisableLayer from "../DisableLayer";
+import TiptapEditor, { TiptapEditorRef } from "@renderer/components/TiptapEditor";
+import noteService from '@renderer/services/noteService';
+import './NoteForm.scss';
 
 interface NoteFormProp{
     note?: Note | null;

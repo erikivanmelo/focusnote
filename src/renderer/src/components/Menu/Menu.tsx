@@ -1,8 +1,8 @@
 import { useState, useEffect, ReactNode } from "react";
 import { Modal } from "react-bootstrap";
-import "../styles/global.scss";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@renderer/routes/routesConfig";
+import './Menu.scss'
 
 // Extender la interfaz CSSProperties para incluir propiedades de WebKit
 declare module 'react' {
@@ -168,4 +168,3 @@ function Menu({ children }: Props) {
 }
 
 export default Menu;
-
