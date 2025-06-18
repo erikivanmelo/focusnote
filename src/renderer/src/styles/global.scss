@@ -1,4 +1,4 @@
-@import './colors.scss';
+@use './colors' as *;
 
 :root {
     --bs-black: #18191a !important;

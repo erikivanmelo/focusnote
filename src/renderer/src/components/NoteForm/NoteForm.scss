@@ -81,7 +81,7 @@
             }
         }
 
-        @each $color in blue, green, yellow, red, purple, pink, orange {
+        @each $color in 'blue', 'green', 'yellow', 'red', 'purple', 'pink', 'orange' {
             input[type='radio'][value='#{$color}']:checked + .checkmark,
             input[type='radio'][value='#{$color}'] + .checkmark {
                 background-color: var(--bs-#{$color});

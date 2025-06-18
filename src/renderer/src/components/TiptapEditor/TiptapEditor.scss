@@ -1,4 +1,4 @@
-@import '../../styles/colors.scss';
+@use '../../styles/colors' as *;
 
 .tiptap.ProseMirror {
     background-color: var(--background-input-color)!important;
