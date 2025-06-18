@@ -116,6 +116,7 @@ function NoteForm({
                     <input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
+                        maxLength={40}
                         id="title"
                         type="text"
                         placeholder="Title"
@@ -254,9 +255,13 @@ function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
                     type="text"
                     placeholder="Tags"
                     className="form-control"
+                    maxLength={40}
                     list="tagList"
                     value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
+                    onChange={e => {
+                        const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
+                        setInputValue(value);
+                    }}
                     onKeyDown={handleKeyDown}
                 />
                 <button

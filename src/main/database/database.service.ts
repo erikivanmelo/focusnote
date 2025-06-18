@@ -40,7 +40,7 @@ export class DatabaseService {
         this.db.exec(`
             CREATE TABLE IF NOT EXISTS notes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
+                title TEXT NOT NULL CHECK(length(title) <= 40),
                 content TEXT NOT NULL,
                 color_id INTEGER NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
