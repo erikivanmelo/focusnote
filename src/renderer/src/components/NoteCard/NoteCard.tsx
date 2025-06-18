@@ -87,7 +87,7 @@ function NoteCard({ note }: Props) {
                 centered
                 className="delete-modal"
             >
-                <Modal.Header closeButton closeVariant="white">
+                <Modal.Header closeButton>
                     <Modal.Title>Delete Note</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

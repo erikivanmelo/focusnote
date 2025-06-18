@@ -72,7 +72,10 @@ $scrollbar-track-color: rgba(0, 0, 0, 0.05);
     border-radius: 12px;
 }
 
-// Asegurarse de que el contenido no se extienda más allá de la ventana
+input::placeholder {
+    color: var(--placeholder-color)!important;
+}
+
 body {
     overflow: hidden;
     height: 100vh;
@@ -80,15 +83,12 @@ body {
     padding: 0;
 }
 
-// Contenedor principal
 #root {
     display: flex;
     flex-direction: column;
     height: 100vh;
     min-height: 100vh;
 }
-
-// Estilos para el modo oscuro
 
 .main-content {
     flex-grow: 1;
@@ -121,7 +121,19 @@ body {
 }
 
 .form-control {
-    background-color: var(--background-form-color) !important;
+    background-color: var(--background-input-color) !important;
+}
+
+.card,
+.modal-content {
+    background-color: var(--background-form-color)!important;
+}
+
+.btn-close,
+.btn-close::before,
+.btn-close-white,
+.btn{
+    color: var(--close-button)!important;
 }
 
 /****DARK MODE****/
@@ -134,18 +146,7 @@ body.dark {
     $scrollbar-thumb-hover-color: #718096; // Gris medio
     $scrollbar-thumb-active-color: #4a5568; // Gris oscuro
 
-    .card,
-    .modal-content {
-        background-color: #242526!important;
-    }
 
-    small {
-        color: #b0b3b8!important;
-    }
-
-    .bg-light{
-        background-color: #242526!important;
-    }
 
     .alert-danger {
         color: var(--darkreader-text-721c24, #e1868f);
