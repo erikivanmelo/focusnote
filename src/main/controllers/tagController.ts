@@ -30,10 +30,12 @@ const tagController = {
         return query.all(noteId) as RawTag[];
     },
 
-    getAllNames: (): string[] => {
+    getAllNamesInUse: (): string[] => {
         const query = db.prepare(`
-            SELECT name FROM tags
-            ORDER BY name ASC
+            SELECT DISTINCT t.name
+            FROM tags t
+            INNER JOIN note_tags nt ON t.id = nt.tag_id
+            ORDER BY t.name ASC
         `);
         return query.pluck().all() as string[];
     },

@@ -6,7 +6,7 @@ export interface RawTag {
 }
 
 const tagApi = {
-  getAllNames: () => apiArrayCall<string>('tag', 'getAllNames'),
+  getAllNamesInUse: () => apiArrayCall<string>('tag', 'getAllNamesInUse'),
 };
 
 export default tagApi;

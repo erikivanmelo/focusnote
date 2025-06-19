@@ -199,7 +199,7 @@ interface TagInputProps {
 }
 
 function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
-	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNames);
+	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNamesInUse);
 	const [inputValue , setInputValue ] = useState("");
 
     const suggestions = useMemo(() => {
