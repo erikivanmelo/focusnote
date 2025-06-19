@@ -33,7 +33,7 @@ publish:
 
 # Platform specific configurations
 win:
-  target: ["nsis"]
+  target: ["nsis", "portable"]
   icon: "build/icon.ico"
   publisherName: "FocusNote Team"
   verifyUpdateCodeSignature: false
@@ -67,12 +67,6 @@ dmg:
       type: link
       path: /Applications
 
-win:
-  target: ["nsis", "portable"]
-  icon: "build/icon.ico"
-  publisherName: "FocusNote Team"
-  verifyUpdateCodeSignature: false
-
 linux:
   target: ["AppImage", "deb"]
   category: "Utility"
@@ -84,12 +78,12 @@ linux:
     Categories: "Utility;TextEditor;"
     Terminal: false
 
-# Configuración de recursos adicionales
+# Additional resources configuration
 extraResources:
   - "resources/**"
   - "!resources/**/*.{map,ts,tsx,js,jsx}"
 
-# Configuración específica para paquetes DEB
+# DEB package specific configuration
 deb:
   depends:
     - libcrypt1
@@ -106,17 +100,6 @@ deb:
   packageCategory: "Utility"
   description: "FocusNote is a simple and clean note-taking application."
   icon: "build/icon.png"
-
-# Configuración de NSIS (Windows)
-nsis:
-  oneClick: false
-  perMachine: false
-  allowToChangeInstallationDirectory: true
-  createDesktopShortcut: true
-  createStartMenuShortcut: true
-  shortcutName: "FocusNote"
-  uninstallDisplayName: "FocusNote"
-  include: "build/installer.nsh"
 
 # Configuración de actualizaciones automáticas
 generateUpdatesFilesForAllChannels: true
