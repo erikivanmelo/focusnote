@@ -1,6 +1,6 @@
 appId: com.focusnote.app
 productName: FocusNote
-copyright: Copyright © ${year} FocusNote Team
+copyright: Copyright © 2025 FocusNote Team
 
 directories:
   buildResources: build
@@ -31,7 +31,23 @@ publish:
   releaseType: release
   publishAutoUpdate: true
 
-# Configuraciones específicas por plataforma
+# Platform specific configurations
+win:
+  target: ["nsis"]
+  icon: "build/icon.ico"
+  publisherName: "FocusNote Team"
+  verifyUpdateCodeSignature: false
+  
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: "FocusNote"
+  uninstallDisplayName: "FocusNote"
+  include: "build/installer.nsh"
+  
 mac:
   category: public.app-category.productivity
   target: ["dmg", "zip"]
