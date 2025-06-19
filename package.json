@@ -1,6 +1,6 @@
 {
-  "name": "focusnote-app",
-  "version": "0.1.0-beta.1",
+  "name": "focusnote",
+  "version": "1.0.0-beta",
   "description": "An Electron application with React and TypeScript",
   "repository": {
     "type": "git",
