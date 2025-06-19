@@ -5,21 +5,23 @@ copyright: Copyright © ${year} FocusNote Team
 directories:
   buildResources: build
   output: release
-  app: out
+  app: .
 
 files:
+  - "dist/**/*"
   - "out/**/*"
   - "package.json"
-  - "!**/.git/**"
-  - "!**/src/**"
-  - "!**/.vscode/**"
-  - "!**/dist/**"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,example,examples,doc,docs}"
+  - "!**/node_modules/.bin"
   - "!**/*.{iml,o,hprof,orig,pyc,pyo,swp,md,log,lock}"
   - "!**/._*"
-  - "!**/node_modules/.cache/**"
-  - "!**/node_modules/*/{test,__tests__,tests,example,examples,doc,docs,*.md}"
-  - "node_modules/**/*"
-  - "!node_modules/**/{.bin,*.md,*.d.ts,*.tsbuildinfo}"
+  - "!**/.git"
+  - "!**/.github"
+  - "!**/.vscode"
+  - "!**/.idea"
+  - "!**/src"
+  - "!**/test"
+  - "!**/tests"
 
 # Configuración de publicación
 publish:
