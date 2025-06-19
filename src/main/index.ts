@@ -4,11 +4,26 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { setupIpcRoutes } from './utils/ipcRoutes';
 import { initDatabase } from './database/init';
 import { Menu, MenuItem } from 'electron';
+import { setupAutoUpdater, checkForUpdates, quitAndInstall } from './services/autoUpdaterService';
+import log from 'electron-log';
+
+// Configurar el sistema de logs
+log.transports.file.level = 'info';
+log.info('Application starting...');
 
 // Inicializar la base de datos y configurar manejadores IPC
 app.whenReady().then(() => {
   initDatabase();
   setupIpcRoutes(ipcMain);
+  
+  // Configurar manejadores IPC para actualizaciones
+  ipcMain.handle('check-for-updates', async () => {
+    return await checkForUpdates();
+  });
+  
+  ipcMain.on('install-update', () => {
+    quitAndInstall();
+  });
 });
 
 function createWindow(): void {
@@ -92,6 +107,13 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+    
+    // Iniciar el auto-updater después de que la ventana esté lista
+    if (!is.dev) {
+      setupAutoUpdater(mainWindow);
+    } else {
+      log.info('Running in development, auto-updater is disabled');
+    }
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

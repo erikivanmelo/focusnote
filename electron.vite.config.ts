@@ -15,6 +15,28 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
+    build: {
+      outDir: '../../dist/renderer',
+      emptyOutDir: true,
+      rollupOptions: {
+        input: {
+          main: resolve('src/renderer/index.html')
+        },
+        output: {
+          entryFileNames: 'assets/[name].js',
+          chunkFileNames: 'assets/[name].js',
+          assetFileNames: 'assets/[name].[ext]'
+        }
+      }
+    },
+    define: {
+      'process.env': {}
+    },
+    server: {
+      port: 3000,
+      strictPort: true,
+      open: false
+    },
     plugins: [react()]
   }
 })

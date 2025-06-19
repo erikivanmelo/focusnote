@@ -1,3 +1,55 @@
-provider: generic
-url: https://example.com/auto-updates
-updaterCacheDirName: focusnote-app-updater
+provider: github
+owner: erikivanmelo  # Replace with your GitHub username/organization
+repo: focusnote
+uprx: true
+updaterCacheDirName: focusnote-updater
+
+# Platform-specific configuration
+# (optional, electron-updater will use default values if not specified)
+updates:
+  # For Windows
+  win: 
+    provider: github
+    owner: erikivanmelo
+    repo: focusnote
+  
+  # For macOS
+  mac: 
+    provider: github
+    owner: erikivanmelo
+    repo: focusnote
+  
+  # For Linux
+  linux:
+    provider: github
+    owner: erikivanmelo
+    repo: focusnote
+
+# Update channel configuration
+# Default: latest
+channel: latest
+
+# Auto-update configuration
+autoDownload: true
+autoInstallOnAppQuit: true
+allowDowngrade: false
+fullChangelog: true
+
+# Logging configuration
+logger:
+  level: info
+  file: logs/updater.log
+
+# Retry configuration
+requestHeaders:
+  accept: 'application/octet-stream, application/json'
+maxHttpBufferSize: 10485760  # 10MB
+
+# Download timeout (in milliseconds)
+downloadTimeout: 60000
+
+# Chunk size for downloads (in bytes)
+chunkSize: 1048576  # 1MB
+
+# Signature verification (recommended for production)
+verifyUpdateCodeSignature: true

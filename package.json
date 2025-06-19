@@ -1,6 +1,6 @@
 {
   "name": "focusnote-app",
-  "version": "1.0.0",
+  "version": "0.1.0-beta.1",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -21,6 +21,106 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux"
   },
+  "release": {
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "angular",
+          "releaseRules": [
+            {
+              "type": "feat",
+              "release": "minor"
+            },
+            {
+              "type": "fix",
+              "release": "patch"
+            },
+            {
+              "type": "perf",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": false
+            },
+            {
+              "type": "test",
+              "release": false
+            },
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": false
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "angular"
+        }
+      ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "release/*.dmg",
+              "label": "macOS"
+            },
+            {
+              "path": "release/*.exe",
+              "label": "Windows"
+            },
+            {
+              "path": "release/*.AppImage",
+              "label": "Linux AppImage"
+            },
+            {
+              "path": "release/*.deb",
+              "label": "Linux DEB"
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ],
+    "branches": [
+      "main",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ]
+  },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
@@ -36,7 +136,6 @@
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
     "date-fns": "^4.1.0",
-    "electron-updater": "^6.3.9",
     "quill-markdown-shortcuts": "^0.0.10",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.10",
@@ -57,6 +156,8 @@
     "@vitejs/plugin-react": "^4.5.2",
     "electron": "^36.4.0",
     "electron-builder": "^25.1.8",
+    "electron-log": "^5.4.1",
+    "electron-updater": "^6.6.2",
     "electron-vite": "^3.1.0",
     "eslint": "^9.24.0",
     "eslint-plugin-react": "^7.37.5",

@@ -1,8 +1,12 @@
 appId: com.focusnote.app
 productName: FocusNote
+copyright: Copyright © ${year} FocusNote Team
+
 directories:
   buildResources: build
-  output: dist
+  output: release
+  app: out
+
 files:
   - "out/**/*"
   - "package.json"
@@ -17,8 +21,42 @@ files:
   - "node_modules/**/*"
   - "!node_modules/**/{.bin,*.md,*.d.ts,*.tsbuildinfo}"
 
+# Configuración de publicación
+publish:
+  provider: github
+  owner: erikivanmelo  # Reemplaza con tu usuario/organización de GitHub
+  repo: focusnote
+  releaseType: release
+  publishAutoUpdate: true
+
+# Configuraciones específicas por plataforma
+mac:
+  category: public.app-category.productivity
+  target: ["dmg", "zip"]
+  icon: "build/icon.icns"
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: "build/entitlements.mac.plist"
+  entitlementsInherit: "build/entitlements.mac.plist"
+
+dmg:
+  contents:
+    - x: 110
+      y: 150
+      type: file
+    - x: 240
+      y: 150
+      type: link
+      path: /Applications
+
+win:
+  target: ["nsis", "portable"]
+  icon: "build/icon.ico"
+  publisherName: "FocusNote Team"
+  verifyUpdateCodeSignature: false
+
 linux:
-  target: ["AppImage"]
+  target: ["AppImage", "deb"]
   category: "Utility"
   icon: "build/icon.png"
   maintainer: "FocusNote Team"
@@ -28,13 +66,39 @@ linux:
     Categories: "Utility;TextEditor;"
     Terminal: false
 
+# Configuración de recursos adicionales
 extraResources:
   - "resources/**"
   - "!resources/**/*.{map,ts,tsx,js,jsx}"
 
+# Configuración específica para paquetes DEB
 deb:
-  maintainer: "FocusNote Team"
-  depends: ["libcrypt1", "libgtk-3-0", "libnotify4", "libnss3", "libxss1", "libxtst6", "xdg-utils", "libat-spi2-core", "libuuid1", "libsecret-1-0", "libappindicator3-1"]
+  depends:
+    - libcrypt1
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libat-spi2-core
+    - libuuid1
+    - libsecret-1-0
+    - libappindicator3-1
   packageCategory: "Utility"
   description: "FocusNote is a simple and clean note-taking application."
   icon: "build/icon.png"
+
+# Configuración de NSIS (Windows)
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: "FocusNote"
+  uninstallDisplayName: "FocusNote"
+  include: "build/installer.nsh"
+
+# Configuración de actualizaciones automáticas
+generateUpdatesFilesForAllChannels: true
