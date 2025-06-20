@@ -1,27 +1,32 @@
 appId: com.focusnote.app
 productName: FocusNote
-copyright: Copyright © 2025 FocusNote Team
+copyright: Copyright 2025 FocusNote Team
 
 directories:
-  buildResources: build
   output: release
+  buildResources: build
   app: .
 
+# Files to include in the build
 files:
   - "dist/**/*"
-  - "out/**/*"
+  - "node_modules/**/*"
   - "package.json"
-  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,example,examples,doc,docs}"
+  - "src/renderer/**/*"
+  - "src/preload/**/*"
+  - "src/main/**/*"
+  - "resources/**/*"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
   - "!**/node_modules/.bin"
-  - "!**/*.{iml,o,hprof,orig,pyc,pyo,swp,md,log,lock}"
-  - "!**/._*"
-  - "!**/.git"
-  - "!**/.github"
-  - "!**/.vscode"
-  - "!**/.idea"
-  - "!**/src"
-  - "!**/test"
-  - "!**/tests"
+  - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+  - "!.editorconfig"
+  - "!**/node_modules/**/*.d.ts"
+  - "!**/node_modules/**/*.map"
+  - "!**/node_modules/**/.bin"
+  - "!**/node_modules/**/.cache"
+  - "!**/node_modules/**/.github"
+  - "!**/node_modules/**/.idea"
+  - "!**/node_modules/**/.vscode"
 
 # Configuración de publicación
 publish:

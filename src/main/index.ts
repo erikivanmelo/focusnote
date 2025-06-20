@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { setupIpcRoutes } from './utils/ipcRoutes';
@@ -7,9 +7,28 @@ import { Menu, MenuItem } from 'electron';
 import { setupAutoUpdater, checkForUpdates, quitAndInstall } from './services/autoUpdaterService';
 import log from 'electron-log';
 
-// Configurar el sistema de logs
-log.transports.file.level = 'info';
-log.info('Application starting...');
+// Configuración mejorada de logs
+log.transports.file.level = 'debug';
+log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
+// Configurar la ruta del archivo de log
+const logPath = join(app.getPath('userData'), 'focusnote-debug.log');
+log.transports.file.resolvePath = () => logPath;
+
+// Capturar errores no manejados
+process.on('uncaughtException', (error) => {
+  log.error('Uncaught Exception:', error);
+  dialog.showErrorBox('Error', `Un error inesperado ocurrió: ${error.message}`);
+});
+
+process.on('unhandledRejection', (reason) => {
+  log.error('Unhandled Rejection:', reason);
+});
+
+log.info('=== Application Starting ===');
+log.info('App Path:', app.getAppPath());
+log.info('User Data Path:', app.getPath('userData'));
+log.info('Environment:', process.env.NODE_ENV);
+log.info('Platform:', process.platform, process.arch);
 
 // Inicializar la base de datos y configurar manejadores IPC
 app.whenReady().then(() => {
@@ -26,8 +45,10 @@ app.whenReady().then(() => {
   });
 });
 
-function createWindow(): void {
-  // Create the browser window.
+function createWindow(): BrowserWindow {
+  log.info('Creating main window...');
+  
+  // Configuración de la ventana
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -35,15 +56,51 @@ function createWindow(): void {
     autoHideMenuBar: true,
     frame: false,
     titleBarStyle: 'hidden',
-    ...(process.platform === 'linux' ? { icon: join(__dirname, '../../resources/icon.png') } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       nodeIntegration: false,
       contextIsolation: true,
+      // Habilitar herramientas de desarrollo en producción
+      devTools: true,
+      // Mejorar mensajes de error
+      nodeIntegrationInWorker: false,
+      webSecurity: true,
+      // Habilitar soporte para ES modules
+      // Habilitar soporte para require en el proceso de renderizado
+      nodeIntegrationInSubFrames: false,
+      // Habilitar soporte para webview
+      webviewTag: true,
+      // Habilitar soporte para spellcheck
       spellcheck: true
+    },
+    ...(process.platform === 'linux' ? { icon: join(__dirname, '../../resources/icon.png') } : {})
+  });
+
+  // Habilitar herramientas de desarrollo en producción
+  mainWindow.webContents.on('did-frame-finish-load', () => {
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
   });
+
+  // Manejar errores de carga
+  mainWindow.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
+    log.error('Failed to load window:', { errorCode, errorDescription });
+    dialog.showErrorBox('Error de Carga', `No se pudo cargar la aplicación: ${errorDescription}`);
+  });
+
+  // Registrar eventos de la ventana
+  mainWindow.on('closed', () => {
+    log.info('Main window closed');
+  });
+
+  mainWindow.on('unresponsive', () => {
+    log.warn('Main window is unresponsive');
+    dialog.showErrorBox('Error', 'La ventana principal no responde');
+  });
+
+  return mainWindow;
 
   mainWindow.webContents.on('context-menu', (_, params) => {
   const menu = new Menu()
@@ -121,12 +178,40 @@ function createWindow(): void {
     return { action: 'deny' };
   });
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
+  // Load the app in development or production
+  if (is.dev) {
+    // In development, load from the dev server
+    const rendererUrl = process.env['ELECTRON_RENDERER_URL'] || 'http://localhost:3000';
+    if (rendererUrl) {
+      log.info('Loading development version from:', rendererUrl);
+      mainWindow.loadURL(rendererUrl).catch(err => {
+        log.error('Failed to load development URL:', err);
+        dialog.showErrorBox('Error', `Failed to load development version: ${err.message}`);
+      });
+    } else {
+      log.error('ELECTRON_RENDERER_URL is not defined in development mode');
+      dialog.showErrorBox('Error', 'Development server URL is not available');
+    }
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
+    // In production, load from the file system
+    const indexPath = join(__dirname, '../renderer/index.html');
+    log.info('Loading production build from:', indexPath);
+    
+    // Check if file exists
+    import('fs').then(fs => {
+      fs.access(indexPath, fs.constants.F_OK, (err) => {
+        if (err) {
+          log.error('Renderer file does not exist:', indexPath);
+          dialog.showErrorBox('Error', `Renderer file not found at: ${indexPath}\n\n${err.message}`);
+          return;
+        }
+        
+        mainWindow.loadFile(indexPath).catch(loadErr => {
+          log.error('Failed to load production file:', loadErr);
+          dialog.showErrorBox('Error', `Failed to load production build: ${loadErr.message}`);
+        });
+      });
+    });
   }
 }
 
