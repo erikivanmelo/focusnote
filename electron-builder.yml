@@ -33,20 +33,10 @@ publish:
 
 # Platform specific configurations
 win:
-  target: ["nsis", "portable"]
+  target: ["portable"]
   icon: "build/icon.ico"
   publisherName: "FocusNote Team"
   verifyUpdateCodeSignature: false
-  
-nsis:
-  oneClick: false
-  perMachine: false
-  allowToChangeInstallationDirectory: true
-  createDesktopShortcut: true
-  createStartMenuShortcut: true
-  shortcutName: "FocusNote"
-  uninstallDisplayName: "FocusNote"
-  include: "build/installer.nsh"
   
 mac:
   category: public.app-category.productivity

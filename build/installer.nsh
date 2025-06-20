@@ -9,19 +9,22 @@
 !macroend
 
 !macro customInstall
-    ; Create desktop shortcut
-    CreateShortCut "$DESKTOP\\${PRODUCT_NAME}.lnk" "$INSTDIR\\${APP_EXEC}"
-    
-    ; Create start menu shortcut
-    CreateDirectory "$SMPROGRAMS\\${PRODUCT_NAME}"
-    CreateShortCut "$SMPROGRAMS\\${PRODUCT_NAME}\\${PRODUCT_NAME}.lnk" "$INSTDIR\\${APP_EXEC}" "" "$INSTDIR\\${APP_EXEC}" 0
-    CreateShortCut "$SMPROGRAMS\\${PRODUCT_NAME}\\Uninstall ${PRODUCT_NAME}.lnk" "$INSTDIR\\Uninstall ${PRODUCT_NAME}.exe"
+  ; Create desktop shortcut
+  CreateShortCut "$DESKTOP\\${PRODUCT_NAME}.lnk" "$INSTDIR\\${APP_FILENAME}.exe"
+  
+  ; Create start menu shortcut
+  CreateDirectory "$SMPROGRAMS\\${PRODUCT_NAME}"
+  CreateShortCut "$SMPROGRAMS\\${PRODUCT_NAME}\\${PRODUCT_NAME}.lnk" "$INSTDIR\\${APP_FILENAME}.exe"
+  CreateShortCut "$SMPROGRAMS\\${PRODUCT_NAME}\\Uninstall ${PRODUCT_NAME}.lnk" "$INSTDIR\\uninstaller.exe"
 !macroend
 
 !macro customUnInstall
-    ; Remove desktop shortcut
-    Delete "$DESKTOP\\${PRODUCT_NAME}.lnk"
-    
-    ; Remove start menu shortcuts
-    RMDir /r "$SMPROGRAMS\\${PRODUCT_NAME}"
+  ; Remove desktop shortcut
+  Delete "$DESKTOP\\${PRODUCT_NAME}.lnk"
+  
+  ; Remove start menu shortcuts
+  RMDir /r "$SMPROGRAMS\\${PRODUCT_NAME}"
+  
+  ; Remove application data
+  RMDir /r "$LOCALAPPDATA\\${PRODUCT_NAME}"
 !macroend
