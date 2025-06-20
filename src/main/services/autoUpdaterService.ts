@@ -8,8 +8,11 @@ log.transports.file.level = 'info';
 log.info('Auto-updater service initialized');
 
 // Basic auto-updater configuration
-autoUpdater.autoDownload = true;
-autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.autoDownload = false; // Changed to false for first release
+autoUpdater.autoInstallOnAppQuit = false; // Changed to false for first release
+
+// Disable auto-update for first release
+const IS_FIRST_RELEASE = true; // Set to false after first successful release
 
 export function setupAutoUpdater(mainWindow: BrowserWindow | null): void {
   if (!mainWindow) {
@@ -17,10 +20,23 @@ export function setupAutoUpdater(mainWindow: BrowserWindow | null): void {
     return;
   }
 
-  // Check for updates on startup
-  autoUpdater.checkForUpdates().catch(err => {
-    log.error('Error checking for updates:', err);
-  });
+  if (IS_FIRST_RELEASE) {
+    log.info('Skipping auto-update check for first release');
+    return;
+  }
+
+  try {
+    // Check for updates on startup
+    autoUpdater.checkForUpdates().catch(err => {
+      log.error('Error checking for updates:', err);
+      // Don't show error to user for first release
+      if (!IS_FIRST_RELEASE) {
+        dialog.showErrorBox('Update Error', 'Failed to check for updates. Please check your internet connection.');
+      }
+    });
+  } catch (error) {
+    log.error('Unexpected error in auto-updater setup:', error);
+  }
 
   // Event when an update is available
   autoUpdater.on('update-available', (info) => {
