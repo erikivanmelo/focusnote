@@ -4,9 +4,35 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   main: {
+    build: {
+      outDir: 'dist/main',
+      emptyOutDir: true,
+      rollupOptions: {
+        input: 'src/main/index.ts',
+        output: {
+          format: 'cjs',
+          entryFileNames: 'index.js',
+          chunkFileNames: '[name].js',
+          assetFileNames: '[name].[ext]',
+        },
+      },
+    },
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
+    build: {
+      outDir: 'dist/preload',
+      emptyOutDir: true,
+      rollupOptions: {
+        input: 'src/preload/index.ts',
+        output: {
+          format: 'cjs',
+          entryFileNames: 'index.js',
+          chunkFileNames: '[name].js',
+          assetFileNames: '[name].[ext]',
+        },
+      },
+    },
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
@@ -16,7 +42,7 @@ export default defineConfig({
       }
     },
     build: {
-      outDir: '../../dist/renderer',
+      outDir: 'dist/renderer',
       emptyOutDir: true,
       rollupOptions: {
         input: {

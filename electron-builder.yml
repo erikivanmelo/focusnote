@@ -1,7 +1,9 @@
+# Application information
 appId: com.focusnote.app
 productName: FocusNote
 copyright: Copyright 2025 FocusNote Team
 
+# Directories configuration
 directories:
   output: release
   buildResources: build
@@ -12,9 +14,6 @@ files:
   - "dist/**/*"
   - "node_modules/**/*"
   - "package.json"
-  - "src/renderer/**/*"
-  - "src/preload/**/*"
-  - "src/main/**/*"
   - "resources/**/*"
   - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
   - "!**/node_modules/.bin"
@@ -27,11 +26,15 @@ files:
   - "!**/node_modules/**/.github"
   - "!**/node_modules/**/.idea"
   - "!**/node_modules/**/.vscode"
+  - "!src/**/*"  # Exclude source files, we only want the built files
 
-# Configuración de publicación
+# ASAR configuration
+asar: true
+
+# Publish configuration
 publish:
   provider: github
-  owner: erikivanmelo  # Reemplaza con tu usuario/organización de GitHub
+  owner: erikivanmelo
   repo: focusnote
   releaseType: release
   publishAutoUpdate: true
