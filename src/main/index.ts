@@ -7,17 +7,17 @@ import { Menu, MenuItem } from 'electron';
 import { setupAutoUpdater, checkForUpdates, quitAndInstall } from './services/autoUpdaterService';
 import log from 'electron-log';
 
-// Configuración mejorada de logs
+// Enhanced log configuration
 log.transports.file.level = 'debug';
 log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
-// Configurar la ruta del archivo de log
+// Set the log file path
 const logPath = join(app.getPath('userData'), 'focusnote-debug.log');
 log.transports.file.resolvePath = () => logPath;
 
-// Capturar errores no manejados
+// Catch unhandled exceptions and rejections
 process.on('uncaughtException', (error) => {
   log.error('Uncaught Exception:', error);
-  dialog.showErrorBox('Error', `Un error inesperado ocurrió: ${error.message}`);
+  dialog.showErrorBox('Error', `An unexpected error occurred: ${error.message}`);
 });
 
 process.on('unhandledRejection', (reason) => {
@@ -30,12 +30,12 @@ log.info('User Data Path:', app.getPath('userData'));
 log.info('Environment:', process.env.NODE_ENV);
 log.info('Platform:', process.platform, process.arch);
 
-// Inicializar la base de datos y configurar manejadores IPC
+// Initialize database and set up IPC handlers
 app.whenReady().then(() => {
   initDatabase();
   setupIpcRoutes(ipcMain);
   
-  // Configurar manejadores IPC para actualizaciones
+  // Set up IPC handlers for updates
   ipcMain.handle('check-for-updates', async () => {
     return await checkForUpdates();
   });
@@ -48,7 +48,7 @@ app.whenReady().then(() => {
 function createWindow(): BrowserWindow {
   log.info('Creating main window...');
   
-  // Configuración de la ventana
+  // Window configuration
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -61,17 +61,17 @@ function createWindow(): BrowserWindow {
       sandbox: false,
       nodeIntegration: false,
       contextIsolation: true,
-      // Habilitar herramientas de desarrollo en producción
+      // Enable dev tools in production
       devTools: true,
-      // Mejorar mensajes de error
+      // Improve error messages
       nodeIntegrationInWorker: false,
       webSecurity: true,
-      // Habilitar soporte para ES modules
-      // Habilitar soporte para require en el proceso de renderizado
+      // Enable ES modules support
+      // Enable require support in renderer process
       nodeIntegrationInSubFrames: false,
-      // Habilitar soporte para webview
+      // Enable webview support
       webviewTag: true,
-      // Habilitar soporte para spellcheck
+      // Enable spellcheck support
       spellcheck: true
     },
     ...(process.platform === 'linux' ? { icon: join(__dirname, '../../resources/icon.png') } : {})
@@ -87,46 +87,45 @@ function createWindow(): BrowserWindow {
   // Manejar errores de carga
   mainWindow.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
     log.error('Failed to load window:', { errorCode, errorDescription });
-    dialog.showErrorBox('Error de Carga', `No se pudo cargar la aplicación: ${errorDescription}`);
+    dialog.showErrorBox('Load Error', `Failed to load application: ${errorDescription}`);
   });
 
-  // Registrar eventos de la ventana
+  // Register window events
   mainWindow.on('closed', () => {
     log.info('Main window closed');
   });
 
   mainWindow.on('unresponsive', () => {
     log.warn('Main window is unresponsive');
-    dialog.showErrorBox('Error', 'La ventana principal no responde');
+    dialog.showErrorBox('Error', 'The main window is not responding');
   });
 
-  return mainWindow;
-
+  // Set up context menu for spell checking
   mainWindow.webContents.on('context-menu', (_, params) => {
-  const menu = new Menu()
+    const menu = new Menu();
 
-  // Add each spelling suggestion
-  for (const suggestion of params.dictionarySuggestions) {
-    menu.append(new MenuItem({
-      label: suggestion,
-      click: () => mainWindow.webContents.replaceMisspelling(suggestion)
-    }))
-  }
+    // Add spelling suggestions
+    for (const suggestion of params.dictionarySuggestions) {
+      menu.append(new MenuItem({
+        label: suggestion,
+        click: () => mainWindow.webContents.replaceMisspelling(suggestion)
+      }));
+    }
 
-  // Allow users to add the misspelled word to the dictionary
-  if (params.misspelledWord) {
-    menu.append(
-      new MenuItem({
-        label: 'Add to dictionary',
-        click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
-      })
-    )
-  }
+    // Allow adding words to the dictionary
+    if (params.misspelledWord) {
+      menu.append(
+        new MenuItem({
+          label: 'Añadir al diccionario',
+          click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+        })
+      );
+    }
 
-  menu.popup()
-})
+    menu.popup();
+  });
 
-  // Manejo de eventos de la ventana
+  // Window event handling
   ipcMain.on('window:minimize', () => {
     const window = BrowserWindow.getFocusedWindow();
     if (window) window.minimize();
@@ -153,7 +152,7 @@ function createWindow(): BrowserWindow {
     return window ? window.isMaximized() : false;
   });
 
-  // Notificar al renderer cuando cambie el estado de maximizado
+  // Notify renderer when maximized state changes
   mainWindow.on('maximize', () => {
     mainWindow.webContents.send('window:maximized', true);
   });
@@ -165,14 +164,13 @@ function createWindow(): BrowserWindow {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
     
-    // Iniciar el auto-updater después de que la ventana esté lista
-    if (!is.dev) {
-      setupAutoUpdater(mainWindow);
-    } else {
-      log.info('Running in development, auto-updater is disabled');
+    // Open dev tools in development
+    if (is.dev || process.env.DEBUG_PROD === 'true') {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
   });
 
+  // Handle opening external links in the default browser
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: 'deny' };
@@ -182,22 +180,16 @@ function createWindow(): BrowserWindow {
   if (is.dev) {
     // In development, load from the dev server
     const rendererUrl = process.env['ELECTRON_RENDERER_URL'] || 'http://localhost:3000';
-    if (rendererUrl) {
-      log.info('Loading development version from:', rendererUrl);
-      mainWindow.loadURL(rendererUrl).catch(err => {
-        log.error('Failed to load development URL:', err);
-        dialog.showErrorBox('Error', `Failed to load development version: ${err.message}`);
-      });
-    } else {
-      log.error('ELECTRON_RENDERER_URL is not defined in development mode');
-      dialog.showErrorBox('Error', 'Development server URL is not available');
-    }
+    log.info('Cargando versión de desarrollo desde:', rendererUrl);
+    mainWindow.loadURL(rendererUrl).catch((err: Error) => {
+      log.error('Error loading development URL:', err);
+      dialog.showErrorBox('Error', `Failed to load development version: ${err.message}`);
+    });
   } else {
     // In production, load from the file system
     const indexPath = join(__dirname, '../renderer/index.html');
-    log.info('Loading production build from:', indexPath);
+    log.info('Cargando versión de producción desde:', indexPath);
     
-    // Check if file exists
     import('fs').then(fs => {
       fs.access(indexPath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -206,13 +198,22 @@ function createWindow(): BrowserWindow {
           return;
         }
         
-        mainWindow.loadFile(indexPath).catch(loadErr => {
-          log.error('Failed to load production file:', loadErr);
-          dialog.showErrorBox('Error', `Failed to load production build: ${loadErr.message}`);
+        mainWindow.loadFile(indexPath).catch((loadErr: Error) => {
+          log.error('Error loading production file:', loadErr);
+          dialog.showErrorBox('Error', `Failed to load production version: ${loadErr.message}`);
         });
       });
     });
   }
+
+  // Start auto-updater after the window is ready
+  if (!is.dev) {
+    setupAutoUpdater(mainWindow);
+  } else {
+    log.info('Running in development, auto-updater is disabled');
+  }
+
+  return mainWindow;
 }
 
 // This method will be called when Electron has finished
