@@ -11,8 +11,7 @@ FocusNote is a desktop application designed to help you capture and organize you
 - 📝 Create and edit notes quickly
 - 🏷️ Tag system for better organization
 - 💾 Auto-save functionality
-- 🚀 Automatic updates
-- 🖥️ Cross-platform (Windows, macOS, Linux)
+- 🖥️ Cross-platform (Windows, Linux)
 - 🔒 Local storage for your notes
 - 🎨 Dark/Light mode
 
@@ -24,9 +23,9 @@ Download the latest version for your operating system from the [Releases](https:
 
 ### System Requirements
 
-- Windows 10/11, macOS 10.14+, or Linux
+- Windows 10/11 or Linux
 - 64-bit operating system
-- At least 200MB of free disk space
+- At least 500MB of free disk space
 
 ## 🛠️ For Developers
 
@@ -65,10 +64,7 @@ Download the latest version for your operating system from the [Releases](https:
 
 - `npm run build` - Build for production
 - `npm run build:win` - Build for Windows
-- `npm run build:mac` - Build for macOS
 - `npm run build:linux` - Build for Linux
-- `npm run format` - Format code with Prettier
-- `npm run lint` - Run ESLint for code quality
 
 ## 🤝 Contributing
 
@@ -102,9 +98,6 @@ $ npm run dev
 ```bash
 # For windows
 $ npm run build:win
-
-# For macOS
-$ npm run build:mac
 
 # For Linux
 $ npm run build:linux
