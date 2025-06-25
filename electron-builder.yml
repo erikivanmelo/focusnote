@@ -1,44 +1,35 @@
 appId: com.focusnote.app
 productName: FocusNote
+copyright: Copyright 2025 FocusNote Team
+asar: true
+
 directories:
   buildResources: build
   output: dist
+
 files:
   - "out/**/*"
   - "package.json"
-  - "!**/.git/**"
-  - "!**/src/**"
-  - "!**/.vscode/**"
-  - "!**/dist/**"
-  - "!**/*.{iml,o,hprof,orig,pyc,pyo,swp,md,log,lock}"
-  - "!**/._*"
-  - "!**/node_modules/.cache/**"
-  - "!**/node_modules/*/{test,__tests__,tests,example,examples,doc,docs,*.md}"
-  - "node_modules/**/*"
-  - "!node_modules/**/{.bin,*.md,*.d.ts,*.tsbuildinfo}"
+  - "!**/node_modules/*"
+  - "!**/.git/*"
+  - "!**/*.md"
+  - "!**/*.map"
+  - "!**/*.ts"
+  - "!**/*.tsx"
+  - "!**/*.js.map"
+  - "!**/*.log"
 
 win:
-  target: ["nsis", "portable", "msi"]
-  icon: "build/icon.ico"
+  target: "nsis"
   publisherName: "FocusNote Team"
   rfc3161TimeStampServer: "http://timestamp.digicert.com"
   verifyUpdateCodeSignature: false
+  requestedExecutionLevel: "asInvoker"
 
-mac:
-  target: ["dmg", "pkg", "zip"]
-  category: "public.app-category.utilities"
-  icon: "build/icon.icns"
-  hardenedRuntime: true
-  gatekeeperAssess: false
-  entitlements: "build/entitlements.mac.plist"
-  entitlementsInherit: "build/entitlements.mac.plist"
-  darkModeSupport: true
-  minimumSystemVersion: "10.13"
 
 linux:
-  target: ["AppImage", "deb", "rpm"]
+  target: ["AppImage", "deb"]
   category: "Utility"
-  icon: "build/icon.png"
   maintainer: "FocusNote Team"
   desktop:
     Name: "FocusNote"
@@ -49,31 +40,17 @@ linux:
 extraResources:
   - "resources/**"
   - "!resources/**/*.{map,ts,tsx,js,jsx}"
-
-afterPack: ./build/afterPack.js
-
 nsis:
   oneClick: false
-  perMachine: false
+  perMachine: true
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
+  menuCategory: "FocusNote"
   shortcutName: "FocusNote"
   uninstallDisplayName: "FocusNote"
-  include: "build/installer.nsh"
-  artifactName: "${productName}-${version}-setup.${ext}"
-
-appx:
-  applicationId: "FocusNote"
-  displayName: "FocusNote"
-  publisherDisplayName: "FocusNote Team"
-  identityName: "FocusNote"
-  publisher: "CN=FocusNote"
-  languages: ["en-US"]
-  backgroundColor: "#ffffff"
-  showNameOnTiles: true
-  languages: ["en-US"]
-  artifactName: "${productName}-${version}-${arch}.${ext}"
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
 
 deb:
   maintainer: "FocusNote Team"

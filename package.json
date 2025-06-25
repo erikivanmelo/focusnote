@@ -22,7 +22,7 @@
     "electron-app"
   ],
   "build": {
-    "extends": null
+    "extends": "./electron-builder.yml"
   },
   "scripts": {
     "format": "prettier --write .",
