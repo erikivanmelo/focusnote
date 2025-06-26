@@ -1,0 +1,17 @@
+body {
+    --text-color: #212529;
+    --border-color:#dee2e6;
+    --background-input-color:#fff;
+    --background-form-color:white;
+    --placeholder-color: #bdbdbd;
+    --close-button: #7f7f7f;
+}
+body.dark {
+    --text-color: #e0e0e0;
+    --border-color:#393a3b;
+    --background-input-color:#3a3b3b;
+    --background-form-color: #242526;
+    --close-button: #848585;
+}
+//dark 848585
+//light 7f7f7f

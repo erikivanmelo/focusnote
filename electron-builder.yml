@@ -1,36 +1,56 @@
 appId: com.focusnote.app
 productName: FocusNote
+copyright: Copyright 2025 FocusNote Team
+asar: true
+
 directories:
   buildResources: build
   output: dist
+
 files:
   - "out/**/*"
   - "package.json"
-  - "!**/.git/**"
-  - "!**/src/**"
-  - "!**/.vscode/**"
-  - "!**/dist/**"
-  - "!**/*.{iml,o,hprof,orig,pyc,pyo,swp,md,log,lock}"
-  - "!**/._*"
-  - "!**/node_modules/.cache/**"
-  - "!**/node_modules/*/{test,__tests__,tests,example,examples,doc,docs,*.md}"
-  - "node_modules/**/*"
-  - "!node_modules/**/{.bin,*.md,*.d.ts,*.tsbuildinfo}"
+  - "!**/node_modules/*"
+  - "!**/.git/*"
+  - "!**/*.md"
+  - "!**/*.map"
+  - "!**/*.ts"
+  - "!**/*.tsx"
+  - "!**/*.js.map"
+  - "!**/*.log"
+
+win:
+  target: "nsis"
+  publisherName: "FocusNote Team"
+  rfc3161TimeStampServer: "http://timestamp.digicert.com"
+  verifyUpdateCodeSignature: false
+  requestedExecutionLevel: "asInvoker"
+
 
 linux:
-  target: ["AppImage"]
+  target: ["AppImage", "deb"]
   category: "Utility"
-  icon: "build/icon.png"
   maintainer: "FocusNote Team"
   desktop:
     Name: "FocusNote"
     Comment: "A minimalistic note-taking app"
-    Categories: "Utility;TextEditor;"
+    Categories: "Utility"
     Terminal: false
 
 extraResources:
   - "resources/**"
   - "!resources/**/*.{map,ts,tsx,js,jsx}"
+nsis:
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  menuCategory: "FocusNote"
+  shortcutName: "FocusNote"
+  uninstallDisplayName: "FocusNote"
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
 
 deb:
   maintainer: "FocusNote Team"

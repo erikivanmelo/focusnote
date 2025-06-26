@@ -1,10 +1,29 @@
 {
-  "name": "focusnote-app",
-  "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "name": "focusnote",
+  "version": "1.0.0-beta",
+  "description": "A minimalistic note-taking app",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "FocusNote Team",
   "homepage": "https://electron-vite.org",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erikivanmelo/focusnote.git"
+  },
+  "bugs": {
+    "url": "https://github.com/erikivanmelo/focusnote/issues"
+  },
+  "keywords": [
+    "electron",
+    "focusnote",
+    "note-taking",
+    "productivity",
+    "desktop-app",
+    "electron-app"
+  ],
+  "build": {
+    "extends": "./electron-builder.yml"
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

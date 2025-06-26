@@ -13,8 +13,8 @@ export function fromRawsToTags(data: Array<RawTag>) {
 }
 
 const tagService = {
-    getAllNames: async (): Promise<string[]> => {
-        const tags = await tagApi.getAllNames();
+    getAllNamesInUse: async (): Promise<string[]> => {
+        const tags = await tagApi.getAllNamesInUse();
         return tags;
     },
 };

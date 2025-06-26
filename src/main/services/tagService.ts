@@ -22,8 +22,8 @@ const tagService = {
         return tagController.getAll() as Tag[];
     },
 
-    getAllNames: (): string[] => {
-        return tagController.getAllNames() as string[];
+    getAllNamesInUse: (): string[] => {
+        return tagController.getAllNamesInUse() as string[];
     },
 
     getAllByNote: (params: GetAllByNoteParams): Tag[] => {

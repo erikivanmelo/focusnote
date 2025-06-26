@@ -1,9 +1,9 @@
 import { Modal } from "react-bootstrap";
 import NoteForm from "./NoteForm";
 import { useNavigate, useParams } from 'react-router-dom';
-import noteService from "../services/noteService";
-import { useGenericQuery } from "../hooks/useGenericQuery";
-import {ROUTES} from "../routes/routesConfig";
+import noteService from "@renderer/services/noteService";
+import { useGenericQuery } from "@renderer/hooks/useGenericQuery";
+import {ROUTES} from "@renderer/routes/routesConfig";
 
 interface ModalNoteFormProps {
 	action: "Update" | "Publish";
@@ -19,11 +19,7 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 	) : {data: null};
 
 	const handleClose = () => {
-		if (window.history.state?.hasInitialModal) {
-			navigate(ROUTES.HOME, { replace: true });
-		} else {
-			navigate(-1);
-		}
+		navigate(ROUTES.HOME, { replace: true });
 	};
 
 	return (

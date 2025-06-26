@@ -1,15 +1,14 @@
 import { useState, useEffect, ReactNode } from "react";
-import { Modal, Form, ListGroup, Button } from "react-bootstrap";
-import "../styles/global.scss";
+import { Button, Form, ListGroup, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@renderer/routes/routesConfig";
-import Note from "../models/Note";
-import noteService from "@renderer/services/noteService";
-import ColorSelector from "./ColorSelector";
-import TagInput from "./TagInput";
-import Color from "@renderer/models/Color";
+import './Menu.scss'
 import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
-import {useCachedQueryData} from "@renderer/hooks/useCachedQueryData";
+import Note from "@renderer/models/Note";
+import noteService from "@renderer/services/noteService";
+import TagInput from "../TagInput";
+import ColorSelector from "../ColorSelector";
+import Color from "@renderer/models/Color";
 
 // Extender la interfaz CSSProperties para incluir propiedades de WebKit
 declare module 'react' {
@@ -319,4 +318,3 @@ function NoteFilter() {
 }
 
 export default Menu;
-

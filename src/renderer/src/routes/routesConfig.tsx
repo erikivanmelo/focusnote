@@ -1,7 +1,7 @@
 import { RouteObject } from 'react-router-dom';
 import App from '../App';
 import NoteCardList from '../components/NoteCardList';
-import ModalNoteForm from '../components/ModalNoteForm';
+import { ModalNoteForm } from '../components/NoteForm';
 
 export const ROUTES = {
 	HOME: '/',
