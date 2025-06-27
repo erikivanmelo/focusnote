@@ -1,92 +1,100 @@
-import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
+import { useGenericQueryNoParams } from "@renderer/hooks/useGenericQuery";
 import tagService from "@renderer/services/tagService";
-import {useCallback, useMemo, useState} from "react";
+import { useEffect, useRef, useState } from "react";
+import { Form } from "react-bootstrap";
 import './TagInput.scss';
 
 interface TagInputProps {
-	tags    : string[];
-	onSubmit: (tag: string) => boolean;
-	onRemove: (tag: string) => void;
+    tags         : string[];
+    onSubmit     : (tag: string) => boolean;
+    onRemove     : (tag: string) => void;
+    onlyExisting?: boolean;
 }
 
-function TagInput({
-    tags,
-    onSubmit,
-    onRemove
-}: TagInputProps) {
-	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNamesInUse);
-	const [inputValue , setInputValue ] = useState("");
+function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [inputValue, setInputValue] = useState("");
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const suggestions = useMemo(() => {
-        if (!initialSuggestions.isSuccess || !initialSuggestions.data) return [];
-        return initialSuggestions.data.filter(tag => !tags.includes(tag));
-    }, [
-        initialSuggestions.isSuccess,
-        initialSuggestions.data,
-        tags
-    ]);
+    const { data: allTags = [] } = useGenericQueryNoParams<string[]>(
+        ["tags"],
+        tagService.getAllNamesInUse
+    );
 
-	const handleKeyDown = useCallback(
-         (e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key !== "Enter")
-                return;
+    const filteredTags = allTags.filter(tag =>
+        !tags.includes(tag) &&
+        tag.toLowerCase().includes(inputValue.toLowerCase())
+    );
 
-            if (onSubmit(inputValue.trim()))
-                setInputValue("");
-		},
-		[inputValue, onSubmit]
-	);
+    const handleSubmit = (tag: string) => {
+        if ((!onlyExisting || allTags.includes(tag)) && !tags.includes(tag)) {
+            if (onSubmit(tag)) {
+                setInputValue('');
+                setShowSuggestions(false);
+            }
+        }
+    };
 
-    const handleAddTag = useCallback(() => {
-            if (onSubmit(inputValue.trim()))
-                setInputValue("");
-		},
-		[inputValue, onSubmit]
-	);
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
-
-	return (
-		<>
-			<ul id="tag-pills">
-				{tags.map(tag => (
-					<li key={tag} value={tag}>
-						<span>{tag}</span>
-						<a onClick={() => onRemove(tag)}>
-							<i className="bi bi-x-circle-fill"></i>
-						</a>
-					</li>
-				))}
-			</ul>
-
-			<datalist id="tagList">
-				{[...suggestions].map(tag => (
-					<option key={tag} value={tag} />
-				))}
-			</datalist>
-
-            <div className="input-group">
-                <input
-                    id="tags"
-                    type="text"
-                    placeholder="Tags"
-                    className="form-control"
-                    maxLength={40}
-                    list="tagList"
-                    value={inputValue}
-                    onChange={e => {
-                        const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
-                        setInputValue(value);
-                    }}
-                    onKeyDown={handleKeyDown}
-                />
-                <button
-                    className="btn"
-                    onClick={handleAddTag}
-                >
-                    <i className="bi bi-plus-lg" ></i>
-                </button>
+    return (
+        <div className="tag-selector mb-3" ref={containerRef}>
+            <div className="selected-tags d-flex flex-wrap gap-1 mb-2">
+                {tags.map(tag => (
+                    <span key={tag} className="badge bg-primary d-flex align-items-center">
+                        {tag}
+                        <button
+                            type="button"
+                            className="btn-close btn-close-white btn-sm ms-1"
+                            onClick={() => onRemove(tag)}
+                            aria-label={`Remove ${tag}`}
+                        />
+                    </span>
+                ))}
             </div>
-		</>
-	);
+
+            <div className="position-relative">
+                <Form.Control
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && inputValue.trim()) {
+                            handleSubmit(inputValue.trim());
+                        } else if (e.key === 'Escape') {
+                            setShowSuggestions(false);
+                        }
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onClick={() => setShowSuggestions(true)}
+                    placeholder={onlyExisting ? "Search and select tags..." : "Add or search tags..."}
+                    className="mb-0"
+                />
+
+                {showSuggestions && filteredTags.length > 0 && (
+                    <div className="tag-suggestions position-absolute w-100 bg-white border rounded shadow-sm mt-1">
+                        {filteredTags.map(tag => (
+                            <div
+                                key={tag}
+                                className="suggestion-item p-2 hover-bg-light cursor-pointer"
+                                onClick={() => handleSubmit(tag)}
+                            >
+                                {tag}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
+
 export default TagInput;

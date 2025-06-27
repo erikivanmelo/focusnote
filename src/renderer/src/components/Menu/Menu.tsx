@@ -266,6 +266,7 @@ function NoteFilter() {
                         tags={selectedTags}
                         onSubmit={handleAddTag}
                         onRemove={handleRemoveTag}
+                        onlyExisting={true}
                     />
 
                     <div className="d-flex gap-2 mb-2 mt-3">
