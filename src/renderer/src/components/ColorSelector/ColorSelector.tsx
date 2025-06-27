@@ -1,15 +1,16 @@
 import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
 import Color from "@renderer/models/Color";
 import colorService from "@renderer/services/colorService";
+import './ColorSelector.scss';
 
 interface ColorSelectorProps {
-    value?   : Color | null;
-    onChange?: (color: Color) => void;
+    value   : Color | null;
+    onChange: (color: Color) => void;
 }
 
 function ColorSelector({
-    value = null,
-    onChange = () => {}
+    value,
+    onChange
 }: ColorSelectorProps) {
     const {data: colors} = useGenericQueryNoParams<Color[]>(["colors"], colorService.getAll);
 

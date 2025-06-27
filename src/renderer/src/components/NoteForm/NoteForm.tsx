@@ -1,9 +1,5 @@
 import React, {useRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { useGenericQueryNoParams } from "@renderer/hooks/useGenericQuery";
 import { useInvalidateMutation } from "@renderer/hooks/useInvalidateMutation";
-//import noteService from '../services/noteService';
-import colorService from "@renderer/services/colorService";
-import tagService from "@renderer/services/tagService";
 import Note from "@renderer/models/Note";
 import Tag from "@renderer/models/Tag";
 import Color from "@renderer/models/Color";
@@ -11,6 +7,8 @@ import DisableLayer from "../DisableLayer";
 import TiptapEditor, { TiptapEditorRef } from "@renderer/components/TiptapEditor";
 import noteService from '@renderer/services/noteService';
 import './NoteForm.scss';
+import TagInput from '../TagInput';
+import ColorSelector from '../ColorSelector';
 
 interface NoteFormProp{
     note?: Note | null;
@@ -18,6 +16,7 @@ interface NoteFormProp{
     onSuccess?: () => void
 }
 
+// add Comments
 function NoteForm({
         note = null,
         action,
@@ -164,115 +163,5 @@ function NoteForm({
         </div>
     );
 };
-
-
-interface ColorSelectorProps {
-    value   : Color;
-    onChange: (color: Color) => void;
-}
-
-function ColorSelector({ value, onChange }: ColorSelectorProps) {
-    const {data: colors} = useGenericQueryNoParams<Array<Color>>(["colors"], colorService.getAll);
-
-    return (
-        <div className="input-colors">
-            {colors?.map((color: Color) => (
-                <label key={color.id}>
-                    <input
-                        type="radio"
-                        value={color.name}
-                        checked={color.id === value.id}
-                        onChange={() => onChange(color)}
-                    />
-                    <span className="checkmark"></span>
-                </label>
-            ))}
-        </div>
-    );
-}
-
-
-interface TagInputProps {
-	tags: string[];
-	onSubmit: (tag: string) => boolean;
-	onRemove: (tag: string) => void;
-}
-
-function TagInput({ tags, onSubmit, onRemove }: TagInputProps) {
-	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNamesInUse);
-	const [inputValue , setInputValue ] = useState("");
-
-    const suggestions = useMemo(() => {
-        if (!initialSuggestions.isSuccess || !initialSuggestions.data) return [];
-        return initialSuggestions.data.filter(tag => !tags.includes(tag));
-    }, [
-        initialSuggestions.isSuccess,
-        initialSuggestions.data,
-        tags
-    ]);
-
-	const handleKeyDown = useCallback(
-         (e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key !== "Enter")
-                return;
-
-            if (onSubmit(inputValue.trim()))
-                setInputValue("");
-		},
-		[inputValue, onSubmit]
-	);
-
-    const handleAddTag = useCallback(() => {
-            if (onSubmit(inputValue.trim()))
-                setInputValue("");
-		},
-		[inputValue, onSubmit]
-	);
-
-
-	return (
-		<>
-			<ul id="tag-pills">
-				{tags.map(tag => (
-					<li key={tag} value={tag}>
-						<span>{tag}</span>
-						<a onClick={() => onRemove(tag)}>
-							<i className="bi bi-x-circle-fill"></i>
-						</a>
-					</li>
-				))}
-			</ul>
-
-			<datalist id="tagList">
-				{[...suggestions].map(tag => (
-					<option key={tag} value={tag} />
-				))}
-			</datalist>
-
-            <div className="input-group">
-                <input
-                    id="tags"
-                    type="text"
-                    placeholder="Tags"
-                    className="form-control"
-                    maxLength={40}
-                    list="tagList"
-                    value={inputValue}
-                    onChange={e => {
-                        const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
-                        setInputValue(value);
-                    }}
-                    onKeyDown={handleKeyDown}
-                />
-                <button
-                    className="btn"
-                    onClick={handleAddTag}
-                >
-                    <i className="bi bi-plus-lg" ></i>
-                </button>
-            </div>
-		</>
-	);
-}
 
 export default NoteForm;

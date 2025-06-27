@@ -72,7 +72,7 @@ $scrollbar-track-color: rgba(0, 0, 0, 0.05);
     border-radius: 12px;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
     color: var(--placeholder-color)!important;
 }
 

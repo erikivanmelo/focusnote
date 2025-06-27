@@ -300,7 +300,7 @@ function NoteFilter() {
                             className={"search-result-item " + note.color.name}
                         >
                             <div className="fw-bold">{note.title || 'Untitled Note'}</div>
-                            <div className="text-muted small">
+                            <div className="small">
                                 {note.content && note.content.substring(0, 100)}{note.content && note.content.length > 100 ? '...' : ''}
                             </div>
                         </ListGroup.Item>

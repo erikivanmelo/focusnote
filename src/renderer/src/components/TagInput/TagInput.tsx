@@ -1,19 +1,20 @@
 import {useGenericQueryNoParams} from "@renderer/hooks/useGenericQuery";
 import tagService from "@renderer/services/tagService";
 import {useCallback, useMemo, useState} from "react";
+import './TagInput.scss';
 
 interface TagInputProps {
-	tags    ?: string[];
-	onSubmit?: (tag: string) => boolean;
-	onRemove?: (tag: string) => void;
+	tags    : string[];
+	onSubmit: (tag: string) => boolean;
+	onRemove: (tag: string) => void;
 }
 
 function TagInput({
-    tags = [],
-    onSubmit = () => {return false},
-    onRemove = () => {}
+    tags,
+    onSubmit,
+    onRemove
 }: TagInputProps) {
-	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNames);
+	const initialSuggestions = useGenericQueryNoParams<string[]>(["tags"], tagService.getAllNamesInUse);
 	const [inputValue , setInputValue ] = useState("");
 
     const suggestions = useMemo(() => {
@@ -69,9 +70,13 @@ function TagInput({
                     type="text"
                     placeholder="Tags"
                     className="form-control"
+                    maxLength={40}
                     list="tagList"
                     value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
+                    onChange={e => {
+                        const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
+                        setInputValue(value);
+                    }}
                     onKeyDown={handleKeyDown}
                 />
                 <button
