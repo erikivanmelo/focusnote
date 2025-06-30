@@ -75,7 +75,7 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                     }}
                     onFocus={() => setShowSuggestions(true)}
                     onClick={() => setShowSuggestions(true)}
-                    placeholder={onlyExisting ? "Search and select tags..." : "Add or search tags..."}
+                    placeholder="Tags"
                     className="mb-0"
                 />
 
