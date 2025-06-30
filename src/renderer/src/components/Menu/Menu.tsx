@@ -33,7 +33,7 @@ function Menu({ children }: Props) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [isMaximized, setIsMaximized] = useState<boolean>(false);
-
+    const [showSearch, setShowSearch] = useState<boolean>(false);
     const navigate = useNavigate();
 
     // Handle window controls
@@ -79,7 +79,6 @@ function Menu({ children }: Props) {
             title: isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme',
             onClick: toggleTheme
         },
-        //{ id: 'settings', icon: 'gear', title: 'Settings', onClick: () => {} },
     ];
 
     return (

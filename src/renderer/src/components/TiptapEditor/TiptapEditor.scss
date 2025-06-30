@@ -32,7 +32,7 @@
 .tiptap.ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
-    color: #595c60;
+    color: var(--placeholder-color)!important;
     pointer-events: none;
     height: 0;
 }
@@ -40,6 +40,6 @@
 .form-control::placeholder,
 .tiptap.ProseMirror::placeholder,
 .tiptap.ProseMirror p.is-editor-empty:first-child::before{
-    color: var(--placeholder-color);
+    color: var(--placeholder-color) !important;
 }
 

@@ -72,7 +72,7 @@ $scrollbar-track-color: rgba(0, 0, 0, 0.05);
     border-radius: 12px;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
     color: var(--placeholder-color)!important;
 }
 
@@ -91,6 +91,11 @@ body {
 }
 
 .main-content {
+    &.with-search {
+        //margin-left: 300px;
+        width: calc(100% - 300px);
+        transition: all 0.3s ease;
+    }
     flex-grow: 1;
     display: flex;
     flex-direction: column;
