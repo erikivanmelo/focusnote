@@ -16,7 +16,6 @@ interface NoteFormProp{
     onSuccess?: () => void
 }
 
-// add Comments
 function NoteForm({
         note = null,
         action,
@@ -103,62 +102,57 @@ function NoteForm({
     };
 
     return (
-        <div className="card shadow form-wrapper">
-            <div className="card-body">
-                <div className="card-text" style={mutator.isPending? {  "filter": "blur(4px)" } : {}}>
+        <div className="minimalist-form" style={mutator.isPending? {  "filter": "blur(2px)" } : {}}>
+            <div className="form-content">
+                <div className="d-flex">
                     <ColorSelector
                         value={selectedColor}
                         onChange={setSelectedColor}
                     />
 
-                    {/* Title Input */}
-                    <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        maxLength={40}
-                        id="title"
-                        type="text"
-                        placeholder="Title"
-                        className="form-control mb-2 mt-4 fs-2 "
-                        onKeyDown={handleTitleKeyDown}
-                    />
+                    <div className="flex-grow-1">
+                        <input
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            maxLength={40}
+                            id="title"
+                            type="text"
+                            placeholder="Title"
+                            className="title-input"
+                            onKeyDown={handleTitleKeyDown}
+                        />
 
-                    {/* Content Input */}
-                    <TiptapEditor
-                        ref={contentRef}
-                        placeholder="What do you have to tell today?"
-                        className={(shakeContent ? 'shake-animation' : '')}
-                    />
+                        <TiptapEditor
+                            ref={contentRef}
+                            placeholder="What do you have to tell today?"
+                            className={(shakeContent ? 'shake-animation' : '')}
+                        />
 
-                    <TagInput
-                        tags={selectedTags}
-                        onSubmit={handleAddTag}
-                        onRemove={handleRemoveTag}
-                    />
+                        <TagInput
+                            tags={selectedTags}
+                            onSubmit={handleAddTag}
+                            onRemove={handleRemoveTag}
+                        />
+                    </div>
                 </div>
             </div>
-            <div className="card-footer">
-                { mutator.isPending &&
-                    <div className="float-start mt-2">
-                        <div
-                            className="spinner-border"
-                            style={{
-                                "width": '25px',
-                                "height": '25px',
-                                "borderWidth": "5px",
-                                "paddingTop": '5px',
-                                "position": "absolute"
-                            }}>
-                            <span className="visually-hidden"></span>
-                        </div>
-                        <div className="ps-5">
-                            Sending...
-                        </div>
+            
+            <div className="form-actions">
+                {mutator.isPending && (
+                    <div className="loading-indicator">
+                        <div className="spinner"></div>
+                        <span>Sending...</span>
                     </div>
-                }
-
-                <button className="btn btn-primary rounded-pill float-end" onClick={publish}>{action}</button>
+                )}
+                <button 
+                    className="action-button" 
+                    onClick={publish}
+                    disabled={mutator.isPending}
+                >
+                    {action}
+                </button>
             </div>
+            
             <DisableLayer disabled={mutator.isPending} />
         </div>
     );

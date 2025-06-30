@@ -17,7 +17,10 @@ function ColorSelector({
     return (
         <div className="input-colors">
             {colors?.map((color: Color) => (
-                <label key={color.id}>
+                <label 
+                    key={color.id}
+                    data-color-name={color.name}
+                >
                     <input
                         type="radio"
                         value={color.name}

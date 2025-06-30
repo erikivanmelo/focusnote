@@ -1,3 +1,136 @@
+/* Minimalist NoteForm Styles */
+.minimalist-form {
+    background: var(--bs-body-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .form-content {
+        flex: 1;
+        padding: 1.5rem;
+        overflow-y: auto;
+
+        .title-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--bs-body-color);
+            margin-bottom: 1rem;
+            padding: 0;
+            transition: all 0.2s ease;
+
+            &::placeholder {
+                color: var(--bs-gray-500);
+                font-weight: 400;
+            }
+        }
+
+        /* Content editor minimum height */
+        .tiptap.ProseMirror {
+            min-height: 249px !important;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--bs-border-color);
+        background: var(--bs-body-bg);
+        gap: 1rem;
+
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--bs-gray-600);
+            font-size: 0.875rem;
+
+            .spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--bs-border-color);
+                border-top: 2px solid var(--bs-primary);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+        }
+
+        .action-button {
+            background: var(--bs-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover:not(:disabled) {
+                background: #0056b3;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+/* Spinner animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Dark mode adjustments */
+body.dark {
+    .minimalist-form {
+        background: var(--background-form-color);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+
+        .form-content {
+            .title-input {
+                color: var(--text-color);
+
+                &::placeholder {
+                    color: var(--placeholder-color);
+                }
+            }
+        }
+
+        .form-actions {
+            border-top-color: var(--border-color);
+            background: var(--background-form-color);
+
+            .loading-indicator {
+                color: var(--text-color);
+            }
+
+            .action-button {
+                &:hover:not(:disabled) {
+                    background: #1a4a8a;
+                    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+                }
+            }
+        }
+    }
+}
+
 /* Animación de vibración */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -6,14 +139,7 @@
 }
 
 .shake-animation {
-    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-    border-color: #dc3545 !important;
-    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-}
-
-.shake-animation {
-    border: 1px solid #dc3545;
-    margin-bottom: 0.5rem; /* Mantener consistencia */
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Estilo para el borde rojo en el input cuando hay error */

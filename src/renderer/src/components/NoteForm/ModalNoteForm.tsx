@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import noteService from "@renderer/services/noteService";
 import { useGenericQuery } from "@renderer/hooks/useGenericQuery";
 import {ROUTES} from "@renderer/routes/routesConfig";
+import './ModalNoteForm.scss';
 
 interface ModalNoteFormProps {
 	action: "Update" | "Publish";
@@ -29,12 +30,19 @@ export function ModalNoteForm({ action }: ModalNoteFormProps) {
 			backdrop="static"
 			keyboard={false}
 			centered
-			dialogClassName='modal-lg'
+			dialogClassName='minimalist-modal'
+			contentClassName='minimalist-modal-content'
 		>
-			<Modal.Header closeButton>
-				<Modal.Title>Note Editor</Modal.Title>
-			</Modal.Header>
-			<Modal.Body className='p-0 m-0'>
+			<Modal.Body className='p-0'>
+				<div className="modal-header-minimal">
+					<button
+						className="close-button"
+						onClick={handleClose}
+						aria-label="Close"
+					>
+						×
+					</button>
+				</div>
 				<NoteForm
 					note={note}
 					action={action}

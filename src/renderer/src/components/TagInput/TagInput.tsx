@@ -47,19 +47,6 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
 
     return (
         <div className="tag-selector mb-3" ref={containerRef}>
-            <div className="selected-tags d-flex flex-wrap gap-1 mb-2">
-                {tags.map(tag => (
-                    <span key={tag} className="badge bg-primary d-flex align-items-center">
-                        {tag}
-                        <button
-                            type="button"
-                            className="btn-close btn-close-white btn-sm ms-1"
-                            onClick={() => onRemove(tag)}
-                            aria-label={`Remove ${tag}`}
-                        />
-                    </span>
-                ))}
-            </div>
 
             <div className="position-relative">
                 <Form.Control
@@ -93,6 +80,20 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                     </div>
                 )}
             </div>
+            <div className="selected-tags d-flex flex-wrap gap-1 mt-2">
+                {tags.map(tag => (
+                    <span key={tag} className="badge bg-primary d-flex align-items-center">
+                        {tag}
+                        <button
+                            type="button"
+                            className="btn-close btn-close-white btn-sm ms-1"
+                            onClick={() => onRemove(tag)}
+                            aria-label={`Remove ${tag}`}
+                        />
+                    </span>
+                ))}
+            </div>
+
         </div>
     );
 }
