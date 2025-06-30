@@ -71,9 +71,9 @@ function NoteCard({ note }: Props) {
                 />
 
                 {note.tags.length > 0 && (
-                    <div className="note-card__tags">
+                    <div className="note-card__tags d-flex flex-wrap gap-1">
                         {note.tags.map((tag) => (
-                            <span key={tag.id} className="note-card__tag">
+                            <span key={tag.id} className="badge bg-primary d-flex align-items-center">
                                 #{tag.name}
                             </span>
                         ))}
