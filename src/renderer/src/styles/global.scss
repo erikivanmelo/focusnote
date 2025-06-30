@@ -136,9 +136,12 @@ body {
 
 .btn-close,
 .btn-close::before,
-.btn-close-white,
-.btn{
+.btn-close-white{
     color: var(--close-button)!important;
+}
+
+body.dark .btn-close[aria-label="Close"] {
+    filter: invert(1)!important;
 }
 
 .btn-primary{
