@@ -5,14 +5,21 @@ import {fromRawToColor} from "./colorService";
 import {fromRawsToTags} from "./tagService";
 
 function fromRawToNote(data: RawNote): Note {
+    // Convert UTC dates from SQLite to local timezone
+    const parseLocalDate = (dateString: string): Date => {
+        const utcDate = new Date(dateString);
+        const timezoneOffsetMinutes = new Date().getTimezoneOffset();
+        return new Date(utcDate.getTime() - (timezoneOffsetMinutes * 60 * 1000));
+    };
+
     return new Note(
         data.id ?? -1,
         data.title ?? "",
         data.content ?? "",
         fromRawToColor(data.color_details),
         fromRawsToTags(data.tags_details),
-        new Date(data.created_at),
-        new Date(data.updated_at)
+        parseLocalDate(data.created_at),
+        parseLocalDate(data.updated_at)
     );
 }
 

@@ -19,7 +19,7 @@ function NoteCard({ note }: Props) {
     const [showModal, setShowModal] = useState(false);
 
     const formattedDate = note.createdAt
-        ? formatDistanceToNow(new Date(note.createdAt), {
+        ? formatDistanceToNow(note.createdAt, {
             addSuffix: true,
             locale: enUS
           })
