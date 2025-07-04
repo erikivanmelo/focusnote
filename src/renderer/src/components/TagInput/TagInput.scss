@@ -10,6 +10,12 @@
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
+            transition: all 0.2s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
 
             .btn-close {
                 opacity: 1;
