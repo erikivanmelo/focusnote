@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@renderer/routes/routesConfig";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { enUS } from "date-fns/locale";
-import "./NoteCard.css";
+import "./NoteCard.scss";
 
 interface Props {
     note: Note;
@@ -36,21 +36,21 @@ function NoteCard({ note }: Props) {
                 id={`note-${note.id}`}
                 className={`note-card ${note.color?.name || 'light'}`}
             >
-                <div className="note-card__header">
-                    <div className="note-card__meta">
-                        <span className="note-card__time">{formattedDate}</span>
-                        <span className="note-card__id">#{note.id}</span>
+                <div className="header">
+                    <div className="meta">
+                        <span className="time">{formattedDate}</span>
+                        <span className="id">#{note.id}</span>
                     </div>
-                    <div className="note-card__actions">
+                    <div className="actions">
                         <button
-                            className="note-card__action"
+                            className="action"
                             onClick={() => navigate(ROUTES.NOTE_EDIT(note.id))}
                             title="Edit note"
                         >
                             <i className="bi bi-pencil" />
                         </button>
                         <button
-                            className="note-card__action note-card__action--danger"
+                            className="action action--danger"
                             onClick={() => setShowModal(true)}
                             title="Delete note"
                         >
@@ -60,21 +60,22 @@ function NoteCard({ note }: Props) {
                 </div>
 
                 {note.title && (
-                    <h3 className="note-card__title">
+                    <h3 className="title">
                         {note.title}
                     </h3>
                 )}
 
                 <div
-                    className="note-card__content"
+                    className="content"
                     dangerouslySetInnerHTML={{ __html: note.content }}
                 />
 
                 {note.tags.length > 0 && (
-                    <div className="note-card__tags d-flex flex-wrap gap-1">
+                    <div className="tags d-flex flex-wrap gap-1">
                         {note.tags.map((tag) => (
                             <span key={tag.id} className="badge bg-primary d-flex align-items-center">
-                                #{tag.name}
+                                <i className="bi bi-tag"></i>
+                                {tag.name}
                             </span>
                         ))}
                     </div>
