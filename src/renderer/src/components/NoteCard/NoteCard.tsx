@@ -60,9 +60,9 @@ function NoteCard({ note }: Props) {
                 </div>
 
                 {note.title && (
-                    <h3 className="title">
+                    <span className="title">
                         {note.title}
-                    </h3>
+                    </span>
                 )}
 
                 <div
