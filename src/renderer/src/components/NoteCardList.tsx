@@ -71,9 +71,7 @@ function NoteCardList() {
 
     } else {
         content = notes.map(note => (
-            <div key={note.id}>
-                <NoteCard note={note} />
-            </div>
+            <NoteCard note={note} key={note.id}/>
         ));
     }
 
