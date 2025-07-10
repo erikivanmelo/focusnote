@@ -2,6 +2,7 @@ import { RouteObject } from 'react-router-dom';
 import App from '../App';
 import NoteCardList from '../components/NoteCardList';
 import { ModalNoteForm } from '../components/NoteForm';
+import ModalNoteCard from '@renderer/components/NoteCard/ModalNoteCard';
 
 export const ROUTES = {
 	HOME: '/',
@@ -12,7 +13,7 @@ export const ROUTES = {
 
 const routesConfig: RouteObject [] = [
 	{
-		path: ROUTES .HOME,
+		path: ROUTES.HOME,
 		element: <App />,
 		children: [
 			{
@@ -29,7 +30,11 @@ const routesConfig: RouteObject [] = [
 					},
 					{
 						path: `edit/:id`,
-						element: <ModalNoteForm action="Update" />,
+					    element: <ModalNoteForm action="Update" />,
+					},
+					{
+						path: `:id`,
+						element: <ModalNoteCard/>,
 					},
 				],
 			},

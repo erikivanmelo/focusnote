@@ -1,0 +1,71 @@
+.minimalist-modal {
+
+    .modal-content {
+        border-radius: 12px;
+        border: none!important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        background: var(--background-form-color);
+        overflow: visible;
+        margin-top: 2rem;
+    }
+
+    .modal-close-button-wrapper {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        z-index: 10;
+
+        .close-button {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            color: var(--bs-gray-600);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            opacity: 0.8;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.95);
+                color: var(--bs-gray-800);
+                transform: scale(1.05);
+                opacity: 1;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            }
+        }
+    }
+
+    .modal-body {
+        & > * {
+            margin: 0!important;
+        }
+        padding: 1rem;
+    }
+}
+
+// Dark mode support
+body.dark {
+    .minimalist-modal {
+        .modal-close-button-wrapper {
+            .close-button {
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(10px);
+                border-color: rgba(255, 255, 255, 0.2);
+                color: var(--bs-gray-300);
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.8);
+                    color: var(--bs-gray-100);
+                    border-color: rgba(255, 255, 255, 0.3);
+                }
+            }
+        }
+    }
+}

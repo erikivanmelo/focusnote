@@ -117,16 +117,63 @@
         font-weight: 600;
         line-height: 1.3;
     }
+    .content-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
     .content {
         color: var(--text-color);
         line-height: 1.5;
-        margin-bottom: 1rem;
+
         p {
             margin-bottom: 0.75rem;
             &:last-child {
                 margin-bottom: 0;
             }
         }
+
+        &--limited {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .content-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, var(--background-form-color) 70%);
+        height: 60px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+
+        .btn {
+            pointer-events: auto;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+        }
+    }
+
+    &:hover .content-overlay {
+        opacity: 1;
     }
     .tags {
         display: flex;
@@ -138,7 +185,7 @@
         .badge {
             font-weight: 500;
             padding: 0.25em 0.5em;
-            font-size: 0.7em;
+            font-size: 0.8em;
             display: inline-flex;
             align-items: center;
             gap: 0.2rem;
@@ -177,6 +224,10 @@ body.dark {
                     }
                 }
             }
+        }
+
+        .content-overlay {
+            background: linear-gradient(transparent, var(--background-form-color) 70%);
         }
     }
 }

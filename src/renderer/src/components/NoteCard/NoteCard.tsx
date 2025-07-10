@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import Note from "@renderer/models/Note";
 import noteService from "@renderer/services/noteService";
@@ -11,12 +11,15 @@ import "./NoteCard.scss";
 
 interface Props {
     note: Note;
+    isModal?: boolean;
 }
 
-function NoteCard({ note }: Props) {
+function NoteCard({ note, isModal = false }: Props) {
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
     const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showMoreButton, setShowMoreButton] = useState(false);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     const formattedDate = note.createdAt
         ? formatDistanceToNow(note.createdAt, {
@@ -27,8 +30,25 @@ function NoteCard({ note }: Props) {
 
     const handleDeleteNote = async () => {
         deleteNoteMutation.mutate(note.id);
-        setShowModal(false);
+        setShowDeleteModal(false);
     };
+
+    useEffect(() => {
+        if (isModal) {
+            setShowMoreButton(false);
+            return;
+        }
+        const checkContentHeight = () => {
+            if (contentRef.current) {
+                const element = contentRef.current;
+                const lineHeight = parseInt(window.getComputedStyle(element).lineHeight);
+                const maxHeight = lineHeight * 10;
+                setShowMoreButton(element.scrollHeight > maxHeight);
+            }
+        };
+        const timer = setTimeout(checkContentHeight, 100);
+        return () => clearTimeout(timer);
+    }, [note.content, isModal]);
 
     return (
         <>
@@ -51,7 +71,10 @@ function NoteCard({ note }: Props) {
                         </button>
                         <button
                             className="action action--danger"
-                            onClick={() => setShowModal(true)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowDeleteModal(true);
+                            }}
                             title="Delete note"
                         >
                             <i className="bi bi-trash" />
@@ -65,10 +88,23 @@ function NoteCard({ note }: Props) {
                     </span>
                 )}
 
-                <div
-                    className="content"
-                    dangerouslySetInnerHTML={{ __html: note.content }}
-                />
+                <div className="content-wrapper">
+                    <div
+                        ref={contentRef}
+                        className={`content ${!isModal && showMoreButton ? 'content--limited' : ''}`}
+                        dangerouslySetInnerHTML={{ __html: note.content }}
+                    />
+                    {!isModal && showMoreButton && (
+                        <div className="content-overlay">
+                            <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => navigate(ROUTES.NOTES + '/' + note.id)}
+                            >
+                                Ver más
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 {note.tags.length > 0 && (
                     <div className="tags d-flex flex-wrap gap-1">
@@ -84,8 +120,8 @@ function NoteCard({ note }: Props) {
 
             {/* Delete Note Modal */}
             <Modal
-                show={showModal}
-                onHide={() => setShowModal(false)}
+                show={showDeleteModal}
+                onHide={() => setShowDeleteModal(false)}
                 centered
                 className="delete-modal"
             >
@@ -100,7 +136,7 @@ function NoteCard({ note }: Props) {
                 <Modal.Footer className="border-0">
                     <Button
                         variant="outline-secondary"
-                        onClick={() => setShowModal(false)}
+                        onClick={() => setShowDeleteModal(false)}
                         className="px-4"
                     >
                         Cancel
