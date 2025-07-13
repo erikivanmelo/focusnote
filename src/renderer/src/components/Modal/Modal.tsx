@@ -36,14 +36,15 @@ export function RouteModal({
             size={size}
             dialogClassName={className}
             contentClassName='minimalist-modal-content'
+            animation={false}
         >
             <div className="modal-close-button-wrapper">
                 <button
                     className="close-button"
                     onClick={handleClose}
-                    aria-label="Close"
+                    aria-label="Go back"
                 >
-                    ×
+                    <i className="bi bi-arrow-left"></i>
                 </button>
             </div>
             <BootstrapModal.Body className='p-0'>

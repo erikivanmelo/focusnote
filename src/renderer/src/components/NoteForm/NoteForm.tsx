@@ -101,61 +101,96 @@ function NoteForm({
             contentRef.current?.focus();
     };
 
+    // Usar el mismo diseño de tarjeta para ambos modos
     return (
-        <div className="minimalist-form" style={mutator.isPending? {  "filter": "blur(2px)" } : {}}>
-            <div className="form-content">
-                <div className="d-flex">
+        <div
+            id={`note-${note?.id || 'new'}`}
+            className={`note-card ${selectedColor?.name || 'light'} no-hover-effect` }
+            style={mutator.isPending? {  "filter": "blur(2px)" } : {}}
+        >
+            <div className="header">
+                <div className="meta">
+                    <span className="time">{action === "Update" ? "Editing note" : "Creating note"}</span>
+                    <span className="id">#{note?.id || 'new'}</span>
+                </div>
+                <div className="actions">
                     <ColorSelector
                         value={selectedColor}
                         onChange={setSelectedColor}
                     />
-
-                    <div className="flex-grow-1">
-                        <input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            maxLength={40}
-                            id="title"
-                            type="text"
-                            placeholder="Title"
-                            className="title-input"
-                            onKeyDown={handleTitleKeyDown}
-                        />
-
-                        <TiptapEditor
-                            ref={contentRef}
-                            placeholder="What do you have to tell today?"
-                            className={(shakeContent ? 'shake-animation' : '')}
-                        />
-
-                        <TagInput
-                            tags={selectedTags}
-                            onSubmit={handleAddTag}
-                            onRemove={handleRemoveTag}
-                        />
-                    </div>
                 </div>
             </div>
-            
+
+            <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={40}
+                id="title"
+                type="text"
+                placeholder="Note title"
+                className="title"
+                onKeyDown={handleTitleKeyDown}
+            />
+
+            <div className="content-wrapper">
+                <TiptapEditor
+                    ref={contentRef}
+                    placeholder="What do you have to tell today?"
+                    className={`content ${shakeContent ? 'shake-animation' : ''}`}
+                />
+            </div>
+
+            {selectedTags.length > 0 && (
+                <div className="tags d-flex flex-wrap gap-1">
+                    {selectedTags.map((tag) => (
+                        <span key={tag} className="badge bg-primary d-flex align-items-center">
+                            <i className="bi bi-tag"></i>
+                            {tag}
+                            <button
+                                type="button"
+                                className="btn-close btn-close-white btn-sm ms-1"
+                                onClick={() => handleRemoveTag(tag)}
+                                aria-label={`Remove ${tag}`}
+                            />
+                        </span>
+                    ))}
+                </div>
+            )}
+
+            <div className="tag-input-container">
+                <input
+                    type="text"
+                    placeholder="Add tags..."
+                    className="form-control"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                            handleAddTag(e.currentTarget.value.trim());
+                            e.currentTarget.value = '';
+                        }
+                    }}
+                />
+            </div>
+
             <div className="form-actions">
                 {mutator.isPending && (
                     <div className="loading-indicator">
                         <div className="spinner"></div>
-                        <span>Sending...</span>
+                        <span>{action === "Update" ? "Saving..." : "Sending..."}</span>
                     </div>
                 )}
-                <button 
-                    className="action-button" 
+                <button
+                    className="action-button"
                     onClick={publish}
                     disabled={mutator.isPending}
                 >
                     {action}
                 </button>
             </div>
-            
+
             <DisableLayer disabled={mutator.isPending} />
         </div>
     );
 };
 
 export default NoteForm;
+

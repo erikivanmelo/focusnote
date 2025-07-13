@@ -54,7 +54,7 @@ function NoteCard({ note, isModal = false }: Props) {
         <>
             <div
                 id={`note-${note.id}`}
-                className={`note-card ${note.color?.name || 'light'}`}
+                className={`note-card ${note.color?.name || 'light'} no-hover-effect`}
             >
                 <div className="header">
                     <div className="meta">

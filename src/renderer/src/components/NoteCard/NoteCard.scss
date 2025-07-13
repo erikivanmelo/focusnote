@@ -199,6 +199,28 @@
     }
 }
 
+.no-hover-effect {
+    transition: none !important;
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+    }
+    &:hover::before {
+      width: 6px !important;
+      box-shadow: none !important;
+    }
+    .header {
+      opacity: 1 !important;
+      .actions {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+    &::before {
+      transition: none !important;
+    }
+}
+
 /* Modal styles fuera de note-card */
 body.dark {
     .note-card {

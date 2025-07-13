@@ -80,7 +80,7 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                     </div>
                 )}
             </div>
-            <div className="selected-tags d-flex flex-wrap gap-1 mt-2">
+            <div className="tags d-flex flex-wrap gap-1 mt-2">
                 {tags.map(tag => (
                     <span key={tag} className="badge bg-primary d-flex align-items-center">
                         <i className="bi bi-tag"></i>
