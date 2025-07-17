@@ -1,11 +1,11 @@
-import { Outlet } from 'react-router-dom';
 import Menu from './components/Menu';
+import NoteCardList from './components/NoteCardList';
 
 function App() {
   return (
     <>
       <Menu>
-          <Outlet />
+          <NoteCardList />
       </Menu>
     </>
   );

@@ -1,7 +1,7 @@
 @use '../../styles/colors' as *;
 
 .tiptap.ProseMirror {
-    background-color: var(--background-input-color)!important;
+    background-color: var(--background-editor-color)!important;
     overflow: auto !important;
     height: auto;
     display: block !important;
@@ -14,19 +14,18 @@
     background-clip: padding-box;
     border: var(--bs-border-width) solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.2s ease;
     --bs-focus-ring-width: 0.25rem;
     --bs-focus-ring-opacity: 0.25;
     --bs-focus-ring-color: rgba(13, 110, 253, 0.25) !important;
-    resize: vertical;
     min-height: 110px !important;
 }
 
 .tiptap.ProseMirror:focus {
-    color: var(--bs-body-color);
-    //border-color: #86b7fe;
+    color: var(--text-color);
     outline: 0;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: var(--bs-primary);
 }
 
 .tiptap.ProseMirror p.is-editor-empty:first-child::before {

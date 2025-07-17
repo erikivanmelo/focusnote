@@ -1,40 +1,174 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Modal, Button } from "react-bootstrap";
 import Note from "@renderer/models/Note";
+import Tag from "@renderer/models/Tag";
+import Color from "@renderer/models/Color";
 import noteService from "@renderer/services/noteService";
 import { useInvalidateMutation } from "@renderer/hooks/useInvalidateMutation";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@renderer/routes/routesConfig";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { enUS } from "date-fns/locale";
+import TiptapEditor, { TiptapEditorRef } from "@renderer/components/TiptapEditor";
+import DisableLayer from "../DisableLayer";
+import TagInput from '../TagInput';
+import ColorSelector from '../ColorSelector';
 import "./NoteCard.scss";
 
+
 interface Props {
-    note: Note;
+    note?: Note | null;
     isModal?: boolean;
+    showModal?: boolean;
+    mode?: 'view' | 'edit' | 'create';
+    onModalClose?: () => void;
+    onModalShow?: () => void;
+    onModalEdit?: () => void;
 }
 
-function NoteCard({ note, isModal = false }: Props) {
-    const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
-    const navigate = useNavigate();
+function NoteCard({
+    note = null,
+    isModal = false,
+    mode = 'view',
+    onModalClose = () => {},
+    onModalShow = () => {},
+    onModalEdit = () => {}
+}: Props) {
+
+    if (isModal)
+        console.log(note);
+    const [currentNote, setCurrentNote] = useState<Note | null>(note);
+    const [currentMode, setCurrentMode] = useState<'view' | 'edit' | 'create'>(mode);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showMoreButton, setShowMoreButton] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
+    const editorRef = useRef<TiptapEditorRef>(null);
 
-    const formattedDate = note.createdAt
-        ? formatDistanceToNow(note.createdAt, {
+    // Form state
+    const defaultColor = useMemo(() => new Color(1, "light", true), []);
+    const [selectedColor, setSelectedColor] = useState<Color>(defaultColor);
+    const [title, setTitle] = useState<string>("");
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [shakeContent, setShakeContent] = useState<boolean>(false);
+
+    // Mutations
+    const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
+    const createNoteMutation = useInvalidateMutation(["notes"], noteService.create);
+    const updateNoteMutation = useInvalidateMutation(["notes"], noteService.update);
+
+    const isEditing = currentMode === 'edit' || currentMode === 'create';
+    const isCreating = currentMode === 'create';
+
+    const formattedDate = currentNote?.createdAt
+        ? formatDistanceToNow(currentNote.createdAt, {
             addSuffix: true,
             locale: enUS
           })
         : 'Just now';
 
+    useEffect(() => {
+        setCurrentNote(note);
+    }, [note]);
+
+    // Initialize form data when note changes or mode changes
+    useEffect(() => {
+        if (isEditing && currentNote) {
+            setSelectedColor(currentNote.color || defaultColor);
+            setTitle(currentNote.title || "");
+            setSelectedTags(currentNote.tags.map((tag) => tag.name));
+            editorRef.current?.setContent(currentNote.content);
+        } else if (isCreating) {
+            setSelectedColor(defaultColor);
+            setTitle("");
+            setSelectedTags([]);
+            editorRef.current?.setContent("");
+        }
+    }, [currentMode, defaultColor]);
+
+    // Reset form on successful mutation
+    useEffect(() => {
+        if (deleteNoteMutation.isSuccess && isModal) {
+            onModalClose();
+        }
+        if (createNoteMutation.isSuccess || updateNoteMutation.isSuccess) {
+            const newNote: Note | undefined = (createNoteMutation.isSuccess ? createNoteMutation.data : updateNoteMutation.data)
+            if (!newNote)
+                return
+            if (mode === 'create') {
+                onModalClose();
+            }
+            setCurrentNote(newNote);
+        }
+    }, [createNoteMutation.isSuccess, updateNoteMutation.isSuccess, deleteNoteMutation.isSuccess]);
+
     const handleDeleteNote = async () => {
-        deleteNoteMutation.mutate(note.id);
+        if (currentNote) {
+            deleteNoteMutation.mutate(currentNote.id);
+        }
         setShowDeleteModal(false);
     };
 
+    const handleSave = useCallback(async () => {
+        const currentContent = editorRef.current?.getContent().trim() || '';
+        const isContentEmpty = currentContent === '' || currentContent === "<p></p>";
+
+        if (isContentEmpty) {
+            setShakeContent(true);
+            setTimeout(() => {
+                setShakeContent(false);
+            }, 1000);
+            return;
+        }
+
+        const noteData = new Note(
+            currentNote?.id || -1,
+            title.trim(),
+            currentContent,
+            selectedColor,
+            selectedTags.map((tagName) => new Tag(-1, tagName))
+        );
+
+        if (isCreating) {
+            createNoteMutation.mutate(noteData);
+        } else {
+            updateNoteMutation.mutate(noteData);
+        }
+
+    }, [title, selectedColor, selectedTags, currentNote, createNoteMutation, updateNoteMutation, isCreating]);
+
+    const handleBack = () => {
+        if (currentMode == 'edit')
+            setCurrentMode('view')
+        else if (currentMode == 'view' || currentMode == 'create') {
+            onModalClose();
+        }
+    };
+
+    const handleEdit = () => {
+        if (isModal)
+            setCurrentMode('edit');
+        else
+            onModalEdit();
+    };
+
+    const handleAddTag = (tag: string) => {
+        if (selectedTags.includes(tag)) {
+            return false;
+        }
+        setSelectedTags([...selectedTags, tag]);
+        return true;
+    };
+
+    const handleRemoveTag = (tag: string) => {
+        setSelectedTags(selectedTags.filter((t) => t !== tag));
+    };
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter")
+            editorRef.current?.focus();
+    };
+
+    // Check content height for "Ver más" button
     useEffect(() => {
-        if (isModal) {
+        if (isModal || isEditing) {
             setShowMoreButton(false);
             return;
         }
@@ -48,75 +182,153 @@ function NoteCard({ note, isModal = false }: Props) {
         };
         const timer = setTimeout(checkContentHeight, 100);
         return () => clearTimeout(timer);
-    }, [note.content, isModal]);
+    }, [currentNote?.content, isModal, isEditing]);
 
-    return (
+    const isPending = createNoteMutation.isPending || updateNoteMutation.isPending || deleteNoteMutation.isPending;
+
+    const content = (
         <>
             <div
-                id={`note-${note.id}`}
-                className={`note-card ${note.color?.name || 'light'} no-hover-effect`}
+                id={`note-${note?.id || 'new'}`}
+                className={`note-card ${(isEditing ? selectedColor?.name : currentNote?.color?.name) || 'light'} ${(isModal || isEditing) && ' modal'}`}
+                style={isPending ? { "filter": "blur(2px)" } : {}}
             >
                 <div className="header">
                     <div className="meta">
-                        <span className="time">{formattedDate}</span>
-                        <span className="id">#{note.id}</span>
+                        <span className="time">
+                            {isEditing
+                                ? (isCreating ? "Creating note" : "Editing note")
+                                : formattedDate
+                            }
+                        </span>
+                        <span className="id">#{currentNote?.id || 'new'}</span>
+
+                        {isPending && (
+                            <div className="loading-indicator">
+                                <div className="spinner"></div>
+                                <span>{isCreating ? "Sending..." : "Saving..."}</span>
+                            </div>
+                        )}
+
                     </div>
                     <div className="actions">
-                        <button
-                            className="action"
-                            onClick={() => navigate(ROUTES.NOTE_EDIT(note.id))}
-                            title="Edit note"
-                        >
-                            <i className="bi bi-pencil" />
-                        </button>
-                        <button
-                            className="action action--danger"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowDeleteModal(true);
-                            }}
-                            title="Delete note"
-                        >
-                            <i className="bi bi-trash" />
-                        </button>
+                        {!isEditing ? (
+                            <>
+                                {!isModal &&
+                                    <button
+                                        className="action"
+                                        onClick={onModalShow}
+                                        title="Open as popup"
+                                    >
+                                        <i className="bi bi-arrows-fullscreen" />
+                                    </button>
+                                }
+                                <button
+                                    className="action"
+                                    onClick={handleEdit}
+                                    title="Edit note"
+                                >
+                                    <i className="bi bi-pencil" />
+                                </button>
+                                <button
+                                    className="action action--danger"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowDeleteModal(true);
+                                    }}
+                                    title="Delete note"
+                                >
+                                    <i className="bi bi-trash" />
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                            <ColorSelector
+                                value={selectedColor}
+                                onChange={setSelectedColor}
+                            />
+                            <button
+                                className="btn btn-primary rounded-pill p-0 ps-2 pe-2 ms-2"
+                                onClick={handleSave}
+                                disabled={isPending}
+                            >
+                                Save
+                            </button>
+                            </>
+                        )}
                     </div>
                 </div>
 
-                {note.title && (
-                    <span className="title">
-                        {note.title}
-                    </span>
+                {isEditing ? (
+                    <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        maxLength={40}
+                        id="title"
+                        type="text"
+                        placeholder="Note title"
+                        className="title"
+                        onKeyDown={handleTitleKeyDown}
+                    />
+                ) : (
+                    currentNote?.title && (
+                        <span className="title">
+                            {currentNote.title}
+                        </span>
+                    )
                 )}
 
+
                 <div className="content-wrapper">
-                    <div
-                        ref={contentRef}
-                        className={`content ${!isModal && showMoreButton ? 'content--limited' : ''}`}
-                        dangerouslySetInnerHTML={{ __html: note.content }}
-                    />
-                    {!isModal && showMoreButton && (
-                        <div className="content-overlay">
-                            <button
-                                className="btn btn-outline-primary btn-sm"
-                                onClick={() => navigate(ROUTES.NOTES + '/' + note.id)}
-                            >
-                                Ver más
-                            </button>
-                        </div>
+                    {isEditing ? (
+                        <TiptapEditor
+                            ref={editorRef}
+                            placeholder="What do you have to tell today?"
+                            className={`content ${shakeContent ? 'shake-animation' : ''}`}
+                        />
+                    ) : (
+                        <>
+                            <div
+                                ref={contentRef}
+                                className={`content ${!isModal && showMoreButton ? 'content--limited' : ''}`}
+                                dangerouslySetInnerHTML={{ __html: currentNote?.content || '' }}
+                            />
+                            {!isModal && showMoreButton && (
+                                <div className="content-overlay">
+                                    <button
+                                        className="btn btn-outline-primary btn-sm"
+                                        onClick={onModalShow}
+                                    >
+                                        Ver más
+                                    </button>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
 
-                {note.tags.length > 0 && (
-                    <div className="tags d-flex flex-wrap gap-1">
-                        {note.tags.map((tag) => (
-                            <span key={tag.id} className="badge bg-primary d-flex align-items-center">
-                                <i className="bi bi-tag"></i>
-                                {tag.name}
-                            </span>
-                        ))}
-                    </div>
+                {isEditing ? (
+                    <TagInput
+                        tags={selectedTags}
+                        onSubmit={handleAddTag}
+                        onRemove={handleRemoveTag}
+                    />
+                ) : (
+                    currentNote?.tags && currentNote.tags.length > 0 && (
+                        <div className="tags d-flex flex-wrap gap-1">
+                            {currentNote.tags.map((tag) => (
+                                <span key={tag.id} className="badge bg-primary d-flex align-items-center">
+                                    <i className="bi bi-tag"></i>
+                                    {tag.name}
+                                </span>
+                            ))}
+                        </div>
+                    )
                 )}
+
             </div>
+
+            {isEditing && <DisableLayer disabled={isPending} />}
 
             {/* Delete Note Modal */}
             <Modal
@@ -130,7 +342,7 @@ function NoteCard({ note, isModal = false }: Props) {
                 </Modal.Header>
                 <Modal.Body>
                     <p className="mb-0">
-                        Are you sure you want to delete "{note.title || 'this note'}"? This action cannot be undone.
+                        Are you sure you want to delete "{currentNote?.title || 'this note'}"? This action cannot be undone.
                     </p>
                 </Modal.Body>
                 <Modal.Footer className="border-0">
@@ -152,6 +364,36 @@ function NoteCard({ note, isModal = false }: Props) {
                 </Modal.Footer>
             </Modal>
         </>
+    );
+
+    if (!isModal)
+        return content;
+
+    return (
+        <Modal
+            show={true}
+            //onHide={() => navigate(-1)}
+            backdrop={true}
+            keyboard={true}
+            centered={true}
+            size="lg"
+            dialogClassName="minimalist-modal"
+            contentClassName='minimalist-modal-content'
+            animation={true}
+        >
+            <div className="modal-close-button-wrapper">
+                <button
+                    className="close-button"
+                    onClick={ handleBack }
+                    aria-label="Go back"
+                >
+                    <i className="bi bi-arrow-left"></i>
+                </button>
+            </div>
+            <Modal.Body className='p-0'>
+                {content}
+            </Modal.Body>
+        </Modal>
     );
 }
 

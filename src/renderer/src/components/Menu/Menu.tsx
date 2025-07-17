@@ -1,8 +1,7 @@
 import { useState, useEffect, ReactNode } from "react";
 import { Modal } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@renderer/routes/routesConfig";
 import './Menu.scss'
+import NoteCard from "../NoteCard";
 
 // Extender la interfaz CSSProperties para incluir propiedades de WebKit
 declare module 'react' {
@@ -33,8 +32,7 @@ function Menu({ children }: Props) {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [isMaximized, setIsMaximized] = useState<boolean>(false);
-    const [showSearch, setShowSearch] = useState<boolean>(false);
-    const navigate = useNavigate();
+    const [showNoteForm, setShowNoteForm] = useState<boolean>(false);
 
     // Handle window controls
     useEffect(() => {
@@ -68,7 +66,7 @@ function Menu({ children }: Props) {
     }, [isDarkMode]);
 
     const sidebarButtons = [
-        { id: 'notes', icon: 'plus-lg', title: 'New note', onClick: () => navigate(ROUTES.NOTE_CREATE) },
+        { id: 'notes', icon: 'plus-lg', title: 'New note', onClick: () => {setShowNoteForm(true)} },
         //{ id: 'search', icon: 'search', title: 'Search' },
     ];
 
@@ -162,7 +160,16 @@ function Menu({ children }: Props) {
                     <p>Inspired by the simplicity of platforms like Twitter, FocusNote allows users to record notes, track project progress, and document learnings.</p>
                 </Modal.Body>
             </Modal>
+
+            {showNoteForm &&
+                <NoteCard
+                    isModal={true}
+                    mode='create'
+                    onModalClose={() => {setShowNoteForm(false)}}
+                />
+            }
         </div>
+
     );
 }
 

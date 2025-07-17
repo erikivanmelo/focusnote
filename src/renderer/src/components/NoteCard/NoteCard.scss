@@ -7,9 +7,43 @@
     transition: all 0.2s ease;
     border: 1px solid var(--border-color);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
     padding-left: 28px; /* Espacio para el borde de color */
     color: var(--text-color)!important;
+    overflow: visible;
+
+     //Estilos específicos para modo modal
+    &.modal {
+        max-height: calc(100vh - 88px);
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+        transform: translateY(-2px)!important;
+        .content-wrapper {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+
+            .content {
+                flex: 1;
+                overflow-y: auto;
+            }
+        }
+
+        &::before {
+            width: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            opacity: 1 !important;
+            .actions {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+    }
+
 
     &:hover {
         transform: translateY(-2px);
@@ -98,6 +132,38 @@
                     color: var(--bs-danger);
                 }
             }
+
+            /* Estilos específicos para el ColorSelector dentro del NoteCard */
+            .input-colors {
+                gap: 8px;
+                justify-content: flex-end;
+                padding: 0;
+                border: none;
+                margin: 0;
+                min-width: auto;
+
+                label {
+                    width: 24px;
+                    height: 24px;
+                    margin: 0;
+
+                    .checkmark {
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 4px;
+                        border: 2px solid transparent;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            transform: scale(1.1);
+                        }
+                    }
+
+                    input[type="radio"]:checked + .checkmark::after {
+                        font-size: 12px;
+                    }
+                }
+            }
         }
     }
     &:hover {
@@ -116,6 +182,21 @@
         color: var(--bs-heading-color);
         font-weight: 600;
         line-height: 1.3;
+
+        /* Estilos mínimos para el input de título en modo edición */
+        &[type="text"] {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 0;
+            transition: all 0.2s ease;
+
+            &::placeholder {
+                color: var(--bs-gray-500);
+                font-weight: 400;
+            }
+        }
     }
     .content-wrapper {
         position: relative;
@@ -139,6 +220,15 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* Estilos mínimos para el editor en modo edición */
+        .ProseMirror {
+            min-height: 150px !important;
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 0;
         }
     }
 
@@ -197,28 +287,85 @@
             }
         }
     }
+
+    /* Estilos mínimos para el modo edición */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--border-color);
+        gap: 1rem;
+        margin-top: 0.75rem;
+
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--bs-gray-600);
+            font-size: 0.875rem;
+
+            .spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--bs-border-color);
+                border-top: 2px solid var(--bs-primary);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+        }
+
+        .action-button {
+            background: var(--bs-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover:not(:disabled) {
+                background: #0056b3;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+            &--secondary {
+                background: var(--bs-gray-500);
+
+                &:hover:not(:disabled) {
+                    background: #5a6268;
+                    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+                }
+            }
+        }
+    }
 }
 
-.no-hover-effect {
-    transition: none !important;
-    &:hover {
-      transform: none !important;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
-    }
-    &:hover::before {
-      width: 6px !important;
-      box-shadow: none !important;
-    }
-    .header {
-      opacity: 1 !important;
-      .actions {
-        opacity: 1 !important;
-        transform: none !important;
-      }
-    }
-    &::before {
-      transition: none !important;
-    }
+/* Spinner animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animación de vibración */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake-animation {
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Modal styles fuera de note-card */
@@ -248,8 +395,103 @@ body.dark {
             }
         }
 
-        .content-overlay {
-            background: linear-gradient(transparent, var(--background-form-color) 70%);
+        .form-actions {
+            border-top-color: var(--border-color);
+            background: var(--background-form-color);
+
+            .loading-indicator {
+                color: var(--text-color);
+            }
+
+            .action-button {
+                &:hover:not(:disabled) {
+                    background: #1a4a8a;
+                    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+                }
+
+                &--secondary:hover:not(:disabled) {
+                    background: #495057;
+                    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+                }
+            }
+        }
+    }
+    .tiptap{
+        height: 100%;
+    }
+}
+
+.minimalist-modal {
+
+    .modal-content {
+        border-radius: 12px;
+        border: none!important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        background: var(--background-form-color);
+        overflow: visible;
+        margin-top: 2rem;
+        margin-left: 48px ;
+    }
+
+    .modal-close-button-wrapper {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        z-index: 9999;
+
+        .close-button {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            color: var(--bs-gray-600);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            opacity: 0.8;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.95);
+                color: var(--bs-gray-800);
+                transform: scale(1.05);
+                opacity: 1;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            }
+        }
+    }
+
+    .modal-body {
+        padding: 1rem;
+        & > * {
+            margin: 0!important;
+        }
+    }
+
+}
+
+// Dark mode support
+body.dark {
+    .minimalist-modal {
+        .modal-close-button-wrapper {
+            .close-button {
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(10px);
+                border-color: rgba(255, 255, 255, 0.2);
+                color: var(--bs-gray-300);
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.8);
+                    color: var(--bs-gray-100);
+                    border-color: rgba(255, 255, 255, 0.3);
+                }
+            }
         }
     }
 }
+

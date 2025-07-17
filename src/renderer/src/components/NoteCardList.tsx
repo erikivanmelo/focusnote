@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import NoteCard from './NoteCard';
 import Note from '@renderer/models/Note';
 import {useGenericQueryNoParams} from '@renderer/hooks/useGenericQuery';
@@ -11,36 +10,8 @@ function NoteCardList() {
         noteService.getAll
     );
 
-    const [searchParams] = useSearchParams();
-
-    // Handle smooth scrolling when noteId is in URL
-    useEffect(() => {
-        const noteId = searchParams.get('noteId');
-        if (!noteId) return;
-
-        const timer = setTimeout(() => {
-            const titleElement = document.querySelector(`#note-${noteId} .note-title`) as HTMLElement;
-            const cardElement = document.getElementById(`note-${noteId}`);
-
-            if (titleElement) {
-                // Scroll to title with offset for header
-                const offset = 20;
-                const top = titleElement.getBoundingClientRect().top + window.pageYOffset - offset;
-                window.scrollTo({ top, behavior: 'smooth' });
-            } else if (cardElement) {
-                // Fallback to card if title not found
-                cardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            // Add highlight effect
-            if (cardElement) {
-                cardElement.classList.add('note-highlight');
-                setTimeout(() => cardElement.classList.remove('note-highlight'), 2000);
-            }
-        }, 100);
-
-        return () => clearTimeout(timer);
-    }, [searchParams]);
+    const [currentModalNote, setCurrentModalNote] = useState<Note | null>(null);
+    const [currentModalMode, setCurrentModalMode] = useState<'view' | 'edit' | 'create'>('view');
 
     let content: React.ReactNode;
     if (isLoading) {
@@ -70,15 +41,32 @@ function NoteCardList() {
         );
 
     } else {
-        content = notes.map(note => (
-            <NoteCard note={note} key={note.id}/>
-        ));
+        content = (<>
+
+            {notes.map( (note) => (
+                <NoteCard
+                    note={note}
+                    key={note.id}
+                    onModalShow={() => {setCurrentModalMode('view'); setCurrentModalNote(note)}}
+                    onModalEdit={() => {setCurrentModalMode('edit'); setCurrentModalNote(note)}}
+                />
+            ))}
+
+            {currentModalNote &&
+                <NoteCard
+                    note={currentModalNote}
+                    isModal={true}
+                    mode={currentModalMode}
+                    onModalClose={() => {setCurrentModalNote(null)}}
+                />
+            }
+
+        </>);
     }
 
     return (
         <>
             {content}
-            <Outlet />
         </>
     );
 }

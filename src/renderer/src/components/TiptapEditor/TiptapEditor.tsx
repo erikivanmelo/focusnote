@@ -33,7 +33,7 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
         }));
 
 
-        return <EditorContent editor={editor} id={id} placeholder={placeholder} className={"mb-2 " + className}/>;
+        return <EditorContent editor={editor} id={id} placeholder={placeholder} className={className}/>;
     }
 );
 

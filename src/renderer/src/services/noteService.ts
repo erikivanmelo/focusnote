@@ -1,3 +1,4 @@
+console.log("[noteService.getAll] called");
 import noteApi, {RawNote} from "../api/noteApi";
 import Note from "../models/Note";
 
@@ -34,7 +35,7 @@ const noteService = {
         return rawNote? fromRawToNote(rawNote) : null;
     },
 
-    create: async (note: Note): Promise<void> => {
+    create: async (note: Note): Promise<Note> => {
         const data = {
             title   : note.title,
             content : note.content,
@@ -43,9 +44,10 @@ const noteService = {
         };
 
         await noteApi.create(data);
+        return note;
     },
 
-    update: async (note: Note): Promise<void> => {
+    update: async (note: Note): Promise<Note> => {
         const data = {
             id      : note.id,
             title   : note.title,
@@ -55,6 +57,7 @@ const noteService = {
         };
 
         await noteApi.update(data);
+        return note;
     },
 
     delete: async (id: number): Promise<void> => {
