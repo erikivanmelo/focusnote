@@ -128,6 +128,7 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                                 {/* Show create button only if there are no exact matches */}
                                 {inputValue.trim() && 
                                  !allTags.includes(inputValue.trim()) && 
+                                 !tags.includes(inputValue.trim()) &&
                                  !filteredTags.some(tag => tag.toLowerCase() === inputValue.trim().toLowerCase()) && (
                                     <div
                                         className="suggestion-item suggestion-item--create"
