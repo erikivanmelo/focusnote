@@ -64,99 +64,98 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
     }, [showPopover]);
 
     return (
-        <div className="tag-input-container d-flex align-items-center flex-wrap gap-1" ref={containerRef}>
-            {/* + button wrapped to position the popover */}
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-                <button
-                    ref={buttonRef}
-                    type="button"
-                    className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
-                    style={{ width: 28, height: 28, padding: 0 }}
-                    onClick={() => setShowPopover(true)}
-                    aria-label="Add tag"
-                >
-                    <i className="bi bi-plus" />
-                </button>
-
-                {/* Floating popover always above */}
-                {showPopover && (
-                    <div
-                        className="tag-suggestions popover popover--above"
-                        ref={popoverRef}
+        <div className="tag-input-container" ref={containerRef}>
+            {/* Tag chips and button in the same flex container */}
+            <div className="tags d-flex flex-wrap gap-1 mb-0" style={{ borderTop: 'none', marginTop: 0, paddingTop: 0 }}>
+                {/* + button as first item */}
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <button
+                        ref={buttonRef}
+                        type="button"
+                        className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                        style={{ width: 28, height: 28, padding: 0 }}
+                        onClick={() => setShowPopover(true)}
+                        aria-label="Add tag"
                     >
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                            <span className="fw-bold">Tag note</span>
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white btn-sm"
-                                aria-label="Close"
-                                onClick={() => setShowPopover(false)}
-                            />
-                        </div>
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && inputValue.trim()) {
-                                    handleSubmit(inputValue.trim());
-                                } else if (e.key === 'Escape') {
-                                    setShowPopover(false);
-                                }
-                            }}
-                            autoFocus
-                            placeholder="Enter a tag name"
-                            className="form-control mb-2 popover-input"
-                        />
-                        {/* Suggestions without checkboxes */}
-                        <div className="suggestions-container">
-                            {filteredTags.length > 0 && (
-                                filteredTags.map(tag => (
-                                    <div
-                                        key={tag}
-                                        className="suggestion-item"
-                                        onClick={() => handleSubmit(tag)}
-                                    >
-                                        <i className="bi bi-tag suggestion-icon"></i>
-                                        {tag}
-                                    </div>
-                                ))
-                            )}
-                            
-                            {/* Show create button only if there are no exact matches */}
-                            {inputValue.trim() && 
-                             !allTags.includes(inputValue.trim()) && 
-                             !filteredTags.some(tag => tag.toLowerCase() === inputValue.trim().toLowerCase()) && (
-                                <div
-                                    className="suggestion-item suggestion-item--create"
-                                    onClick={() => handleSubmit(inputValue.trim())}
-                                >
-                                    <i className="bi bi-plus-circle"></i>
-                                    Create tag "{inputValue.trim()}"
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
+                        <i className="bi bi-plus" />
+                    </button>
 
-            {/* Tag chips */}
-            {tags.length > 0 && (
-                <div className="tags d-flex flex-wrap gap-1 mb-0" style={{ borderTop: 'none', marginTop: 0, paddingTop: 0 }}>
-                    {tags.map(tag => (
-                        <span key={tag} className="badge bg-primary d-flex align-items-center">
-                            <i className="bi bi-tag"></i>
-                            {tag}
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white btn-sm ms-1"
-                                onClick={() => onRemove(tag)}
-                                aria-label={`Remove ${tag}`}
+                    {/* Floating popover always above */}
+                    {showPopover && (
+                        <div
+                            className="tag-suggestions popover popover--above"
+                            ref={popoverRef}
+                        >
+                            <div className="d-flex align-items-center justify-content-between mb-2">
+                                <span className="fw-bold">Tag note</span>
+                                <button
+                                    type="button"
+                                    className="btn-close btn-close-white btn-sm"
+                                    aria-label="Close"
+                                    onClick={() => setShowPopover(false)}
+                                />
+                            </div>
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && inputValue.trim()) {
+                                        handleSubmit(inputValue.trim());
+                                    } else if (e.key === 'Escape') {
+                                        setShowPopover(false);
+                                    }
+                                }}
+                                autoFocus
+                                placeholder="Enter a tag name"
+                                className="form-control mb-2 popover-input"
                             />
-                        </span>
-                    ))}
+                            {/* Suggestions without checkboxes */}
+                            <div className="suggestions-container">
+                                {filteredTags.length > 0 && (
+                                    filteredTags.map(tag => (
+                                        <div
+                                            key={tag}
+                                            className="suggestion-item"
+                                            onClick={() => handleSubmit(tag)}
+                                        >
+                                            <i className="bi bi-tag suggestion-icon"></i>
+                                            {tag}
+                                        </div>
+                                    ))
+                                )}
+                                
+                                {/* Show create button only if there are no exact matches */}
+                                {inputValue.trim() && 
+                                 !allTags.includes(inputValue.trim()) && 
+                                 !filteredTags.some(tag => tag.toLowerCase() === inputValue.trim().toLowerCase()) && (
+                                    <div
+                                        className="suggestion-item suggestion-item--create"
+                                        onClick={() => handleSubmit(inputValue.trim())}
+                                    >
+                                        <i className="bi bi-plus-circle"></i>
+                                        Create tag "{inputValue.trim()}"
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+
+                {/* Tag chips */}
+                {tags.map(tag => (
+                    <span key={tag} className="badge bg-primary d-flex align-items-center">
+                        <i className="bi bi-tag"></i>
+                        {tag}
+                        <button
+                            type="button"
+                            className="btn-close btn-close-white btn-sm ms-1"
+                            onClick={() => onRemove(tag)}
+                            aria-label={`Remove ${tag}`}
+                        />
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }

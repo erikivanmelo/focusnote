@@ -97,9 +97,8 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.4rem;
-        margin-top: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid var(--border-color);
+        align-items: flex-start;
+        min-height: 28px; /* Match button height */
 
         .badge {
             font-weight: 500;
