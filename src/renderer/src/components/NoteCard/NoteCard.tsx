@@ -135,11 +135,10 @@ function NoteCard({
     }, [title, selectedColor, selectedTags, currentNote, createNoteMutation, updateNoteMutation, isCreating]);
 
     const handleBack = () => {
-        if (currentMode == 'edit')
-            setCurrentMode('view')
-        else if (currentMode == 'view' || currentMode == 'create') {
+        if ( ((currentMode == 'edit' && mode == 'edit') || currentMode == 'view') || currentMode == 'create')
             onModalClose();
-        }
+        else
+            setCurrentMode('view')
     };
 
     const handleEdit = () => {
