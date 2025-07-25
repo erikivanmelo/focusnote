@@ -149,6 +149,15 @@ body.dark .btn-close[aria-label="Close"] {
     color: white!important;
 }
 
+.Toastify__toast {
+    background-color: var(--background-form-color) !important;
+    color: var(--text-color)!important;
+    border-color: var(--border-color)!important;
+}
+.Toastify__close-button{
+    color: var(--close-button)!important;
+}
+
 /****DARK MODE****/
 body.dark {
     background-color: var(--bs-black)!important;

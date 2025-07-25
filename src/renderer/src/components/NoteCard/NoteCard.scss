@@ -94,12 +94,6 @@
                 color: var(--bs-gray-600);
                 font-weight: 400;
             }
-            .id {
-                font-size: 0.7rem;
-                color: var(--bs-gray-500);
-                font-family: monospace;
-                opacity: 0.6;
-            }
         }
         .actions {
             display: flex;
@@ -317,38 +311,75 @@
 
         .action-button {
             background: var(--bs-primary);
-            color: white;
+            color: #fff;
             border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.875rem;
-            cursor: pointer;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+            padding: 0;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
 
             &:hover:not(:disabled) {
-                background: #0056b3;
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+              background: #0056b3;
+              transform: scale(1.1);
+              box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
             }
-
+            &:active {
+              transform: scale(0.95);
+            }
             &:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-                transform: none;
-                box-shadow: none;
-            }
-
-            &--secondary {
-                background: var(--bs-gray-500);
-
-                &:hover:not(:disabled) {
-                    background: #5a6268;
-                    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-                }
+              opacity: 0.6;
+              cursor: not-allowed;
+              background: var(--bs-gray-400);
+              transform: none;
+              box-shadow: none;
             }
         }
     }
+}
+
+.edit-tags-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .action-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 400;
+    font-size: 0.875rem;
+    padding: 0.4rem 1rem;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+    }
+    &:active {
+      transform: translateY(0);
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+      transform: none;
+      box-shadow: none;
+    }
+  }
 }
 
 /* Spinner animation */
@@ -378,7 +409,6 @@ body.dark {
         .header {
             .meta {
                 .time { color: var(--bs-gray-400); }
-                .id { color: var(--bs-gray-500); }
             }
             .actions {
                 .action {
@@ -412,6 +442,23 @@ body.dark {
                 &--secondary:hover:not(:disabled) {
                     background: #495057;
                     box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+                }
+            }
+        }
+
+        .edit-tags-actions-row {
+            .action-button {
+                background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                color: #fff;
+                box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+
+                &:hover:not(:disabled) {
+                    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+                }
+
+                &:disabled {
+                    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
                 }
             }
         }

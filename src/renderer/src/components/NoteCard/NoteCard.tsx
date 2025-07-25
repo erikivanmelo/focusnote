@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Modal, Button } from "react-bootstrap";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Note from "@renderer/models/Note";
 import Tag from "@renderer/models/Tag";
 import Color from "@renderer/models/Color";
@@ -85,8 +87,19 @@ function NoteCard({
 
     // Reset form on successful mutation
     useEffect(() => {
-        if (deleteNoteMutation.isSuccess && isModal) {
-            onModalClose();
+        if (deleteNoteMutation.isSuccess) {
+            if (isModal)
+                onModalClose();
+            toast.success('Note deleted successfully!');
+            return;
+        }
+        if (deleteNoteMutation.isError) {
+            toast.error('There was an error deleting the note');
+            return;
+        }
+        if (createNoteMutation.isError || updateNoteMutation.isError) {
+            toast.error('There was an error saving the note');
+            return;
         }
         if (createNoteMutation.isSuccess || updateNoteMutation.isSuccess) {
             const newNote: Note | undefined = (createNoteMutation.isSuccess ? createNoteMutation.data : updateNoteMutation.data)
@@ -94,8 +107,12 @@ function NoteCard({
                 return
             if (mode === 'create') {
                 onModalClose();
+                toast.success('Note created successfully!');
+            } else {
+                setCurrentNote(newNote);
+                toast.success('Note saved successfully!');
             }
-            setCurrentNote(newNote);
+            return;
         }
     }, [createNoteMutation.isSuccess, updateNoteMutation.isSuccess, deleteNoteMutation.isSuccess]);
 
@@ -200,12 +217,11 @@ function NoteCard({
                                 : formattedDate
                             }
                         </span>
-                        <span className="id">#{currentNote?.id || 'new'}</span>
 
                         {isPending && (
                             <div className="loading-indicator">
                                 <div className="spinner"></div>
-                                <span>{isCreating ? "Sending..." : "Saving..."}</span>
+                                <span>Saving...</span>
                             </div>
                         )}
 
@@ -241,19 +257,10 @@ function NoteCard({
                                 </button>
                             </>
                         ) : (
-                            <>
                             <ColorSelector
                                 value={selectedColor}
                                 onChange={setSelectedColor}
                             />
-                            <button
-                                className="btn btn-primary rounded-pill p-0 ps-2 pe-2 ms-2"
-                                onClick={handleSave}
-                                disabled={isPending}
-                            >
-                                Save
-                            </button>
-                            </>
                         )}
                     </div>
                 </div>
@@ -307,11 +314,31 @@ function NoteCard({
                 </div>
 
                 {isEditing ? (
-                    <TagInput
-                        tags={selectedTags}
-                        onSubmit={handleAddTag}
-                        onRemove={handleRemoveTag}
-                    />
+                    <div className="edit-tags-actions-row">
+                        <div style={{ flex: 1 }}>
+                            <TagInput
+                                tags={selectedTags}
+                                onSubmit={handleAddTag}
+                                onRemove={handleRemoveTag}
+                            />
+                        </div>
+                        <button
+                            className="action-button ms-3 rounded-pill"
+                            onClick={handleSave}
+                            disabled={isPending}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="me-2">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            Save
+                        </button>
+                        {isPending && (
+                            <div className="loading-indicator ms-2">
+                                <div className="spinner"></div>
+                                <span>{isCreating ? "Enviando..." : "Guardando..."}</span>
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     currentNote?.tags && currentNote.tags.length > 0 && (
                         <div className="tags d-flex flex-wrap gap-1">
