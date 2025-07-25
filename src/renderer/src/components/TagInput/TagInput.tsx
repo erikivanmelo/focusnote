@@ -40,19 +40,19 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as Node;
-            
+
             // Don't close if clicking on the popover or the button
             if (popoverRef.current?.contains(target) || buttonRef.current?.contains(target)) {
                 return;
             }
-            
+
             // Don't close if clicking on tag chips or remove buttons
             const isTagChip = (target as Element)?.closest?.('.badge');
             const isTagRemoveButton = (target as Element)?.closest?.('.btn-close');
             if (isTagChip || isTagRemoveButton) {
                 return;
             }
-            
+
             setShowPopover(false);
         };
         if (showPopover) {
@@ -98,7 +98,8 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                             <input
                                 type="text"
                                 value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+                                maxLength={40}
+                                onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && inputValue.trim()) {
                                         handleSubmit(inputValue.trim());
@@ -124,10 +125,10 @@ function TagInput({ tags, onSubmit, onRemove, onlyExisting = false }: TagInputPr
                                         </div>
                                     ))
                                 )}
-                                
+
                                 {/* Show create button only if there are no exact matches */}
-                                {inputValue.trim() && 
-                                 !allTags.includes(inputValue.trim()) && 
+                                {inputValue.trim() &&
+                                 !allTags.includes(inputValue.trim()) &&
                                  !tags.includes(inputValue.trim()) &&
                                  !filteredTags.some(tag => tag.toLowerCase() === inputValue.trim().toLowerCase()) && (
                                     <div
