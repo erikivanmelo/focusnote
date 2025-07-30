@@ -37,8 +37,12 @@ function NoteCard({
         console.log(note);
     const [currentNote, setCurrentNote] = useState<Note | null>(note);
     const [currentMode, setCurrentMode] = useState<'view' | 'edit' | 'create'>(mode);
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showLeaveModal, setShowLeaveModal] = useState(false);
+
     const [showMoreButton, setShowMoreButton] = useState(false);
+
     const contentRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<TiptapEditorRef>(null);
 
@@ -143,10 +147,27 @@ function NoteCard({
 
     }, [title, selectedColor, selectedTags, currentNote, createNoteMutation, updateNoteMutation, isCreating]);
 
+    const noteWasModified = () => {
+        if (!currentNote)
+            return false;
+        return (
+            currentNote.title !== title ||
+            currentNote.content !== editorRef.current?.getContent().trim() ||
+            currentNote.color !== selectedColor ||
+            currentNote.tags.length !== selectedTags.length
+        );
+    };
+
     const handleBack = () => {
+        if (currentMode !== 'view' && noteWasModified() && !showLeaveModal) {
+            setShowLeaveModal(true);
+            return;
+        }
+
         if ( ((currentMode == 'edit' && mode == 'edit') || currentMode == 'view') || currentMode == 'create')
             onModalClose();
         else
+            setShowLeaveModal(false);
             setCurrentMode('view')
     };
 
@@ -344,31 +365,79 @@ function NoteCard({
                 show={showDeleteModal}
                 onHide={() => setShowDeleteModal(false)}
                 centered
-                className="delete-modal"
+                className="confirmation-modal"
             >
-                <Modal.Header closeButton>
-                    <Modal.Title>Delete Note</Modal.Title>
+                <Modal.Header closeButton className="border-0">
+                    <Modal.Title>
+                        <i className="bi bi-exclamation-triangle-fill text-danger"></i>
+                        Delete Note
+                    </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <p className="mb-0">
-                        Are you sure you want to delete "{currentNote?.title || 'this note'}"? This action cannot be undone.
+                <Modal.Body className="pb-4">
+                    <div className="modal-icon">
+                        <i className="bi bi-trash3"></i>
+                    </div>
+                    <p>
+                        Are you sure you want to delete <strong>"{currentNote?.title || 'this note'}"</strong>?<br />
+                        This action <strong>cannot</strong> be undone.
                     </p>
                 </Modal.Body>
-                <Modal.Footer className="border-0">
+                <Modal.Footer className="border-0 pt-0">
                     <Button
                         variant="outline-secondary"
                         onClick={() => setShowDeleteModal(false)}
-                        className="px-4"
                     >
+                        <i className="bi bi-x-lg me-1"></i>
                         Cancel
                     </Button>
                     <Button
                         variant="danger"
                         onClick={handleDeleteNote}
-                        className="px-4"
+                        className="d-flex align-items-center"
                     >
-                        <i className="bi bi-trash me-2"></i>
-                        Delete
+                        <i className="bi bi-trash3 me-1"></i>
+                        Delete Note
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Leave Without Saving Modal */}
+            <Modal
+                show={showLeaveModal}
+                onHide={() => setShowLeaveModal(false)}
+                centered
+                className="confirmation-modal"
+            >
+                <Modal.Header closeButton className="border-0">
+                    <Modal.Title>
+                        <i className="bi bi-exclamation-diamond-fill text-warning"></i>
+                        Unsaved Changes
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="pb-4">
+                    <div className="modal-icon text-warning">
+                        <i className="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <p>
+                        You have <strong>unsaved changes</strong>.<br />
+                        Are you sure you want to leave this page?
+                    </p>
+                </Modal.Body>
+                <Modal.Footer className="border-0 pt-0">
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => setShowLeaveModal(false)}
+                    >
+                        <i className="bi bi-x-lg me-1"></i>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="warning"
+                        onClick={handleBack}
+                        className="text-dark"
+                    >
+                        <i className="bi bi-arrow-left me-1"></i>
+                        Leave Without Saving
                     </Button>
                 </Modal.Footer>
             </Modal>
