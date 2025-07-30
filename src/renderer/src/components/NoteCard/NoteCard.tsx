@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Note from "@renderer/models/Note";
 import Tag from "@renderer/models/Tag";
 import Color from "@renderer/models/Color";
@@ -10,7 +9,6 @@ import { useInvalidateMutation } from "@renderer/hooks/useInvalidateMutation";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { enUS } from "date-fns/locale";
 import TiptapEditor, { TiptapEditorRef } from "@renderer/components/TiptapEditor";
-import DisableLayer from "../DisableLayer";
 import TagInput from '../TagInput';
 import ColorSelector from '../ColorSelector';
 import "./NoteCard.scss";
@@ -66,10 +64,6 @@ function NoteCard({
           })
         : 'Just now';
 
-    useEffect(() => {
-        setCurrentNote(note);
-    }, [note]);
-
     // Initialize form data when note changes or mode changes
     useEffect(() => {
         if (isEditing && currentNote) {
@@ -107,10 +101,8 @@ function NoteCard({
                 return
             if (mode === 'create') {
                 onModalClose();
-                toast.success('Note created successfully!');
             } else {
                 setCurrentNote(newNote);
-                toast.success('Note saved successfully!');
             }
             return;
         }
@@ -207,7 +199,6 @@ function NoteCard({
             <div
                 id={`note-${note?.id || 'new'}`}
                 className={`note-card ${(isEditing ? selectedColor?.name : currentNote?.color?.name) || 'light'} ${(isModal || isEditing) && ' modal'}`}
-                style={isPending ? { "filter": "blur(2px)" } : {}}
             >
                 <div className="header">
                     <div className="meta">
@@ -305,7 +296,7 @@ function NoteCard({
                                         className="btn btn-outline-primary btn-sm"
                                         onClick={onModalShow}
                                     >
-                                        Ver más
+                                        See more
                                     </button>
                                 </div>
                             )}
@@ -332,12 +323,6 @@ function NoteCard({
                             </svg>
                             Save
                         </button>
-                        {isPending && (
-                            <div className="loading-indicator ms-2">
-                                <div className="spinner"></div>
-                                <span>{isCreating ? "Enviando..." : "Guardando..."}</span>
-                            </div>
-                        )}
                     </div>
                 ) : (
                     currentNote?.tags && currentNote.tags.length > 0 && (
@@ -353,8 +338,6 @@ function NoteCard({
                 )}
 
             </div>
-
-            {isEditing && <DisableLayer disabled={isPending} />}
 
             {/* Delete Note Modal */}
             <Modal
@@ -398,12 +381,10 @@ function NoteCard({
     return (
         <Modal
             show={true}
-            //onHide={() => navigate(-1)}
             backdrop={true}
             keyboard={true}
             centered={true}
-            size="lg"
-            dialogClassName="minimalist-modal"
+            dialogClassName="minimalist-modal notes-container"
             contentClassName='minimalist-modal-content'
             animation={true}
         >

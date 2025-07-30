@@ -141,12 +141,10 @@ function Menu({ children }: Props) {
                 </div>
 
                 {/* Main Content */}
-                <div className="main-content">
-                    <div className="row justify-content-center notes-container">
-                        <main className="col-lg-8">
-                            {children}
-                        </main>
-                    </div>
+                <div className="main-content overflow-scroll">
+                    <main className="notes-container">
+                        {children}
+                    </main>
                 </div>
             </div>
 
