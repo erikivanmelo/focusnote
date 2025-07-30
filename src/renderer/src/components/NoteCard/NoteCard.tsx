@@ -88,7 +88,6 @@ function NoteCard({
         if (deleteNoteMutation.isSuccess) {
             if (isModal)
                 onModalClose();
-            toast.success('Note deleted successfully!');
             return;
         }
         if (deleteNoteMutation.isError) {
@@ -115,8 +114,8 @@ function NoteCard({
     const handleDeleteNote = async () => {
         if (currentNote) {
             deleteNoteMutation.mutate(currentNote.id);
+            setShowDeleteModal(false);
         }
-        setShowDeleteModal(false);
     };
 
     const handleSave = useCallback(async () => {
