@@ -194,6 +194,10 @@ function NoteCard({
             editorRef.current?.focus();
     };
 
+    useEffect(() => {
+        setCurrentNote(note);
+    }, [note]);
+
     // Check content height for "Ver más" button
     useEffect(() => {
         if (isModal || isEditing) {
