@@ -62,9 +62,9 @@
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.3",
-    "react-toastify": "^11.0.5",
     "sass-embedded": "^1.89.0"
   },
   "devDependencies": {

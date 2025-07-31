@@ -1,5 +1,4 @@
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'react-hot-toast';
 import Menu from './components/Menu';
 import NoteCardList from './components/NoteCardList';
 
@@ -9,18 +8,16 @@ function App() {
             <Menu>
                 <NoteCardList />
             </Menu>
-            <ToastContainer
-                className="mt-4"
-                position="top-right"
-                autoClose={1500}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 1500,
+                    style: {
+                        background: '#363636',
+                        color: '#fff',
+                        marginTop: '30px',
+                    },
+                }}
             />
         </>
     );

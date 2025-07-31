@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import Note from "@renderer/models/Note";
 import Tag from "@renderer/models/Tag";
 import Color from "@renderer/models/Color";
@@ -86,6 +86,7 @@ function NoteCard({
     // Reset form on successful mutation
     useEffect(() => {
         if (deleteNoteMutation.isSuccess) {
+            toast.success('Note deleted');
             if (isModal)
                 onModalClose();
             return;
@@ -102,6 +103,8 @@ function NoteCard({
             const newNote: Note | undefined = (createNoteMutation.isSuccess ? createNoteMutation.data : updateNoteMutation.data)
             if (!newNote)
                 return
+
+            toast.success('Note saved');
             if (mode === 'create') {
                 onModalClose();
             } else {
