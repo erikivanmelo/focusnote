@@ -150,14 +150,21 @@ function NoteCard({
     }, [title, selectedColor, selectedTags, currentNote, createNoteMutation, updateNoteMutation, isCreating]);
 
     const noteWasModified = () => {
-        if (!currentNote)
-            return false;
-        return (
-            currentNote.title !== title ||
-            currentNote.content !== editorRef.current?.getContent().trim() ||
-            currentNote.color !== selectedColor ||
-            currentNote.tags.length !== selectedTags.length
-        );
+        if (currentNote) {
+            return (
+                currentNote.title !== title ||
+                currentNote.content !== editorRef.current?.getContent().trim() ||
+                currentNote.color !== selectedColor ||
+                currentNote.tags.length !== selectedTags.length
+            );
+        } else {
+            return (
+                title !== "" ||
+                editorRef.current?.getContent().trim() !== "<p></p>" ||
+                selectedColor !== defaultColor ||
+                selectedTags.length > 0
+            );
+        }
     };
 
     const handleBack = () => {
