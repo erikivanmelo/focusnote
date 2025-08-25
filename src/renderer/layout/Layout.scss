@@ -1,0 +1,16 @@
+.general-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.general-content {
+    display: flex;
+    flex-grow: 1;
+    height: calc(100vh - 30px);
+}
+
+main {
+    padding-top: 1.5rem;
+    width: 100%;
+}

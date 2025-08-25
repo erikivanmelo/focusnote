@@ -1,13 +1,13 @@
 import { Toaster } from 'react-hot-toast';
-import Menu from './components/Menu';
+import Layout from './layout';
 import NoteCardList from './components/NoteCardList';
 
 function App() {
     return (
         <>
-            <Menu>
+            <Layout>
                 <NoteCardList />
-            </Menu>
+            </Layout>
             <Toaster
                 position="top-center"
                 toastOptions={{
