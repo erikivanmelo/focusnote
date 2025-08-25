@@ -1,8 +1,8 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/renderer/src/**/*.ts",
-    "src/renderer/src/**/*.tsx",
+    "src/renderer/**/*.ts",
+    "src/renderer/**/*.tsx",
     "src/preload/*.d.ts"
   ],
   "compilerOptions": {
@@ -15,7 +15,7 @@
     "strict": true,
     "outDir": "./dist/renderer",
     "paths": {
-      "@renderer/*": ["src/renderer/src/*"]
+      "@renderer/*": ["src/renderer/*"]
     }
   }
 }
