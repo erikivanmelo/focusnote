@@ -1,6 +1,6 @@
 import { Toaster } from 'react-hot-toast';
 import Layout from './layout';
-import NoteCardList from './components/NoteCardList';
+import NoteCardList from './pages/NoteCardList';
 
 function App() {
     return (

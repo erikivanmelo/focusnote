@@ -4,18 +4,6 @@
     --bs-black: #18191a !important;
 }
 
-.notes-container {
-    padding-top: 1.5rem;
-    max-width: 800px;
-    --bs-gutter-x: 1.5rem;
-    --bs-gutter-y: 0;
-    width: 100%;
-    padding-right: calc(var(--bs-gutter-x) * .5);
-    padding-left: calc(var(--bs-gutter-x) * .5);
-    margin-right: auto;
-    margin-left: auto;
-}
-
 // Scrollbar personalizada
 $scrollbar-width: 8px;
 $scrollbar-thumb-color: #4a5568; // Gris azulado más neutro
@@ -94,18 +82,6 @@ body {
     height: 100vh;
     min-height: 100vh;
 }
-
-.main-content {
-    &.with-search {
-        //margin-left: 300px;
-        width: calc(100% - 300px);
-        transition: all 0.3s ease;
-    }
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
 
 .text-body,
 .card,

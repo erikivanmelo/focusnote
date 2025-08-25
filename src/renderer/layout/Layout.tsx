@@ -16,11 +16,8 @@ function Layout({ children }: Props) {
                 <SideBar />
 
                 {/* Main Content */}
-                {/* Todo: ver si main-content es necesario*/}
                 <div className="main-content overflow-scroll">
-
-                    {/* Todo: ver si esta clase es necesaria */}
-                    <main className="notes-container">
+                    <main>
                         {children}
                     </main>
                 </div>

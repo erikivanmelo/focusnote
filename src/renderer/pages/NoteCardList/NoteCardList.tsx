@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import NoteCard from './NoteCard';
+import NoteCard from '@renderer/components/NoteCard';
 import Note from '@renderer/models/Note';
 import {useGenericQueryNoParams} from '@renderer/hooks/useGenericQuery';
 import noteService from '@renderer/services/noteService';
+import './NoteCardList.scss';
 
 function NoteCardList() {
     const { data: notes, isLoading, isError, error} = useGenericQueryNoParams<Note[]>(
@@ -65,9 +66,9 @@ function NoteCardList() {
     }
 
     return (
-        <>
+        <div className="notes-container">
             {content}
-        </>
+        </div>
     );
 }
 
