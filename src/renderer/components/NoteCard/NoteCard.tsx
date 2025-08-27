@@ -63,7 +63,16 @@ function NoteCard({
         | { type: 'REMOVE_TAG'; payload: string }
         | { type: 'SET_TAGS'; payload: string[] }
         | { type: 'SET_SHAKE'; payload: boolean }
-        | { type: 'RESET'; payload: { defaultColor: Color } };
+        | { type: 'RESET'; payload: { defaultColor: Color } }
+        | { 
+            type: 'INIT_NOTE'; 
+            payload: {
+                title: string;
+                color: Color;
+                tags: string[];
+                content: string;
+            } 
+          };
 
     const formReducer = (state: FormState, action: FormAction): FormState => {
         switch (action.type) {
@@ -84,6 +93,14 @@ function NoteCard({
                 return { ...state, selectedTags: action.payload };
             case 'SET_SHAKE':
                 return { ...state, shakeContent: action.payload };
+            case 'INIT_NOTE':
+                return {
+                    ...state,
+                    title: action.payload.title,
+                    selectedColor: action.payload.color,
+                    selectedTags: action.payload.tags,
+                    shakeContent: false
+                };
             case 'RESET':
                 return {
                     title: '',
@@ -124,9 +141,16 @@ function NoteCard({
     // Initialize form data when note changes or mode changes
     useEffect(() => {
         if (isEditing && currentNote) {
-            dispatch({ type: 'SET_COLOR', payload: currentNote.color || defaultColor });
-            dispatch({ type: 'SET_TITLE', payload: currentNote.title || "" });
-            dispatch({ type: 'SET_TAGS', payload: currentNote.tags.map((tag) => tag.name) });
+            // Unificar en una sola acción para evitar múltiples renders
+            dispatch({
+                type: 'INIT_NOTE',
+                payload: {
+                    title: currentNote.title || "",
+                    color: currentNote.color || defaultColor,
+                    tags: currentNote.tags.map(tag => tag.name),
+                    content: currentNote.content
+                }
+            });
             editorRef.current?.setContent(currentNote.content);
         } else if (isCreating) {
             dispatch({ type: 'RESET', payload: { defaultColor } });
