@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import LeaveWithoutSavingModal from "./LeaveWithoutSavingModal";
 import toast from 'react-hot-toast';
 import Note from "@renderer/models/Note";
 import Tag from "@renderer/models/Tag";
@@ -373,87 +375,23 @@ function NoteCard({
 
             </div>
 
-            {/* Delete Note Modal */}
-            <Modal
+            <DeleteConfirmationModal
                 show={showDeleteModal}
-                onHide={() => setShowDeleteModal(false)}
-                centered
-                className="confirmation-modal"
-            >
-                <Modal.Header closeButton className="border-0">
-                    <Modal.Title>
-                        <i className="bi bi-exclamation-triangle-fill text-danger"></i>
-                        Delete Note
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="pb-4">
-                    <div className="modal-icon">
-                        <i className="bi bi-trash3"></i>
-                    </div>
-                    <p>
-                        Are you sure you want to delete <strong>"{currentNote?.title || 'this note'}"</strong>?<br />
-                        This action <strong>cannot</strong> be undone.
-                    </p>
-                </Modal.Body>
-                <Modal.Footer className="border-0 pt-0">
-                    <Button
-                        variant="outline-secondary"
-                        onClick={() => setShowDeleteModal(false)}
-                    >
-                        <i className="bi bi-x-lg me-1"></i>
-                        Cancel
-                    </Button>
-                    <Button
-                        variant="danger"
-                        onClick={handleDeleteNote}
-                        className="d-flex align-items-center"
-                    >
-                        <i className="bi bi-trash3 me-1"></i>
-                        Delete Note
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                isDeleting={deleteNoteMutation.isPending}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDeleteNote}
+            />
 
-            {/* Leave Without Saving Modal */}
-            <Modal
+            <LeaveWithoutSavingModal
                 show={showLeaveModal}
-                onHide={() => setShowLeaveModal(false)}
-                centered
-                className="confirmation-modal"
-            >
-                <Modal.Header closeButton className="border-0">
-                    <Modal.Title>
-                        <i className="bi bi-exclamation-diamond-fill text-warning"></i>
-                        Unsaved Changes
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="pb-4">
-                    <div className="modal-icon text-warning">
-                        <i className="bi bi-exclamation-triangle"></i>
-                    </div>
-                    <p>
-                        You have <strong>unsaved changes</strong>.<br />
-                        Are you sure you want to leave this page?
-                    </p>
-                </Modal.Body>
-                <Modal.Footer className="border-0 pt-0">
-                    <Button
-                        variant="outline-secondary"
-                        onClick={() => setShowLeaveModal(false)}
-                    >
-                        <i className="bi bi-x-lg me-1"></i>
-                        Cancel
-                    </Button>
-                    <Button
-                        variant="warning"
-                        onClick={handleBack}
-                        className="text-dark"
-                    >
-                        <i className="bi bi-arrow-left me-1"></i>
-                        Leave Without Saving
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                isSaving={isPending}
+                onClose={() => setShowLeaveModal(false)}
+                onConfirm={() => {
+                    setShowLeaveModal(false);
+                    setCurrentMode('view');
+                    onModalClose();
+                }}
+            />
         </>
     );
 
