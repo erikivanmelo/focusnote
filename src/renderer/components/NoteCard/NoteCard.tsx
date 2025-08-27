@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, useReducer } from "react";
 import { Button, Modal } from "react-bootstrap";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import LeaveWithoutSavingModal from "./LeaveWithoutSavingModal";
@@ -48,12 +48,63 @@ function NoteCard({
     const contentRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<TiptapEditorRef>(null);
 
-    // Form state
+    // Form state with useReducer
+    type FormState = {
+        title: string;
+        selectedColor: Color;
+        selectedTags: string[];
+        shakeContent: boolean;
+    };
+
+    type FormAction =
+        | { type: 'SET_TITLE'; payload: string }
+        | { type: 'SET_COLOR'; payload: Color }
+        | { type: 'ADD_TAG'; payload: string }
+        | { type: 'REMOVE_TAG'; payload: string }
+        | { type: 'SET_TAGS'; payload: string[] }
+        | { type: 'SET_SHAKE'; payload: boolean }
+        | { type: 'RESET'; payload: { defaultColor: Color } };
+
+    const formReducer = (state: FormState, action: FormAction): FormState => {
+        switch (action.type) {
+            case 'SET_TITLE':
+                return { ...state, title: action.payload };
+            case 'SET_COLOR':
+                return { ...state, selectedColor: action.payload };
+            case 'ADD_TAG':
+                return state.selectedTags.includes(action.payload)
+                    ? state
+                    : { ...state, selectedTags: [...state.selectedTags, action.payload] };
+            case 'REMOVE_TAG':
+                return {
+                    ...state,
+                    selectedTags: state.selectedTags.filter(tag => tag !== action.payload)
+                };
+            case 'SET_TAGS':
+                return { ...state, selectedTags: action.payload };
+            case 'SET_SHAKE':
+                return { ...state, shakeContent: action.payload };
+            case 'RESET':
+                return {
+                    title: '',
+                    selectedColor: action.payload.defaultColor,
+                    selectedTags: [],
+                    shakeContent: false
+                };
+            default:
+                return state;
+        }
+    };
+
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
-    const [selectedColor, setSelectedColor] = useState<Color>(defaultColor);
-    const [title, setTitle] = useState<string>("");
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [shakeContent, setShakeContent] = useState<boolean>(false);
+    const [formState, dispatch] = useReducer(formReducer, {
+        title: "",
+        selectedColor: defaultColor,
+        selectedTags: [],
+        shakeContent: false
+    });
+
+    const { title, selectedColor, selectedTags, shakeContent } = formState;
 
     // Mutations
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
@@ -73,17 +124,15 @@ function NoteCard({
     // Initialize form data when note changes or mode changes
     useEffect(() => {
         if (isEditing && currentNote) {
-            setSelectedColor(currentNote.color || defaultColor);
-            setTitle(currentNote.title || "");
-            setSelectedTags(currentNote.tags.map((tag) => tag.name));
+            dispatch({ type: 'SET_COLOR', payload: currentNote.color || defaultColor });
+            dispatch({ type: 'SET_TITLE', payload: currentNote.title || "" });
+            dispatch({ type: 'SET_TAGS', payload: currentNote.tags.map((tag) => tag.name) });
             editorRef.current?.setContent(currentNote.content);
         } else if (isCreating) {
-            setSelectedColor(defaultColor);
-            setTitle("");
-            setSelectedTags([]);
+            dispatch({ type: 'RESET', payload: { defaultColor } });
             editorRef.current?.setContent("");
         }
-    }, [currentMode, defaultColor]);
+    }, [currentMode, defaultColor, currentNote, isEditing, isCreating]);
 
     // Reset form on successful mutation
     useEffect(() => {
@@ -128,9 +177,9 @@ function NoteCard({
         const isContentEmpty = currentContent === '' || currentContent === "<p></p>";
 
         if (isContentEmpty) {
-            setShakeContent(true);
+            dispatch({ type: 'SET_SHAKE', payload: true });
             setTimeout(() => {
-                setShakeContent(false);
+                dispatch({ type: 'SET_SHAKE', payload: false });
             }, 1000);
             return;
         }
@@ -154,17 +203,17 @@ function NoteCard({
     const noteWasModified = () => {
         if (currentNote) {
             return (
-                currentNote.title !== title ||
+                currentNote.title !== formState.title ||
                 currentNote.content !== editorRef.current?.getContent().trim() ||
-                currentNote.color !== selectedColor ||
-                currentNote.tags.length !== selectedTags.length
+                currentNote.color !== formState.selectedColor ||
+                currentNote.tags.length !== formState.selectedTags.length
             );
         } else {
             return (
-                title !== "" ||
+                formState.title !== "" ||
                 editorRef.current?.getContent().trim() !== "<p></p>" ||
-                selectedColor !== defaultColor ||
-                selectedTags.length > 0
+                formState.selectedColor !== defaultColor ||
+                formState.selectedTags.length > 0
             );
         }
     };
@@ -190,15 +239,15 @@ function NoteCard({
     };
 
     const handleAddTag = (tag: string) => {
-        if (selectedTags.includes(tag)) {
+        if (formState.selectedTags.includes(tag)) {
             return false;
         }
-        setSelectedTags([...selectedTags, tag]);
+        dispatch({ type: 'ADD_TAG', payload: tag });
         return true;
     };
 
     const handleRemoveTag = (tag: string) => {
-        setSelectedTags(selectedTags.filter((t) => t !== tag));
+        dispatch({ type: 'REMOVE_TAG', payload: tag });
     };
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -234,7 +283,7 @@ function NoteCard({
         <>
             <div
                 id={`note-${note?.id || 'new'}`}
-                className={`note-card ${(isEditing ? selectedColor?.name : currentNote?.color?.name) || 'light'} ${(isModal || isEditing) && ' modal'}`}
+                className={`note-card ${(isEditing ? formState.selectedColor?.name : currentNote?.color?.name) || 'light'} ${(isModal || isEditing) && ' modal'}`}
             >
                 <div className="header">
                     <div className="meta">
@@ -285,8 +334,8 @@ function NoteCard({
                             </>
                         ) : (
                             <ColorSelector
-                                value={selectedColor}
-                                onChange={setSelectedColor}
+                                value={formState.selectedColor}
+                                onChange={(color) => dispatch({ type: 'SET_COLOR', payload: color })}
                             />
                         )}
                     </div>
@@ -294,8 +343,8 @@ function NoteCard({
 
                 {isEditing ? (
                     <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={formState.title}
+                        onChange={(e) => dispatch({ type: 'SET_TITLE', payload: e.target.value })}
                         maxLength={40}
                         id="title"
                         type="text"
@@ -317,7 +366,7 @@ function NoteCard({
                         <TiptapEditor
                             ref={editorRef}
                             placeholder="What do you have to tell today?"
-                            className={`content ${shakeContent ? 'shake-animation' : ''}`}
+                            className={`content ${formState.shakeContent ? 'shake-animation' : ''}`}
                         />
                     ) : (
                         <>
@@ -344,7 +393,7 @@ function NoteCard({
                     <div className="edit-tags-actions-row">
                         <div style={{ flex: 1 }}>
                             <TagInput
-                                tags={selectedTags}
+                                tags={formState.selectedTags}
                                 onSubmit={handleAddTag}
                                 onRemove={handleRemoveTag}
                             />
