@@ -42,6 +42,7 @@ function NoteCard({
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showLeaveModal, setShowLeaveModal] = useState(false);
+    const [shakeContent, setShakeContent] = useState(false);
 
     const [showMoreButton, setShowMoreButton] = useState(false);
 
@@ -53,7 +54,6 @@ function NoteCard({
         title: string;
         selectedColor: Color;
         selectedTags: string[];
-        shakeContent: boolean;
     };
 
     type FormAction =
@@ -91,22 +91,17 @@ function NoteCard({
                 };
             case 'SET_TAGS':
                 return { ...state, selectedTags: action.payload };
-            case 'SET_SHAKE':
-                return { ...state, shakeContent: action.payload };
             case 'INIT_NOTE':
                 return {
-                    ...state,
                     title: action.payload.title,
                     selectedColor: action.payload.color,
                     selectedTags: action.payload.tags,
-                    shakeContent: false
                 };
             case 'RESET':
                 return {
                     title: '',
                     selectedColor: action.payload.defaultColor,
                     selectedTags: [],
-                    shakeContent: false
                 };
             default:
                 return state;
@@ -117,11 +112,10 @@ function NoteCard({
     const [formState, dispatch] = useReducer(formReducer, {
         title: "",
         selectedColor: defaultColor,
-        selectedTags: [],
-        shakeContent: false
+        selectedTags: []
     });
 
-    const { title, selectedColor, selectedTags, shakeContent } = formState;
+    const { title, selectedColor, selectedTags } = formState;
 
     // Mutations
     const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
@@ -201,9 +195,9 @@ function NoteCard({
         const isContentEmpty = currentContent === '' || currentContent === "<p></p>";
 
         if (isContentEmpty) {
-            dispatch({ type: 'SET_SHAKE', payload: true });
+            setShakeContent(true);
             setTimeout(() => {
-                dispatch({ type: 'SET_SHAKE', payload: false });
+                setShakeContent(false);
             }, 1000);
             return;
         }
@@ -390,7 +384,7 @@ function NoteCard({
                         <TiptapEditor
                             ref={editorRef}
                             placeholder="What do you have to tell today?"
-                            className={`content ${formState.shakeContent ? 'shake-animation' : ''}`}
+                            className={`content ${shakeContent ? 'shake-animation' : ''}`}
                         />
                     ) : (
                         <>
