@@ -62,16 +62,15 @@ function NoteCard({
         | { type: 'ADD_TAG'; payload: string }
         | { type: 'REMOVE_TAG'; payload: string }
         | { type: 'SET_TAGS'; payload: string[] }
-        | { type: 'SET_SHAKE'; payload: boolean }
         | { type: 'RESET'; payload: { defaultColor: Color } }
-        | { 
-            type: 'INIT_NOTE'; 
+        | {
+            type: 'INIT_NOTE';
             payload: {
                 title: string;
                 color: Color;
                 tags: string[];
                 content: string;
-            } 
+            }
           };
 
     const formReducer = (state: FormState, action: FormAction): FormState => {
