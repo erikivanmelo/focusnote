@@ -26,6 +26,8 @@ interface Props {
     onModalEdit?: () => void;
 }
 
+const TITLE_MAX_LENGTH = 40;
+
 function NoteCard({
     note = null,
     isModal = false,
@@ -62,7 +64,7 @@ function NoteCard({
         | { type: 'ADD_TAG'; payload: string }
         | { type: 'REMOVE_TAG'; payload: string }
         | { type: 'SET_TAGS'; payload: string[] }
-        | { type: 'RESET'; payload: { defaultColor: Color } }
+        | { type: 'RESET' }
         | {
             type: 'INIT_NOTE';
             payload: {
@@ -99,7 +101,7 @@ function NoteCard({
             case 'RESET':
                 return {
                     title: '',
-                    selectedColor: action.payload.defaultColor,
+                    selectedColor: defaultColor,
                     selectedTags: [],
                 };
             default:
@@ -108,6 +110,7 @@ function NoteCard({
     };
 
     const defaultColor = useMemo(() => new Color(1, "light", true), []);
+
     const [formState, dispatch] = useReducer(formReducer, {
         title: "",
         selectedColor: defaultColor,
@@ -116,10 +119,41 @@ function NoteCard({
 
     const { title, selectedColor, selectedTags } = formState;
 
+    // Mutation handlers
+    const handleSaveSuccess = (newNote: Note) => {
+        toast.success('Note saved');
+        if (mode === 'create') {
+            onModalClose();
+        } else {
+            setCurrentNote(newNote);
+        }
+    };
+    const handleSaveError = (_err: unknown) => {
+        toast.error('There was an error saving the note');
+    };
+    const handleDeleteSuccess = () => {
+        toast.success('Note deleted');
+        if (isModal)
+            onModalClose();
+    };
+    const handleDeleteError = (_err: unknown) => {
+        toast.error('There was an error deleting the note');
+    };
+
     // Mutations
-    const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete);
-    const createNoteMutation = useInvalidateMutation(["notes"], noteService.create);
-    const updateNoteMutation = useInvalidateMutation(["notes"], noteService.update);
+    const deleteNoteMutation = useInvalidateMutation("notes", noteService.delete, {
+        onSuccess: () => handleDeleteSuccess(),
+        onError: handleDeleteError,
+        onSettled: () => setShowDeleteModal(false),
+    });
+    const createNoteMutation = useInvalidateMutation(["notes"], noteService.create, {
+        onSuccess: (data) => handleSaveSuccess(data as Note),
+        onError: handleSaveError,
+    });
+    const updateNoteMutation = useInvalidateMutation(["notes"], noteService.update, {
+        onSuccess: (data) => handleSaveSuccess(data as Note),
+        onError: handleSaveError,
+    });
 
     const isEditing = currentMode === 'edit' || currentMode === 'create';
     const isCreating = currentMode === 'create';
@@ -146,46 +180,14 @@ function NoteCard({
             });
             editorRef.current?.setContent(currentNote.content);
         } else if (isCreating) {
-            dispatch({ type: 'RESET', payload: { defaultColor } });
+            dispatch({ type: 'RESET' });
             editorRef.current?.setContent("");
         }
     }, [currentMode, defaultColor, currentNote, isEditing, isCreating]);
 
-    // Reset form on successful mutation
-    useEffect(() => {
-        if (deleteNoteMutation.isSuccess) {
-            toast.success('Note deleted');
-            if (isModal)
-                onModalClose();
-            return;
-        }
-        if (deleteNoteMutation.isError) {
-            toast.error('There was an error deleting the note');
-            return;
-        }
-        if (createNoteMutation.isError || updateNoteMutation.isError) {
-            toast.error('There was an error saving the note');
-            return;
-        }
-        if (createNoteMutation.isSuccess || updateNoteMutation.isSuccess) {
-            const newNote: Note | undefined = (createNoteMutation.isSuccess ? createNoteMutation.data : updateNoteMutation.data)
-            if (!newNote)
-                return
-
-            toast.success('Note saved');
-            if (mode === 'create') {
-                onModalClose();
-            } else {
-                setCurrentNote(newNote);
-            }
-            return;
-        }
-    }, [createNoteMutation.isSuccess, updateNoteMutation.isSuccess, deleteNoteMutation.isSuccess]);
-
     const handleDeleteNote = async () => {
         if (currentNote) {
             deleteNoteMutation.mutate(currentNote.id);
-            setShowDeleteModal(false);
         }
     };
 
@@ -362,7 +364,7 @@ function NoteCard({
                     <input
                         value={formState.title}
                         onChange={(e) => dispatch({ type: 'SET_TITLE', payload: e.target.value })}
-                        maxLength={40}
+                        maxLength={TITLE_MAX_LENGTH}
                         id="title"
                         type="text"
                         placeholder="Note title"
