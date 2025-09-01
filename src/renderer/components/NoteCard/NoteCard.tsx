@@ -13,6 +13,7 @@ import { enUS } from "date-fns/locale";
 import TiptapEditor, { TiptapEditorRef } from "@renderer/components/TiptapEditor";
 import TagInput from '../TagInput';
 import ColorSelector from '../ColorSelector';
+import { TOAST_MESSAGES, UI_TEXTS, CONFIG } from './NoteCard.consts';
 import "./NoteCard.scss";
 
 
@@ -26,7 +27,7 @@ interface Props {
     onModalEdit?: () => void;
 }
 
-const TITLE_MAX_LENGTH = 40;
+
 
 function NoteCard({
     note = null,
@@ -121,7 +122,7 @@ function NoteCard({
 
     // Mutation handlers
     const handleSaveSuccess = (newNote: Note) => {
-        toast.success('Note saved');
+        toast.success(TOAST_MESSAGES.SAVE_SUCCESS);
         if (mode === 'create') {
             onModalClose();
         } else {
@@ -129,15 +130,15 @@ function NoteCard({
         }
     };
     const handleSaveError = (_err: unknown) => {
-        toast.error('There was an error saving the note');
+        toast.error(TOAST_MESSAGES.SAVE_ERROR);
     };
     const handleDeleteSuccess = () => {
-        toast.success('Note deleted');
+        toast.success(TOAST_MESSAGES.DELETE_SUCCESS);
         if (isModal)
             onModalClose();
     };
     const handleDeleteError = (_err: unknown) => {
-        toast.error('There was an error deleting the note');
+        toast.error(TOAST_MESSAGES.DELETE_ERROR);
     };
 
     // Mutations
@@ -163,7 +164,7 @@ function NoteCard({
             addSuffix: true,
             locale: enUS
           })
-        : 'Just now';
+        : UI_TEXTS.JUST_NOW;
 
     // Initialize form data when note changes or mode changes
     useEffect(() => {
@@ -199,7 +200,7 @@ function NoteCard({
             setShakeContent(true);
             setTimeout(() => {
                 setShakeContent(false);
-            }, 1000);
+            }, CONFIG.SHAKE_ANIMATION_DURATION);
             return;
         }
 
@@ -288,7 +289,7 @@ function NoteCard({
             if (contentRef.current) {
                 const element = contentRef.current;
                 const lineHeight = parseInt(window.getComputedStyle(element).lineHeight);
-                const maxHeight = lineHeight * 10;
+                const maxHeight = lineHeight * CONFIG.CONTENT_LINE_HEIGHT_MULTIPLIER;
                 setShowMoreButton(element.scrollHeight > maxHeight);
             }
         };
@@ -308,7 +309,7 @@ function NoteCard({
                     <div className="meta">
                         <span className="time">
                             {isEditing
-                                ? (isCreating ? "Creating note" : "Editing note")
+                                ? (isCreating ? UI_TEXTS.CREATING_NOTE : UI_TEXTS.EDITING_NOTE)
                                 : formattedDate
                             }
                         </span>
@@ -316,7 +317,7 @@ function NoteCard({
                         {isPending && (
                             <div className="loading-indicator">
                                 <div className="spinner"></div>
-                                <span>Saving...</span>
+                                <span>{UI_TEXTS.SAVING}</span>
                             </div>
                         )}
 
@@ -328,7 +329,6 @@ function NoteCard({
                                     <button
                                         className="action"
                                         onClick={onModalShow}
-                                        title="Open as popup"
                                     >
                                         <i className="bi bi-arrows-fullscreen" />
                                     </button>
@@ -336,7 +336,6 @@ function NoteCard({
                                 <button
                                     className="action"
                                     onClick={handleEdit}
-                                    title="Edit note"
                                 >
                                     <i className="bi bi-pencil" />
                                 </button>
@@ -346,7 +345,6 @@ function NoteCard({
                                         e.stopPropagation();
                                         setShowDeleteModal(true);
                                     }}
-                                    title="Delete note"
                                 >
                                     <i className="bi bi-trash" />
                                 </button>
@@ -364,10 +362,10 @@ function NoteCard({
                     <input
                         value={formState.title}
                         onChange={(e) => dispatch({ type: 'SET_TITLE', payload: e.target.value })}
-                        maxLength={TITLE_MAX_LENGTH}
+                        maxLength={CONFIG.TITLE_MAX_LENGTH}
                         id="title"
                         type="text"
-                        placeholder="Note title"
+                        placeholder={UI_TEXTS.TITLE_PLACEHOLDER}
                         className="title"
                         onKeyDown={handleTitleKeyDown}
                     />
@@ -384,7 +382,7 @@ function NoteCard({
                     {isEditing ? (
                         <TiptapEditor
                             ref={editorRef}
-                            placeholder="What do you have to tell today?"
+                            placeholder={UI_TEXTS.CONTENT_PLACEHOLDER}
                             className={`content ${shakeContent ? 'shake-animation' : ''}`}
                         />
                     ) : (
@@ -400,7 +398,7 @@ function NoteCard({
                                         className="btn btn-outline-primary btn-sm"
                                         onClick={onModalShow}
                                     >
-                                        See more
+                                        {UI_TEXTS.SEE_MORE_BUTTON}
                                     </button>
                                 </div>
                             )}
@@ -425,7 +423,7 @@ function NoteCard({
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="me-2">
                                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                             </svg>
-                            Save
+                            {UI_TEXTS.SAVE_BUTTON}
                         </button>
                     </div>
                 ) : (
@@ -480,7 +478,6 @@ function NoteCard({
                 <button
                     className="close-button"
                     onClick={ handleBack }
-                    aria-label="Go back"
                 >
                     <i className="bi bi-arrow-left"></i>
                 </button>
